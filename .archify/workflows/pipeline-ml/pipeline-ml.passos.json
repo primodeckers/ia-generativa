@@ -1,0 +1,79 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver de onde vêm os dados, ou pelo 4 para ver como o modelo aprende.",
+ "steps": [
+  {
+   "node": "coletar", "fase": "Dados", "title": "Coletar dados", "edges": [],
+   "resumo": "Todo projeto começa pelos dados: registros, planilhas, sensores ou históricos que mostram exemplos do problema. A qualidade do modelo depende muito do que se coleta aqui.",
+   "entra": "O problema a resolver e as fontes de dados disponíveis.",
+   "sai": "Um conjunto de dados brutos, ainda sem tratamento.",
+   "exemplo": "Dois anos de histórico de clientes, com a informação de quem cancelou o contrato.", "ilustrativo": true,
+   "termos": [["Dados brutos", "Informação como veio da fonte, sem limpeza."], ["Rótulo", "A resposta correta de cada exemplo, que o modelo tenta prever."]],
+   "tecnico": "Aquisição de dados de bancos, APIs e logs, com atenção a representatividade, viés de amostragem e rotulagem."
+  },
+  {
+   "node": "limpar", "fase": "Dados", "title": "Limpar e preparar", "edges": ["e-coletar-limpar"],
+   "resumo": "Os dados brutos têm erros, lacunas e formatos diferentes. Aqui eles são corrigidos e transformados em features, as características que o modelo realmente vai usar.",
+   "entra": "Dados brutos.",
+   "sai": "Tabela organizada, com features prontas para o modelo.",
+   "exemplo": "Preencher idades ausentes e criar a feature \"meses como cliente\".", "ilustrativo": true,
+   "termos": [["Feature", "Característica usada como entrada do modelo."], ["Valor ausente", "Campo sem informação, que precisa de tratamento."]],
+   "tecnico": "Limpeza, tratamento de valores ausentes e outliers, codificação de variáveis categóricas, normalização e engenharia de features."
+  },
+  {
+   "node": "separar", "fase": "Dados", "title": "Separar dados", "edges": ["e-limpar-separar"],
+   "resumo": "Os dados são divididos em três partes: treino, para o modelo aprender; validação, para comparar e ajustar; e teste, guardado para a avaliação final e honesta.",
+   "entra": "Tabela de features preparada.",
+   "sai": "Três conjuntos separados: treino, validação e teste.",
+   "exemplo": "70% para treino, 15% para validação e 15% para teste.", "ilustrativo": true,
+   "termos": [["Conjunto de teste", "Dados que o modelo nunca viu até a avaliação final."], ["Vazamento de dados", "Quando informação do teste vaza para o treino e infla o resultado."]],
+   "tecnico": "Divisão em treino, validação e teste, com estratificação quando as classes são desbalanceadas e cuidado para evitar data leakage."
+  },
+  {
+   "node": "treinar", "fase": "Modelo", "title": "Treinar modelo", "edges": ["e-separar-treinar", "e-ajustar-treinar", "e-monitorar-treinar"],
+   "resumo": "O algoritmo vê os exemplos de treino e ajusta seus parâmetros internos para errar cada vez menos. É aqui que o modelo aprende os padrões dos dados. Esta caixa também é revisitada após um ajuste ou um retreino.",
+   "entra": "Conjunto de treino e uma configuração do algoritmo.",
+   "sai": "Um modelo treinado.",
+   "exemplo": "Um modelo que aprende a prever cancelamento a partir do histórico dos clientes.", "ilustrativo": true,
+   "termos": [["Parâmetros", "Valores internos que o modelo aprende sozinho."], ["Overfitting", "Quando o modelo decora o treino e generaliza mal."]],
+   "tecnico": "Otimização dos parâmetros do modelo por minimização de uma função de perda sobre o conjunto de treino."
+  },
+  {
+   "node": "avaliar", "fase": "Modelo", "title": "Avaliar", "edges": ["e-treinar-avaliar"],
+   "resumo": "O modelo é testado em dados que não usou para aprender e medido com métricas. Se o resultado atinge a meta, ele segue para produção; se não, volta para ajustes.",
+   "entra": "Modelo treinado e dados de validação (e, ao final, de teste).",
+   "sai": "Métricas de desempenho e a decisão: aprovar ou ajustar.",
+   "exemplo": "O modelo acerta 88% dos casos e a meta era 85%: aprovado.", "ilustrativo": true,
+   "termos": [["Métrica", "Número que resume a qualidade do modelo."], ["Meta", "Nível mínimo de qualidade combinado para aprovar."]],
+   "tecnico": "Cálculo de métricas como acurácia, precisão, recall e F1 na validação, e uma avaliação final única no conjunto de teste."
+  },
+  {
+   "node": "ajustar", "fase": "Modelo", "title": "Ajustar", "edges": ["e-avaliar-ajustar"],
+   "resumo": "Quando o desempenho fica abaixo da meta, mudam-se as configurações do treino, chamadas hiperparâmetros. Depois o modelo é treinado de novo, formando um ciclo de melhoria.",
+   "entra": "Métricas abaixo da meta.",
+   "sai": "Nova configuração, que volta para o treino.",
+   "exemplo": "Testar uma taxa de aprendizado menor e um modelo mais simples.", "ilustrativo": true,
+   "termos": [["Hiperparâmetro", "Configuração definida por nós antes do treino."], ["Busca em grade", "Testar várias combinações de configurações."]],
+   "tecnico": "Ajuste de hiperparâmetros por busca em grade, busca aleatória ou otimização bayesiana, comparando resultados na validação."
+  },
+  {
+   "node": "deploy", "fase": "Produção", "title": "Deploy", "edges": ["e-avaliar-deploy"],
+   "resumo": "O modelo aprovado sai do laboratório e é colocado em produção, onde passa a receber dados reais e devolver previsões para pessoas ou sistemas.",
+   "entra": "Modelo aprovado na avaliação.",
+   "sai": "Um serviço que entrega previsões em uso real.",
+   "exemplo": "A equipe de atendimento passa a ver o risco de cancelamento de cada cliente.", "ilustrativo": true,
+   "termos": [["Produção", "Ambiente onde o sistema é usado de verdade."], ["Inferência", "Usar o modelo treinado para gerar previsões."]],
+   "tecnico": "Empacotamento do modelo e publicação como API ou processo em lote, com versionamento e estratégia de liberação gradual."
+  },
+  {
+   "node": "monitorar", "fase": "Monitoramento", "title": "Monitorar", "edges": ["e-deploy-monitorar"],
+   "resumo": "O mundo muda, e o modelo pode piorar com o tempo. Por isso acompanha-se a qualidade das previsões e a mudança nos dados (drift). Quando o desempenho cai, o modelo é retreinado.",
+   "entra": "Previsões e dados reais em uso.",
+   "sai": "Alertas e a decisão de retreinar o modelo.",
+   "exemplo": "Após uma mudança de mercado, os acertos caem e o time decide retreinar.", "ilustrativo": true,
+   "termos": [["Drift", "Mudança nos dados ou no mundo que degrada o modelo."], ["Retreino", "Treinar de novo com dados mais recentes."]],
+   "tecnico": "Monitoramento de data drift, concept drift e métricas de desempenho em produção, com gatilhos para retreino."
+  }
+ ]
+}

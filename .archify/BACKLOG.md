@@ -11,12 +11,12 @@ Temas para virar workflow (passo a passo). Marque `[x]` quando estiver pronto em
 - [x] ⭐ Stable Diffusion completo (VAE + texto + U-Net)
 
 ## Fundamentos de machine learning
-- [ ] ⭐ Pipeline de ML: dados → treino → validação → deploy
-- [ ] ⭐ Overfitting, regularização e validação cruzada
-- [ ] Regressão linear e logística
-- [ ] Árvores de decisão, Random Forest e gradient boosting (XGBoost)
-- [ ] k-means, k-NN, SVM e PCA
-- [ ] Viés e variância
+- [x] ⭐ Pipeline de ML: dados → treino → validação → deploy
+- [x] ⭐ Overfitting, regularização e validação cruzada
+- [x] Regressão linear e logística
+- [x] Árvores de decisão, Random Forest e gradient boosting (XGBoost)
+- [x] k-means, k-NN, SVM e PCA
+- [x] Viés e variância
 
 ## Como as redes aprendem
 - [ ] ⭐ Gradiente descendente e otimizadores (SGD, Adam)

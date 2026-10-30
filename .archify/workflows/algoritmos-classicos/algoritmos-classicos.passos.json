@@ -1,0 +1,314 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver o k-NN, pelo 5 para o SVM, pelo 9 para o k-means ou pelo 12 para o PCA.",
+ "steps": [
+  {
+   "node": "knn_novo",
+   "fase": "k-NN",
+   "title": "Novo ponto",
+   "edges": [],
+   "resumo": "O k-NN não treina nada de antemão: ele guarda os exemplos já rotulados e espera um caso novo. Este é o ponto que queremos classificar ou estimar.",
+   "entra": "Um caso novo, descrito por suas características.",
+   "sai": "O ponto pronto para ser comparado com os conhecidos.",
+   "exemplo": "Uma fruta nova, com peso e cor medidos, que ainda não sabemos se é laranja ou limão.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Supervisionado",
+     "Aprende com exemplos que já têm a resposta (rótulo)."
+    ],
+    [
+     "Característica",
+     "Uma medida que descreve o caso, como altura ou idade."
+    ]
+   ],
+   "tecnico": "Algoritmo baseado em instâncias, também chamado de aprendizado preguiçoso: não há fase de treino, só armazenamento dos dados."
+  },
+  {
+   "node": "knn_dist",
+   "fase": "k-NN",
+   "title": "Distâncias",
+   "edges": [
+    "knn-1"
+   ],
+   "resumo": "O algoritmo mede a distância entre o novo ponto e cada ponto conhecido. Quanto menor a distância, mais parecidos são os casos.",
+   "entra": "O novo ponto e todos os exemplos rotulados.",
+   "sai": "Uma distância para cada exemplo conhecido.",
+   "termos": [
+    [
+     "Distância",
+     "Medida de quão longe dois pontos estão um do outro."
+    ],
+    [
+     "Escala",
+     "Características em unidades diferentes devem ser colocadas na mesma faixa."
+    ]
+   ],
+   "tecnico": "Normalmente usa distância euclidiana, e a normalização das características influencia muito o resultado."
+  },
+  {
+   "node": "knn_viz",
+   "fase": "k-NN",
+   "title": "k vizinhos",
+   "edges": [
+    "knn-2"
+   ],
+   "resumo": "Das distâncias calculadas, ficam só os k menores. O valor de k é uma escolha sua: poucos vizinhos reagem demais a ruídos, muitos deixam o resultado genérico.",
+   "entra": "As distâncias até todos os exemplos.",
+   "sai": "Os k exemplos mais próximos do novo ponto.",
+   "termos": [
+    [
+     "k",
+     "Número de vizinhos considerados."
+    ],
+    [
+     "Vizinho",
+     "Exemplo conhecido que está perto do novo ponto."
+    ]
+   ],
+   "tecnico": "A escolha de k é um hiperparâmetro, em geral ajustado por validação cruzada. Em empates numa votação, costuma-se usar k ímpar."
+  },
+  {
+   "node": "knn_prev",
+   "fase": "k-NN",
+   "title": "Previsão",
+   "edges": [
+    "knn-3"
+   ],
+   "resumo": "Os vizinhos escolhidos decidem. Na classificação, vence a classe mais comum entre eles. Na regressão, tira-se a média dos valores deles.",
+   "entra": "Os k vizinhos e seus rótulos.",
+   "sai": "A classe ou o valor previsto para o novo ponto.",
+   "exemplo": "Dos 5 vizinhos, 4 são laranjas: a fruta nova é classificada como laranja.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Voto majoritário",
+     "A classe mais frequente entre os vizinhos vence."
+    ],
+    [
+     "Regressão",
+     "Prever um número em vez de uma classe."
+    ]
+   ],
+   "tecnico": "Classificação por voto majoritário, que pode ser ponderado pela distância; regressão pela média dos alvos dos vizinhos."
+  },
+  {
+   "node": "svm_dados",
+   "fase": "SVM",
+   "title": "Duas classes",
+   "edges": [],
+   "resumo": "O SVM parte de exemplos de duas classes, cada um já rotulado. O objetivo é traçar uma linha de separação entre elas.",
+   "entra": "Pontos rotulados em duas classes.",
+   "sai": "Os dados prontos para a busca da fronteira.",
+   "termos": [
+    [
+     "Classe",
+     "Grupo ao qual um exemplo pertence."
+    ],
+    [
+     "Fronteira",
+     "Linha ou superfície que separa as classes."
+    ]
+   ],
+   "tecnico": "Classificador supervisionado, originalmente binário; problemas com várias classes são resolvidos combinando vários classificadores binários."
+  },
+  {
+   "node": "svm_margem",
+   "fase": "SVM",
+   "title": "Maior margem",
+   "edges": [
+    "svm-1"
+   ],
+   "resumo": "Existem muitas linhas que separam duas classes. O SVM escolhe a que deixa a maior folga possível até os pontos mais próximos de cada lado. Essa folga é a margem.",
+   "entra": "Os pontos das duas classes.",
+   "sai": "A fronteira com a maior margem.",
+   "termos": [
+    [
+     "Margem",
+     "Distância entre a fronteira e os pontos mais próximos."
+    ],
+    [
+     "Generalização",
+     "Capacidade de acertar em casos novos."
+    ]
+   ],
+   "tecnico": "Maximizar a margem é um problema de otimização convexa. A margem larga tende a melhorar a generalização."
+  },
+  {
+   "node": "svm_sup",
+   "fase": "SVM",
+   "title": "Vetores de suporte",
+   "edges": [
+    "svm-2"
+   ],
+   "resumo": "Só os pontos mais próximos da fronteira importam. Eles são chamados de vetores de suporte e sozinhos sustentam a posição da linha. Os demais pontos poderiam sumir sem mudar nada.",
+   "entra": "A fronteira de maior margem.",
+   "sai": "O conjunto de vetores de suporte que define o modelo.",
+   "termos": [
+    [
+     "Vetor de suporte",
+     "Ponto que fica sobre a margem ou dentro dela."
+    ],
+    [
+     "Margem suave",
+     "Tolera alguns erros para lidar com dados que se misturam."
+    ]
+   ],
+   "tecnico": "O modelo final depende apenas dos vetores de suporte. O parâmetro de regularização controla o equilíbrio entre margem larga e erros de treino."
+  },
+  {
+   "node": "svm_class",
+   "fase": "SVM",
+   "title": "Classificação",
+   "edges": [
+    "svm-3"
+   ],
+   "resumo": "Um novo ponto é classificado pelo lado da fronteira em que cai. Quando as classes não se separam por uma reta, o truque do kernel permite fronteiras curvas.",
+   "entra": "Um novo ponto e os vetores de suporte.",
+   "sai": "A classe do novo ponto.",
+   "termos": [
+    [
+     "Kernel",
+     "Truque que permite fronteiras curvas sem mudar os dados na mão."
+    ],
+    [
+     "Não linear",
+     "Que não pode ser separado por uma reta."
+    ]
+   ],
+   "tecnico": "O truque do kernel calcula similaridades como se os dados estivessem num espaço de maior dimensão. Kernels comuns: linear, polinomial e RBF."
+  },
+  {
+   "node": "km_ini",
+   "fase": "k-means",
+   "title": "k centros",
+   "edges": [],
+   "resumo": "O k-means é não supervisionado: não há rótulos, ele procura grupos por conta própria. Você define quantos grupos (k) quer e o algoritmo sorteia ou escolhe k centros iniciais.",
+   "entra": "Os dados sem rótulo e o valor de k.",
+   "sai": "k centros iniciais, ainda provisórios.",
+   "termos": [
+    [
+     "Não supervisionado",
+     "Aprende sem respostas prontas, só pela estrutura dos dados."
+    ],
+    [
+     "Centroide",
+     "Ponto central de um grupo."
+    ]
+   ],
+   "tecnico": "Inicialização aleatória ou por k-means++, que espalha melhor os centros. O resultado pode depender da inicialização, por isso se repete com várias."
+  },
+  {
+   "node": "km_atr",
+   "fase": "k-means",
+   "title": "Atribuição",
+   "edges": [
+    "km-1",
+    "km-3"
+   ],
+   "resumo": "Cada ponto é ligado ao centro mais próximo dele. Assim os pontos se dividem em k grupos.",
+   "entra": "Todos os pontos e os centros atuais.",
+   "sai": "Cada ponto marcado com seu grupo.",
+   "termos": [
+    [
+     "Grupo",
+     "Conjunto de pontos ligados ao mesmo centro."
+    ],
+    [
+     "Distância",
+     "Medida de proximidade entre ponto e centro."
+    ]
+   ],
+   "tecnico": "Etapa de atribuição baseada em distância, em geral euclidiana. Ela alterna com a etapa de atualização dos centroides."
+  },
+  {
+   "node": "km_rec",
+   "fase": "k-means",
+   "title": "Novos centros",
+   "edges": [
+    "km-2"
+   ],
+   "resumo": "Cada centro passa a ser o ponto médio do seu grupo. Depois disso, a atribuição é refeita. O ciclo se repete até os grupos pararem de mudar.",
+   "entra": "Os grupos formados.",
+   "sai": "Centros atualizados, ou o resultado final se nada mudou.",
+   "termos": [
+    [
+     "Convergência",
+     "Momento em que o algoritmo estabiliza."
+    ],
+    [
+     "Média",
+     "Valor central obtido somando e dividindo pela quantidade."
+    ]
+   ],
+   "tecnico": "Etapa de atualização dos centroides. O algoritmo converge para um mínimo local, e o resultado final depende da inicialização."
+  },
+  {
+   "node": "pca_dados",
+   "fase": "PCA",
+   "title": "Muitas colunas",
+   "edges": [],
+   "resumo": "O PCA começa com dados que têm muitas colunas, ou seja, muitas dimensões. Muitas delas costumam repetir informação entre si. É uma técnica não supervisionada.",
+   "entra": "Uma tabela com muitas características.",
+   "sai": "Os dados preparados para a análise.",
+   "termos": [
+    [
+     "Dimensão",
+     "Cada coluna ou característica dos dados."
+    ],
+    [
+     "Redução de dimensão",
+     "Resumir os dados em menos colunas."
+    ]
+   ],
+   "tecnico": "Os dados são centralizados e, se as escalas diferem, padronizados antes da análise."
+  },
+  {
+   "node": "pca_dir",
+   "fase": "PCA",
+   "title": "Direções",
+   "edges": [
+    "pca-1"
+   ],
+   "resumo": "O PCA procura as direções em que os dados mais variam. Elas são os componentes principais, ordenados do que carrega mais informação para o que carrega menos.",
+   "entra": "Os dados centralizados.",
+   "sai": "Os componentes principais, em ordem de importância.",
+   "termos": [
+    [
+     "Componente principal",
+     "Direção de maior variação dos dados."
+    ],
+    [
+     "Variância",
+     "Quanto os dados se espalham em uma direção."
+    ]
+   ],
+   "tecnico": "Os componentes são ortogonais entre si e obtidos pela decomposição da matriz de covariância ou por decomposição em valores singulares."
+  },
+  {
+   "node": "pca_proj",
+   "fase": "PCA",
+   "title": "Projeção",
+   "edges": [
+    "pca-2"
+   ],
+   "resumo": "Mantêm-se só os primeiros componentes e cada ponto é projetado sobre eles. O resultado tem menos dimensões e guarda boa parte da informação original.",
+   "entra": "Os dados e os primeiros componentes.",
+   "sai": "Dados com menos dimensões.",
+   "exemplo": "Uma tabela de 50 colunas resumida em 2 para desenhar um gráfico.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Projeção",
+     "Representar cada ponto nas novas direções."
+    ],
+    [
+     "Variância explicada",
+     "Fração da informação mantida."
+    ]
+   ],
+   "tecnico": "O número de componentes é escolhido pela variância explicada acumulada. A projeção é linear e perde parte da informação."
+  }
+ ]
+}

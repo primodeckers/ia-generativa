@@ -1,0 +1,248 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver o modelo simples demais, pelo 5 para ver o complexo demais, ou pelo 9 para ver o equilíbrio.",
+ "steps": [
+  {
+   "node": "s1",
+   "fase": "Modelo simples demais",
+   "title": "Poucos parâmetros",
+   "edges": [],
+   "resumo": "O modelo é muito enxuto: tem poucos \"botões\" para ajustar. É como tentar descrever uma paisagem inteira com uma única linha reta.",
+   "entra": "Os dados de treino e a escolha de um modelo bem simples.",
+   "sai": "Um modelo com pouca capacidade de se adaptar.",
+   "exemplo": "Prever o preço de casas usando só uma reta em função da área.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Parâmetro",
+     "Valor interno que o modelo ajusta durante o treino."
+    ],
+    [
+     "Capacidade",
+     "Quanta variedade de padrões o modelo consegue representar."
+    ]
+   ],
+   "tecnico": "Baixa capacidade do modelo, com poucos parâmetros e hipóteses restritas, como um modelo linear para dados não lineares."
+  },
+  {
+   "node": "s2",
+   "fase": "Modelo simples demais",
+   "title": "Ignora padrões",
+   "edges": [
+    "e-s1-s2"
+   ],
+   "resumo": "Como é limitado demais, o modelo não consegue acompanhar as curvas e os detalhes que existem de verdade nos dados. Ele enxerga só o traço mais grosso.",
+   "entra": "O modelo de baixa capacidade tentando aprender com os dados.",
+   "sai": "Uma aproximação grosseira, que perde padrões reais.",
+   "exemplo": "Casas grandes e pequenas têm preço que sobe em curva, mas o modelo só sabe traçar uma reta.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Padrão",
+     "Regularidade real nos dados que vale a pena aprender."
+    ],
+    [
+     "Aproximação",
+     "Representação simplificada de algo mais complexo."
+    ]
+   ],
+   "tecnico": "O modelo não tem flexibilidade para capturar a relação verdadeira entre entradas e saída, e isso gera erro sistemático."
+  },
+  {
+   "node": "s3",
+   "fase": "Modelo simples demais",
+   "title": "Viés alto",
+   "edges": [
+    "e-s2-s3"
+   ],
+   "resumo": "Viés é o erro que vem de suposições simples demais. Mesmo com muitos dados, o modelo erra sempre na mesma direção, porque o problema está na forma dele, não na quantidade de exemplos.",
+   "entra": "Uma aproximação que ignora padrões reais.",
+   "sai": "Erro sistemático, parecido em qualquer amostra de dados.",
+   "exemplo": "Uma reta que sempre prevê preços baixos demais para as casas mais caras.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Viés",
+     "Erro por suposições simples demais, que se repete sempre."
+    ],
+    [
+     "Erro sistemático",
+     "Erro que aparece de forma parecida a cada tentativa."
+    ]
+   ],
+   "tecnico": "Viés alto significa grande diferença entre a previsão média do modelo e o valor verdadeiro, com baixa sensibilidade à amostra de treino."
+  },
+  {
+   "node": "s4",
+   "fase": "Modelo simples demais",
+   "title": "Underfitting",
+   "edges": [
+    "e-s3-s4"
+   ],
+   "resumo": "É o resultado prático: o modelo não aprende nem os dados de treino direito, e por isso também vai mal em dados novos. Para sair daí, é preciso dar mais flexibilidade ao modelo.",
+   "entra": "Um modelo com viés alto.",
+   "sai": "Erro alto no treino e erro alto no teste.",
+   "exemplo": "Erro de 30% no treino e de 31% no teste: ruim nos dois, e parecido.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Underfitting",
+     "Subajuste: o modelo é simples demais para o problema."
+    ],
+    [
+     "Conjunto de teste",
+     "Dados separados, usados só para medir o desempenho final."
+    ]
+   ],
+   "tecnico": "Underfitting aparece como erro alto tanto no conjunto de treino quanto no de validação ou teste, com pequena diferença entre eles."
+  },
+  {
+   "node": "c1",
+   "fase": "Modelo complexo demais",
+   "title": "Muitos parâmetros",
+   "edges": [],
+   "resumo": "Aqui acontece o oposto: o modelo tem muitos \"botões\" e muita liberdade. É como uma linha tão flexível que consegue passar por cada ponto desenhado.",
+   "entra": "Os dados de treino e um modelo bem flexível.",
+   "sai": "Um modelo com enorme capacidade de se adaptar.",
+   "exemplo": "Um polinômio de grau muito alto, ou uma árvore de decisão sem limite de profundidade.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Flexibilidade",
+     "Facilidade do modelo de assumir formas muito variadas."
+    ],
+    [
+     "Árvore de decisão",
+     "Modelo que divide os dados com uma sequência de perguntas."
+    ]
+   ],
+   "tecnico": "Alta capacidade do modelo, com muitos parâmetros em relação à quantidade de exemplos de treino."
+  },
+  {
+   "node": "c2",
+   "fase": "Modelo complexo demais",
+   "title": "Ajusta o ruído",
+   "edges": [
+    "e-c1-c2"
+   ],
+   "resumo": "Todo dado real traz um pouco de ruído: variações aleatórias sem significado. O modelo flexível demais aprende também essas coincidências, como se fossem regra, e acaba decorando os exemplos.",
+   "entra": "O modelo flexível e os dados de treino, com seu ruído.",
+   "sai": "Um ajuste perfeito ao treino, incluindo as coincidências.",
+   "exemplo": "O modelo aprende que uma casa com portão azul é mais cara, só porque isso ocorreu em poucos exemplos.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Ruído",
+     "Variação aleatória nos dados, sem relação com o padrão real."
+    ],
+    [
+     "Decorar",
+     "Memorizar os exemplos em vez de aprender a regra geral."
+    ]
+   ],
+   "tecnico": "O modelo ajusta o ruído aleatório presente na amostra de treino em vez de apenas o sinal, o que reduz o erro de treino de forma enganosa."
+  },
+  {
+   "node": "c3",
+   "fase": "Modelo complexo demais",
+   "title": "Variância alta",
+   "edges": [
+    "e-c2-c3"
+   ],
+   "resumo": "Variância é o quanto o modelo muda quando os dados de treino mudam um pouco. Se ele decorou as coincidências de uma amostra, outra amostra vai produzir um modelo bem diferente, com previsões instáveis.",
+   "entra": "Um modelo ajustado até o ruído.",
+   "sai": "Previsões instáveis, que dependem muito da amostra usada.",
+   "exemplo": "Treinar duas vezes com amostras ligeiramente diferentes gera duas curvas muito diferentes.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Variância",
+     "Sensibilidade do modelo a pequenas mudanças nos dados de treino."
+    ],
+    [
+     "Amostra",
+     "Subconjunto de dados usado para treinar o modelo."
+    ]
+   ],
+   "tecnico": "Variância alta indica que as previsões variam bastante entre diferentes conjuntos de treino, sinal de forte dependência da amostra."
+  },
+  {
+   "node": "c4",
+   "fase": "Modelo complexo demais",
+   "title": "Overfitting",
+   "edges": [
+    "e-c3-c4"
+   ],
+   "resumo": "É o resultado prático: o modelo vai muito bem nos dados que já viu e mal nos dados novos. A distância entre os dois desempenhos é o sinal de alerta.",
+   "entra": "Um modelo com variância alta.",
+   "sai": "Erro baixo no treino e erro alto no teste.",
+   "exemplo": "Erro de 1% no treino e de 25% no teste: ótimo no que decorou, ruim no que é novo.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Overfitting",
+     "Sobreajuste: o modelo decorou o treino e não generaliza."
+    ],
+    [
+     "Generalizar",
+     "Funcionar bem em dados que o modelo nunca viu."
+    ]
+   ],
+   "tecnico": "Overfitting aparece como grande lacuna entre o erro de treino, baixo, e o erro de validação ou teste, alto."
+  },
+  {
+   "node": "b1",
+   "fase": "Ponto de equilíbrio",
+   "title": "Ajustar complexidade",
+   "edges": [
+    "e-s4-b1",
+    "e-c4-b1"
+   ],
+   "resumo": "Aqui está a troca, o trade-off: deixar o modelo mais complexo reduz o viés, mas aumenta a variância; simplificá-lo faz o contrário. O objetivo é achar o meio-termo, usando mais dados, regularização, que freia o exagero, e validação cruzada, que testa em várias divisões dos dados.",
+   "entra": "Um modelo simples demais ou complexo demais, mais as técnicas de ajuste.",
+   "sai": "Um modelo com complexidade na medida certa.",
+   "exemplo": "Limitar a profundidade de uma árvore e escolher o limite que dá o melhor resultado nos testes de validação.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Trade-off",
+     "Troca em que melhorar uma coisa tende a piorar outra."
+    ],
+    [
+     "Regularização",
+     "Técnica que penaliza a complexidade excessiva do modelo."
+    ],
+    [
+     "Validação cruzada",
+     "Treinar e testar em várias divisões dos dados."
+    ]
+   ],
+   "tecnico": "Reduzir o viés costuma elevar a variância, e vice-versa. Mais dados, regularização, seleção de hiperparâmetros e validação cruzada ajudam a escolher a complexidade."
+  },
+  {
+   "node": "b2",
+   "fase": "Ponto de equilíbrio",
+   "title": "Modelo que generaliza",
+   "edges": [
+    "e-b1-b2"
+   ],
+   "resumo": "O erro total de um modelo soma três partes: o viés ao quadrado, a variância e o ruído dos dados, que nenhum modelo elimina. No ponto de equilíbrio essa soma fica a menor possível, e o modelo vai bem também em dados novos.",
+   "entra": "O modelo com a complexidade ajustada.",
+   "sai": "Um modelo com erro total mais baixo e que generaliza.",
+   "exemplo": "Erro de 8% no treino e de 10% no teste: próximos e razoavelmente baixos.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Erro total",
+     "Soma do viés ao quadrado, da variância e do ruído."
+    ],
+    [
+     "Erro irredutível",
+     "Parte do erro causada pelo ruído, que não dá para eliminar."
+    ]
+   ],
+   "tecnico": "A decomposição do erro esperado em viés ao quadrado, variância e ruído irredutível mostra que o menor erro de generalização está em uma complexidade intermediária."
+  }
+ ]
+}

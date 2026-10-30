@@ -1,0 +1,266 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver a regressão linear, pelo 4 para entender o treino, ou pelo 8 para ver o que muda na logística.",
+ "steps": [
+  {
+   "node": "lx",
+   "fase": "Regressão linear (prever um número)",
+   "title": "Características",
+   "edges": [],
+   "resumo": "São as informações que descrevem cada caso, em forma de números. O modelo linear usa essas medidas para chegar a um valor.",
+   "entra": "Medidas de um caso, como área e número de quartos.",
+   "sai": "Uma lista de números, uma por característica.",
+   "exemplo": "Para prever o preço de um imóvel: área = 70, quartos = 2.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Característica",
+     "Uma medida numérica que descreve o caso."
+    ],
+    [
+     "Variável alvo",
+     "O número que se quer prever."
+    ]
+   ],
+   "tecnico": "As características formam o vetor de entrada (features). Costumam ser normalizadas para o treino convergir melhor."
+  },
+  {
+   "node": "lcomb",
+   "fase": "Regressão linear (prever um número)",
+   "title": "Combinação linear",
+   "edges": [
+    "e-lx-lcomb"
+   ],
+   "resumo": "Cada característica é multiplicada por um peso, que mostra o quanto ela importa. Tudo é somado, junto com um valor fixo chamado viés. Na regressão linear, esse resultado já é a resposta.",
+   "entra": "As características.",
+   "sai": "Um número calculado a partir dos pesos e do viés.",
+   "exemplo": "Área vale muito, quartos valem um pouco; a soma dá o preço estimado.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Peso",
+     "Quanto cada característica influencia o resultado."
+    ],
+    [
+     "Viés",
+     "Valor fixo somado ao final, que desloca a previsão."
+    ]
+   ],
+   "tecnico": "Soma ponderada das características mais o termo de viés (intercepto). Os pesos e o viés são os parâmetros aprendidos no treino."
+  },
+  {
+   "node": "ly",
+   "fase": "Regressão linear (prever um número)",
+   "title": "Valor previsto",
+   "edges": [
+    "e-lcomb-ly"
+   ],
+   "resumo": "É a saída: um número contínuo, que pode ser qualquer valor numa escala, como um preço, uma temperatura ou um tempo. Não há limite entre 0 e 1.",
+   "entra": "O resultado da combinação linear.",
+   "sai": "Um número previsto.",
+   "exemplo": "Preço previsto: R$ 410 mil.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Valor contínuo",
+     "Número que pode assumir qualquer valor numa faixa."
+    ]
+   ],
+   "tecnico": "Saída de regressão: valor real contínuo, sem função de ativação aplicada. É o que diferencia a regressão linear da logística."
+  },
+  {
+   "node": "dados",
+   "fase": "Treino (compartilhado)",
+   "title": "Dados rotulados",
+   "edges": [],
+   "resumo": "Para aprender, o modelo precisa de exemplos em que a resposta certa já é conhecida. Ele compara o que previu com essa resposta e vai se corrigindo.",
+   "entra": "Casos passados com a resposta verdadeira.",
+   "sai": "Pares de características e resposta conhecida.",
+   "exemplo": "Imóveis já vendidos, com o preço real de venda.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Rótulo",
+     "A resposta certa de um exemplo."
+    ],
+    [
+     "Aprendizado supervisionado",
+     "Aprender a partir de exemplos com resposta."
+    ]
+   ],
+   "tecnico": "Conjunto de treino supervisionado, com características e rótulos. Costuma-se separar uma parte para validação e teste."
+  },
+  {
+   "node": "pred",
+   "fase": "Treino (compartilhado)",
+   "title": "Previsão",
+   "edges": [
+    "e-dados-pred",
+    "e-grad-pred"
+   ],
+   "resumo": "Com os pesos atuais, o modelo faz um palpite para cada exemplo. No começo os pesos são quase aleatórios, então o palpite erra bastante. A cada volta do treino ele melhora.",
+   "entra": "Características dos exemplos e os pesos atuais.",
+   "sai": "Previsões para comparar com as respostas.",
+   "exemplo": "Palpite de R$ 300 mil para um imóvel que vendeu por R$ 400 mil.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Pesos atuais",
+     "Valores que o modelo tem naquele momento do treino."
+    ]
+   ],
+   "tecnico": "Passo direto (forward): aplica a combinação linear, e a sigmoide na logística, com os parâmetros correntes. Os parâmetros começam com valores iniciais pequenos."
+  },
+  {
+   "node": "perda",
+   "fase": "Treino (compartilhado)",
+   "title": "Erro (perda)",
+   "edges": [
+    "e-pred-perda"
+   ],
+   "resumo": "A perda mede o quanto o modelo errou, num único número. Quanto menor, melhor. É aqui que as duas regressões se diferenciam: a linear usa o erro quadrático médio e a logística usa a entropia cruzada.",
+   "entra": "Previsões e respostas conhecidas.",
+   "sai": "Um valor de perda.",
+   "exemplo": "Quanto maior a distância entre R$ 300 mil e R$ 400 mil, maior a perda.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Erro quadrático médio",
+     "Média dos erros ao quadrado; usado na regressão linear."
+    ],
+    [
+     "Entropia cruzada",
+     "Penaliza previsões confiantes e erradas; usada na logística."
+    ]
+   ],
+   "tecnico": "Função de perda: erro quadrático médio na regressão linear e entropia cruzada (log loss) na logística. A escolha combina com o tipo de saída."
+  },
+  {
+   "node": "grad",
+   "fase": "Treino (compartilhado)",
+   "title": "Gradiente descendente",
+   "edges": [
+    "e-perda-grad"
+   ],
+   "resumo": "O algoritmo descobre em que direção mudar cada peso para a perda diminuir e dá um pequeno passo nessa direção. Depois o treino volta à previsão e repete, até a perda parar de cair.",
+   "entra": "O valor da perda.",
+   "sai": "Pesos e viés um pouco melhores.",
+   "termos": [
+    [
+     "Gradiente",
+     "Indica como a perda muda quando um peso muda."
+    ],
+    [
+     "Taxa de aprendizado",
+     "Tamanho de cada passo de ajuste."
+    ]
+   ],
+   "tecnico": "Otimização iterativa: calcula o gradiente da perda em relação aos parâmetros e os atualiza no sentido contrário. Pode usar o conjunto todo, mini lotes ou um exemplo por vez."
+  },
+  {
+   "node": "gx",
+   "fase": "Regressão logística (prever uma classe)",
+   "title": "Características",
+   "edges": [],
+   "resumo": "Aqui o objetivo é outro: decidir entre duas classes, como sim ou não. As entradas são as mesmas ideias de antes, medidas numéricas do caso.",
+   "entra": "Medidas de um caso, como valor e horário de uma compra.",
+   "sai": "Uma lista de números.",
+   "exemplo": "Para detectar fraude: valor da compra e hora do dia.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Classificação",
+     "Prever a qual categoria um caso pertence."
+    ],
+    [
+     "Classe",
+     "Uma das categorias possíveis."
+    ]
+   ],
+   "tecnico": "Vetor de características para classificação binária, em que o rótulo vale 0 ou 1."
+  },
+  {
+   "node": "gcomb",
+   "fase": "Regressão logística (prever uma classe)",
+   "title": "Combinação linear",
+   "edges": [
+    "e-gx-gcomb"
+   ],
+   "resumo": "O cálculo é igual ao da regressão linear: pesos, soma e viés. Mas o resultado ainda não é uma resposta final, pois pode ser qualquer número, inclusive negativo ou muito grande.",
+   "entra": "As características.",
+   "sai": "Um número sem limite, chamado escore.",
+   "termos": [
+    [
+     "Escore",
+     "Número bruto, antes de virar probabilidade."
+    ]
+   ],
+   "tecnico": "Soma ponderada com viés, produzindo o escore (logit) que alimenta a sigmoide."
+  },
+  {
+   "node": "gsig",
+   "fase": "Regressão logística (prever uma classe)",
+   "title": "Sigmoide",
+   "edges": [
+    "e-gcomb-gsig"
+   ],
+   "resumo": "A sigmoide transforma qualquer número em um valor entre 0 e 1, que pode ser lido como probabilidade. Escores muito altos ficam perto de 1 e muito baixos perto de 0. Essa é a primeira grande diferença para a regressão linear.",
+   "entra": "O escore da combinação linear.",
+   "sai": "Uma probabilidade entre 0 e 1.",
+   "exemplo": "Probabilidade de fraude: 0,82.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Sigmoide",
+     "Curva em forma de S que comprime números para a faixa de 0 a 1."
+    ],
+    [
+     "Probabilidade",
+     "Grau de confiança de que o caso é da classe 1."
+    ]
+   ],
+   "tecnico": "Função de ativação sigmoide aplicada ao logit. A saída é a probabilidade estimada da classe positiva."
+  },
+  {
+   "node": "glim",
+   "fase": "Regressão logística (prever uma classe)",
+   "title": "Limiar",
+   "edges": [
+    "e-gsig-glim"
+   ],
+   "resumo": "O limiar é a linha de corte que transforma probabilidade em decisão. Se a probabilidade passa do corte, o caso entra na classe 1. Caso contrário, na classe 0.",
+   "entra": "A probabilidade.",
+   "sai": "Uma decisão de classe.",
+   "exemplo": "Com corte de 0,5, a probabilidade 0,82 vira classe 1.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Limiar",
+     "Valor de corte, muitas vezes 0,5, que define a classe."
+    ]
+   ],
+   "tecnico": "Limiar de decisão, em geral 0,5. Pode ser ajustado para equilibrar falsos positivos e falsos negativos."
+  },
+  {
+   "node": "gcls",
+   "fase": "Regressão logística (prever uma classe)",
+   "title": "Classe",
+   "edges": [
+    "e-glim-gcls"
+   ],
+   "resumo": "A saída final é uma categoria, como fraude ou não fraude, e não um número livre. O treino é o mesmo da outra regressão, mas com a perda de entropia cruzada.",
+   "entra": "A decisão do limiar.",
+   "sai": "A classe prevista, 0 ou 1.",
+   "exemplo": "Compra marcada como suspeita (classe 1).",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Classe prevista",
+     "A categoria que o modelo escolheu."
+    ]
+   ],
+   "tecnico": "Saída de classificação binária. Para mais de duas classes, usa-se a extensão com softmax."
+  }
+ ]
+}
