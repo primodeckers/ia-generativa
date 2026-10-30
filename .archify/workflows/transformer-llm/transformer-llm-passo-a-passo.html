@@ -5120,6 +5120,17 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 .walk-pop strong{display:block;font-size:.9rem;margin:.05rem 1.2rem .25rem 0}
 .walk-pop p{margin:0;color:var(--text-muted)}
 .walk-pop button{position:absolute;top:.3rem;right:.4rem;width:1.4rem;height:1.4rem;border:0;background:transparent;color:var(--text-muted);font-size:1rem;line-height:1;cursor:pointer}
+/* navegacao compacta + numeracao no diagrama */
+.walk-nav{position:absolute;left:6px;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:.2rem;align-items:center}
+.walk-n{width:1.45rem;height:1.45rem;padding:0;border-radius:.4rem;border:1px solid var(--panel-border);background:transparent;color:var(--text-muted);font:600 .72rem/1 inherit;cursor:pointer}
+.walk-n:hover:not(:disabled){border-color:var(--arrow-emphasis);color:var(--text)}
+.walk-n.on{background:var(--arrow-emphasis);border-color:var(--arrow-emphasis);color:#04130d}
+.walk-n:disabled{opacity:.35;cursor:default}
+.walk-badge{pointer-events:none}
+.walk-badge circle{fill:var(--bg);stroke:var(--text-dim);stroke-width:1}
+.walk-badge text{fill:var(--text-muted);font:700 8px sans-serif}
+.walk-badge.on circle{fill:var(--arrow-emphasis);stroke:var(--arrow-emphasis)}
+.walk-badge.on text{fill:#04130d}
 /* destaque no diagrama */
 .walk-on svg [data-node-id]{opacity:.3;transition:opacity .25s,filter .25s}
 .walk-on svg [data-edge-id]{opacity:.18;transition:opacity .25s}
@@ -14938,10 +14949,20 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
  function el(t,c,x){var e=document.createElement(t); if(c)e.className=c; if(x!==undefined)e.textContent=x; return e;}
  var shell=el('div','walk-shell'); dc.parentNode.insertBefore(shell,dc);
  var panel=el('aside','walk-panel'); panel.setAttribute('aria-label',D.titulo||'Explicação'); shell.appendChild(dc); shell.appendChild(panel);
- var timer=null; panel.appendChild(el('p','walk-hint',U.dica));
+ var timer=null, chips=[], nav=el('div','walk-nav'), bPrev=el('button','walk-n','▴'), bNext=el('button','walk-n','▾');
+ nav.title=U.dica; bPrev.type=bNext.type='button'; bPrev.title='Passo anterior'; bNext.title='Próximo passo';
+ bPrev.addEventListener('click',function(){pauseAll(); closePop(); show(cur-1);}); bNext.addEventListener('click',function(){pauseAll(); closePop(); show(cur+1);});
+ nav.appendChild(bPrev);
+ S.forEach(function(s,i){var b=el('button','walk-n',String(i+1)); b.type='button'; b.title=s.title; b.addEventListener('click',function(){pauseAll(); closePop(); show(i);}); chips.push(b); nav.appendChild(b);});
+ nav.appendChild(bNext); dc.appendChild(nav);
  var detail=el('div','walk-detail'); detail.setAttribute('aria-live','polite'); panel.appendChild(detail);
  var nodes=[].slice.call(svg.querySelectorAll('[data-node-id]')), edges=[].slice.call(svg.querySelectorAll('[data-edge-id]')), byNode={};
  S.forEach(function(s,i){byNode[s.node]=i;});
+ var NS='http://www.w3.org/2000/svg', badges=[];
+ S.forEach(function(s,i){var n=svg.querySelector('[data-node-id="'+s.node+'"]'); if(!n) return; var bb=n.getBBox(), g=document.createElementNS(NS,'g');
+  g.setAttribute('class','walk-badge'); g.setAttribute('transform','translate('+bb.x+' '+bb.y+')');
+  var c=document.createElementNS(NS,'circle'); c.setAttribute('r','7'); var t=document.createElementNS(NS,'text'); t.textContent=String(i+1); t.setAttribute('text-anchor','middle'); t.setAttribute('y','3');
+  g.appendChild(c); g.appendChild(t); svg.appendChild(g); badges[i]=g;});
  var cur=-1;
  function show(i){
   if(i<0||i>=S.length) return; cur=i; var s=S[i];
@@ -14950,6 +14971,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
    n.classList.toggle('walk-prev',i>0&&id===S[i-1].node);});
   var es={}; (s.edges||[]).forEach(function(x){es[x]=1;}); edges.forEach(function(e){e.classList.toggle('walk-edge',!!es[e.getAttribute('data-edge-id')]);});
   render(s,i);
+  chips.forEach(function(c,k){c.classList.toggle('on',k===i);}); bPrev.disabled=(i===0); bNext.disabled=(i===S.length-1);
+  badges.forEach(function(g,k){if(g) g.classList.toggle('on',k===i);});
   try{history.replaceState(null,'','#passo='+(i+1));}catch(e){}
  }
  function render(s,i){

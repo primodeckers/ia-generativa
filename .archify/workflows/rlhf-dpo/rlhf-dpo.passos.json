@@ -1,0 +1,124 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para seguir o pipeline; depois compare o caminho RLHF (passos 4 a 6) com o caminho DPO (passo 7).",
+ "steps": [
+  {
+   "node": "pre",
+   "fase": "Preparo",
+   "title": "Modelo base",
+   "edges": [],
+   "resumo": "O ponto de partida: um modelo já treinado em uma enorme quantidade de texto. Ele sabe continuar frases, mas não foi ensinado a seguir instruções nem a agradar quem conversa com ele.",
+   "entra": "Grande volume de texto.",
+   "sai": "Um modelo que prevê a próxima palavra.",
+   "exemplo": "Se você pede “Explique o que é gravidade”, ele pode continuar com outras perguntas parecidas, em vez de responder.",
+   "ilustrativo": true,
+   "termos": [
+    ["Pré-treinamento", "Fase em que o modelo aprende a prever o próximo trecho de texto."],
+    ["Alinhamento", "Ajustar o modelo para que seu comportamento siga o que as pessoas querem."]
+   ],
+   "tecnico": "Modelo de linguagem pré-treinado com objetivo de previsão do próximo token, ainda sem alinhamento a instruções ou a preferências humanas."
+  },
+  {
+   "node": "sft",
+   "fase": "Preparo",
+   "title": "Ajuste fino (SFT)",
+   "edges": ["e-pre-sft"],
+   "resumo": "O modelo estuda exemplos de pedidos acompanhados de boas respostas, escritas por pessoas. Assim aprende o formato de uma conversa e a obedecer instruções.",
+   "entra": "O modelo base e exemplos de pedido e boa resposta.",
+   "sai": "Um modelo que responde a instruções.",
+   "termos": [
+    ["SFT", "Supervised Fine-Tuning: ajuste fino supervisionado, com respostas de exemplo."],
+    ["Ajuste fino", "Continuar treinando um modelo já pronto com dados mais específicos."]
+   ],
+   "tecnico": "Supervised fine-tuning com pares de instrução e resposta demonstrada, usando a mesma perda de previsão do próximo token. Produz o modelo que serve de ponto de partida para o alinhamento."
+  },
+  {
+   "node": "pref",
+   "fase": "Preferências",
+   "title": "Preferências",
+   "edges": ["e-sft-pref"],
+   "resumo": "Para um mesmo pedido, o modelo gera várias respostas. Pessoas comparam as respostas e dizem qual é a melhor. É mais fácil escolher entre duas respostas do que escrever a resposta perfeita.",
+   "entra": "Um pedido e várias respostas geradas pelo modelo.",
+   "sai": "Pares de resposta preferida e resposta rejeitada.",
+   "exemplo": "Pedido: “Resuma este texto.” A resposta A é clara e curta; a B é confusa. A pessoa marca A como a preferida.",
+   "ilustrativo": true,
+   "termos": [
+    ["Preferência humana", "Julgamento de uma pessoa sobre qual de duas respostas é melhor."],
+    ["Par de comparação", "Duas respostas ao mesmo pedido, uma escolhida e outra rejeitada."]
+   ],
+   "tecnico": "Conjunto de dados de preferência: para cada prompt, uma resposta escolhida (chosen) e uma rejeitada (rejected), anotadas por humanos sobre amostras do modelo SFT."
+  },
+  {
+   "node": "reward",
+   "fase": "Caminho RLHF",
+   "title": "Modelo de recompensa",
+   "edges": ["e-pref-reward"],
+   "resumo": "Um segundo modelo aprende com as comparações a dar uma nota a qualquer resposta: nota alta para o que as pessoas tendem a preferir, nota baixa para o resto.",
+   "entra": "Pares de resposta preferida e rejeitada.",
+   "sai": "Uma nota (recompensa) para cada resposta.",
+   "termos": [
+    ["Modelo de recompensa", "Modelo que imita o gosto das pessoas e transforma uma resposta em nota."],
+    ["RLHF", "Reinforcement Learning from Human Feedback: aprendizado por reforço a partir de feedback humano."]
+   ],
+   "tecnico": "Reward model treinado sobre os pares de preferência, tipicamente com perda baseada no modelo de Bradley-Terry, para pontuar respostas de forma coerente com as escolhas humanas."
+  },
+  {
+   "node": "ref",
+   "fase": "Caminho RLHF",
+   "title": "Modelo de referência",
+   "edges": [],
+   "resumo": "Uma cópia congelada do modelo depois do ajuste fino. Serve de âncora: durante a otimização, o modelo não pode se afastar demais dela, para não perder a qualidade que já tinha.",
+   "entra": "O modelo SFT, copiado e congelado.",
+   "sai": "Um ponto de comparação para medir o quanto o modelo mudou.",
+   "termos": [
+    ["Modelo congelado", "Modelo cujos pesos não são alterados durante o treino."],
+    ["Divergência KL", "Medida de quanto o comportamento de um modelo difere do de outro."]
+   ],
+   "tecnico": "Modelo de referência (normalmente o SFT) com pesos fixos. Fornece a distribuição usada na KL penalty que limita o desvio da policy."
+  },
+  {
+   "node": "ppo",
+   "fase": "Caminho RLHF",
+   "title": "Otimização (PPO)",
+   "edges": ["e-reward-ppo", "e-ref-ppo"],
+   "resumo": "O modelo gera respostas, recebe notas do modelo de recompensa e ajusta-se para ganhar notas melhores. Uma penalidade impede que ele se afaste demais do modelo de referência, evitando respostas estranhas que só “enganam” a nota.",
+   "entra": "Respostas do modelo, notas do modelo de recompensa e a penalidade de divergência em relação ao modelo de referência.",
+   "sai": "Um modelo ajustado para obter notas altas sem fugir do comportamento original.",
+   "termos": [
+    ["PPO", "Proximal Policy Optimization: algoritmo de aprendizado por reforço que faz mudanças pequenas e estáveis."],
+    ["Penalidade KL", "Desconto na nota quando o modelo se afasta do modelo de referência."],
+    ["Aprendizado por reforço", "Aprender por tentativa e nota, repetindo o que rende recompensa."]
+   ],
+   "tecnico": "A policy é otimizada com PPO para maximizar a recompensa do reward model, com uma KL penalty em relação ao modelo de referência. Exige gerar amostras durante o treino, o que torna o laço de RL mais complexo."
+  },
+  {
+   "node": "dpo",
+   "fase": "Caminho DPO",
+   "title": "Otimização (DPO)",
+   "edges": ["e-pref-dpo"],
+   "resumo": "A alternativa mais simples: usa as comparações diretamente para ensinar o modelo a favorecer a resposta preferida e a rejeitar a outra. Não precisa de modelo de recompensa nem de laço de aprendizado por reforço.",
+   "entra": "Os mesmos pares de resposta preferida e rejeitada.",
+   "sai": "Um modelo ajustado diretamente às preferências.",
+   "termos": [
+    ["DPO", "Direct Preference Optimization: otimização direta de preferências."],
+    ["Treino direto", "Aprender a partir das comparações, sem etapas intermediárias."]
+   ],
+   "tecnico": "Direct Preference Optimization usa uma perda de classificação sobre os pares de preferência, relativa ao modelo de referência, sem reward model explícito e sem amostragem on-line como no PPO."
+  },
+  {
+   "node": "aligned",
+   "fase": "Resultado",
+   "title": "Modelo alinhado",
+   "edges": ["e-ppo-aligned", "e-dpo-aligned"],
+   "resumo": "Os dois caminhos chegam ao mesmo objetivo: um modelo que segue instruções e dá respostas mais úteis e seguras, segundo o que as pessoas preferem. RLHF e DPO são alternativas, não etapas em sequência.",
+   "entra": "O modelo otimizado pelo caminho RLHF ou pelo caminho DPO.",
+   "sai": "Um assistente alinhado às preferências humanas.",
+   "termos": [
+    ["Modelo alinhado", "Modelo cujo comportamento reflete as preferências das pessoas."],
+    ["Alternativa", "RLHF e DPO resolvem o mesmo problema por caminhos diferentes."]
+   ],
+   "tecnico": "A policy final, obtida por PPO com reward model ou por DPO, é o modelo alinhado. Ambos usam as preferências humanas e o modelo SFT como ponto de partida."
+  }
+ ]
+}

@@ -1,0 +1,198 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver o modelo base; o passo 4 mostra a variante QLoRA.",
+ "steps": [
+  {
+   "node": "base",
+   "fase": "Preparar",
+   "title": "Modelo base",
+   "edges": [],
+   "resumo": "Ponto de partida: um modelo de linguagem já pré-treinado, que sabe muita coisa em geral. Na LoRA, os pesos dele ficam congelados: não mudam durante todo o ajuste.",
+   "entra": "Um modelo pré-treinado.",
+   "sai": "O mesmo modelo, intacto e congelado.",
+   "termos": [
+    [
+     "Pré-treinado",
+     "Modelo que já aprendeu com uma enorme quantidade de texto."
+    ],
+    [
+     "Pesos congelados",
+     "Números do modelo que ficam travados e não são atualizados no treino."
+    ]
+   ],
+   "tecnico": "Os pesos do modelo base ficam congelados (sem gradiente nem estado do otimizador para eles), o que reduz muito a memória de GPU."
+  },
+  {
+   "node": "adapt",
+   "fase": "Preparar",
+   "title": "Adaptadores A e B",
+   "edges": [
+    "e-base-adapt"
+   ],
+   "resumo": "Ao lado das camadas de atenção do modelo, adicionam-se duas matrizes pequenas, A e B. Juntas, elas guardam só a mudança necessária para a nova tarefa, em vez de reescrever o modelo inteiro.",
+   "entra": "O modelo base congelado.",
+   "sai": "Pequenas matrizes novas, prontas para treinar.",
+   "termos": [
+    [
+     "Baixo rank",
+     "Matrizes estreitas que resumem uma mudança com poucos números."
+    ],
+    [
+     "Adaptador",
+     "Peça pequena acoplada ao modelo que guarda o aprendizado da tarefa."
+    ]
+   ],
+   "tecnico": "Adapters de baixo rank (LoRA) inseridos nos target modules de atenção. O rank r controla o número de parâmetros treináveis, em geral bem menos de 1% do total."
+  },
+  {
+   "node": "dados",
+   "fase": "Preparar",
+   "title": "Dados da tarefa",
+   "edges": [],
+   "resumo": "Os exemplos que ensinam o comportamento desejado: perguntas e respostas, textos no estilo certo, instruções de um domínio. Um conjunto pequeno costuma bastar.",
+   "entra": "Exemplos da tarefa.",
+   "sai": "Lotes de exemplos para o treino.",
+   "exemplo": "Pares de pergunta e resposta sobre atendimento ao cliente de uma empresa.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Fine-tuning",
+     "Ajuste de um modelo já treinado para uma tarefa ou estilo específico."
+    ],
+    [
+     "Lote (batch)",
+     "Grupo de exemplos processados juntos em cada passo."
+    ]
+   ],
+   "tecnico": "Dataset supervisionado de instruções ou exemplos de domínio, tokenizado e organizado em batches para o fine-tuning."
+  },
+  {
+   "node": "quant",
+   "fase": "Treinar",
+   "title": "Quantização 4 bits",
+   "edges": [
+    "e-base-quant"
+   ],
+   "resumo": "Variante QLoRA: o modelo base é guardado com números de menor precisão (4 bits), ocupando bem menos memória. Os adaptadores continuam sendo treinados por cima dele.",
+   "entra": "O modelo base congelado.",
+   "sai": "O modelo base compactado em 4 bits.",
+   "termos": [
+    [
+     "Quantização",
+     "Guardar os números do modelo com menos bits, trocando um pouco de precisão por memória."
+    ],
+    [
+     "QLoRA",
+     "LoRA aplicada sobre um modelo base quantizado."
+    ]
+   ],
+   "tecnico": "QLoRA: base quantizado em NF4 / 4-bit e congelado; os adapters LoRA são treinados em maior precisão sobre ele."
+  },
+  {
+   "node": "treino",
+   "fase": "Treinar",
+   "title": "Treino dos adaptadores",
+   "edges": [
+    "e-adapt-treino",
+    "e-dados-treino",
+    "e-quant-treino"
+   ],
+   "resumo": "O modelo vê os exemplos e só as matrizes A e B são atualizadas. Como são poucos parâmetros, o treino usa bem menos memória de GPU e roda mais rápido.",
+   "entra": "Exemplos, modelo base e adaptadores.",
+   "sai": "Adaptadores com o aprendizado da tarefa.",
+   "termos": [
+    [
+     "Parâmetro treinável",
+     "Número que o treino pode ajustar."
+    ],
+    [
+     "GPU",
+     "Chip que acelera os cálculos do treino."
+    ]
+   ],
+   "tecnico": "Forward e backward passam pelo modelo congelado, mas só os parâmetros dos adapters recebem atualização do otimizador."
+  },
+  {
+   "node": "salvo",
+   "fase": "Treinar",
+   "title": "Adaptador salvo",
+   "edges": [
+    "e-treino-salvo"
+   ],
+   "resumo": "Terminado o treino, guarda-se só o adaptador. O arquivo é pequeno, bem menor que o modelo, e dá para ter vários adaptadores para o mesmo modelo base.",
+   "entra": "Matrizes A e B treinadas.",
+   "sai": "Um arquivo pequeno de adaptador.",
+   "termos": [
+    [
+     "Checkpoint",
+     "Arquivo com o estado salvo de um treino."
+    ],
+    [
+     "Reuso",
+     "Um mesmo modelo base pode servir a várias tarefas trocando o adaptador."
+    ]
+   ],
+   "tecnico": "Salvam-se apenas os pesos do adapter (poucos megabytes), junto da configuração de rank e dos target modules."
+  },
+  {
+   "node": "carregar",
+   "fase": "Usar",
+   "title": "Base + adaptador",
+   "edges": [
+    "e-salvo-carregar"
+   ],
+   "resumo": "Na hora de usar, carrega-se o modelo base e o adaptador. A contribuição do adaptador é somada à saída do modelo base, e o resultado é um comportamento ajustado à tarefa.",
+   "entra": "Modelo base e adaptador salvo.",
+   "sai": "Respostas com o comportamento aprendido.",
+   "termos": [
+    [
+     "Inferência",
+     "Usar o modelo pronto para gerar respostas."
+    ],
+    [
+     "Troca de adaptador",
+     "Dá para trocar de tarefa carregando outro adaptador."
+    ]
+   ],
+   "tecnico": "O adapter é aplicado em paralelo ao módulo congelado e sua saída é somada à do modelo base durante a inferência."
+  },
+  {
+   "node": "merge",
+   "fase": "Usar",
+   "title": "Merge nos pesos",
+   "edges": [
+    "e-salvo-merge"
+   ],
+   "resumo": "Alternativa: fundir o adaptador nos pesos do modelo. Depois disso não há mais peça extra, e o modelo roda como um modelo comum, sem custo adicional.",
+   "entra": "Modelo base e adaptador salvo.",
+   "sai": "Um único modelo com os pesos já ajustados.",
+   "termos": [
+    [
+     "Merge",
+     "Somar o ajuste do adaptador aos pesos originais, formando um só modelo."
+    ]
+   ],
+   "tecnico": "Merge do adapter nos weights do modelo base elimina a sobrecarga de latência na inferência, mas perde a troca dinâmica de adapters."
+  },
+  {
+   "node": "final",
+   "fase": "Usar",
+   "title": "Modelo especializado",
+   "edges": [
+    "e-carregar-final",
+    "e-merge-final"
+   ],
+   "resumo": "O resultado: o modelo geral agora responde bem à tarefa específica, sem ter sido retreinado por inteiro.",
+   "entra": "Base com adaptador ou modelo fundido.",
+   "sai": "Respostas especializadas na tarefa.",
+   "termos": [
+    [
+     "Especialização",
+     "Deixar um modelo geral melhor em uma tarefa ou domínio."
+    ]
+   ],
+   "tecnico": "Modelo especializado via PEFT (parameter-efficient fine-tuning): LoRA, ou QLoRA com base em 4-bit."
+  }
+ ]
+}

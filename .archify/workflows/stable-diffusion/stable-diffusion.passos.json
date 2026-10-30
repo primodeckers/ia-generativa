@@ -1,0 +1,260 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para seguir o caminho do prompt até a imagem final, ou pelo 8 para ver como o modelo aprende a limpar ruído.",
+ "steps": [
+  {
+   "node": "prompt",
+   "fase": "Entender o pedido",
+   "title": "Prompt",
+   "edges": [],
+   "resumo": "O ponto de partida: o texto em que a pessoa descreve a imagem que quer ver.",
+   "entra": "O texto digitado.",
+   "sai": "A descrição, pronta para ser transformada em números.",
+   "exemplo": "“Um gato astronauta pintado a óleo”",
+   "termos": [
+    [
+     "Prompt",
+     "Texto de entrada que orienta o que o modelo deve criar."
+    ],
+    [
+     "Condicionamento",
+     "Informação extra que guia o resultado."
+    ]
+   ],
+   "tecnico": "Texto usado como condição (conditioning) do modelo, processado pelo CLIP text encoder."
+  },
+  {
+   "node": "clip",
+   "fase": "Entender o pedido",
+   "title": "Codificador CLIP",
+   "edges": [
+    "e-prompt-clip"
+   ],
+   "resumo": "Transforma as palavras em números que carregam o significado do pedido. Assim a rede de imagem consegue usar o texto como guia.",
+   "entra": "O texto do prompt.",
+   "sai": "Uma sequência de vetores que representa o sentido do texto.",
+   "termos": [
+    [
+     "CLIP",
+     "Modelo treinado para ligar textos e imagens."
+    ],
+    [
+     "Vetor",
+     "Lista de números que representa um significado."
+    ]
+   ],
+   "tecnico": "CLIP text encoder (transformer) que gera embeddings por token, usados depois na cross-attention da U-Net."
+  },
+  {
+   "node": "ruido",
+   "fase": "Gerar a imagem",
+   "title": "Ruído latente",
+   "edges": [],
+   "resumo": "A geração começa com um sorteio de ruído, como a chuva de pontos de uma TV sem sinal. Mas não é uma imagem em pixels: é uma versão bem pequena e comprimida, o espaço latente.",
+   "entra": "Nada: é sorteado no início.",
+   "sai": "Um bloco de números aleatórios, pequeno, que será limpo aos poucos.",
+   "termos": [
+    [
+     "Espaço latente",
+     "Representação comprimida da imagem, bem menor que os pixels, onde o modelo trabalha."
+    ],
+    [
+     "Ruído gaussiano",
+     "Números aleatórios que seguem uma curva em forma de sino."
+    ]
+   ],
+   "tecnico": "Ruído gaussiano amostrado no latent space do VAE, muito menor que a imagem em pixels, o que torna a difusão mais barata."
+  },
+  {
+   "node": "unet",
+   "fase": "Gerar a imagem",
+   "title": "U-Net",
+   "edges": [
+    "e-ruido-unet",
+    "e-clip-unet",
+    "e-sched-unet"
+   ],
+   "resumo": "A rede que limpa a imagem. A cada rodada ela estima o ruído presente, olhando para o texto o tempo todo: o texto entra de novo em cada iteração. Também compara com e sem texto para seguir o prompt com mais força.",
+   "entra": "O latente ruidoso e os vetores de texto, a cada rodada.",
+   "sai": "Uma estimativa do ruído que está no latente.",
+   "termos": [
+    [
+     "Atenção cruzada",
+     "Mecanismo em que a imagem em construção consulta o texto para saber o que desenhar."
+    ],
+    [
+     "Classifier-free guidance",
+     "Mistura a previsão com texto e sem texto para reforçar o prompt."
+    ],
+    [
+     "U-Net",
+     "Rede em forma de U que analisa a imagem em várias escalas."
+    ]
+   ],
+   "tecnico": "U-Net com cross-attention sobre os embeddings do CLIP em todas as iterações e classifier-free guidance para controlar a aderência ao prompt."
+  },
+  {
+   "node": "sched",
+   "fase": "Gerar a imagem",
+   "title": "Scheduler",
+   "edges": [
+    "e-unet-sched",
+    "e-sched-unet"
+   ],
+   "resumo": "Decide quanto ruído tirar a cada rodada e atualiza o latente. Depois devolve o resultado à U-Net, e o ciclo se repete por dezenas de passos, até o latente ficar limpo.",
+   "entra": "O ruído estimado pela U-Net e o latente atual.",
+   "sai": "Um latente um pouco mais limpo (volta à U-Net) ou o latente final.",
+   "exemplo": "Algo como 20 a 50 passos é comum.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Passo",
+     "Uma rodada de limpeza de ruído."
+    ],
+    [
+     "Scheduler",
+     "Regra que define o tamanho de cada passo e como atualizar o latente."
+    ]
+   ],
+   "tecnico": "Scheduler (DDIM, Euler, etc.) que aplica a atualização do processo reverso a cada passo de denoising."
+  },
+  {
+   "node": "dec",
+   "fase": "Gerar a imagem",
+   "title": "Decodificador VAE",
+   "edges": [
+    "e-sched-dec"
+   ],
+   "resumo": "Pega o latente limpo, que ainda é pequeno, e o expande para uma imagem com todos os pixels.",
+   "entra": "O latente limpo.",
+   "sai": "Uma imagem em pixels, em tamanho completo.",
+   "termos": [
+    [
+     "VAE",
+     "Autocodificador variacional: comprime imagens em latentes e as reconstrói."
+    ],
+    [
+     "Decodificador",
+     "Metade do VAE que volta do latente para pixels."
+    ]
+   ],
+   "tecnico": "Decoder do VAE que mapeia o latent space de volta ao espaço de pixels."
+  },
+  {
+   "node": "img",
+   "fase": "Gerar a imagem",
+   "title": "Imagem final",
+   "edges": [
+    "e-dec-img"
+   ],
+   "resumo": "O resultado: a imagem que corresponde à descrição do prompt.",
+   "entra": "A imagem decodificada.",
+   "sai": "A imagem pronta para ver e salvar.",
+   "termos": [
+    [
+     "Pixels",
+     "Pontos coloridos que formam a imagem."
+    ]
+   ],
+   "tecnico": "Saída do decoder do VAE após o loop de denoising no latent space."
+  },
+  {
+   "node": "real",
+   "fase": "Treinar o modelo",
+   "title": "Imagem real",
+   "edges": [],
+   "resumo": "No treino, o modelo vê muitas imagens reais com suas legendas. Elas são os exemplos de como uma boa imagem deve ser.",
+   "entra": "Imagens de um grande conjunto de dados.",
+   "sai": "Uma imagem real por vez.",
+   "termos": [
+    [
+     "Conjunto de dados",
+     "Coleção de exemplos usada para treinar."
+    ]
+   ],
+   "tecnico": "Pares imagem e legenda do dataset de treino; a legenda passa pelo CLIP text encoder."
+  },
+  {
+   "node": "enc",
+   "fase": "Treinar o modelo",
+   "title": "Codificador VAE",
+   "edges": [
+    "e-real-enc"
+   ],
+   "resumo": "Comprime a imagem real para o espaço latente, onde o treino acontece. É o caminho inverso do decodificador.",
+   "entra": "A imagem real em pixels.",
+   "sai": "O latente da imagem, pequeno.",
+   "termos": [
+    [
+     "Codificador",
+     "Metade do VAE que comprime a imagem em um latente."
+    ],
+    [
+     "Latente",
+     "Versão comprimida da imagem."
+    ]
+   ],
+   "tecnico": "Encoder do VAE que projeta a imagem no latent space."
+  },
+  {
+   "node": "addn",
+   "fase": "Treinar o modelo",
+   "title": "Adiciona ruído",
+   "edges": [
+    "e-enc-addn"
+   ],
+   "resumo": "Estraga o latente de propósito, com uma quantidade de ruído sorteada. Como o ruído é conhecido, ele serve de resposta certa para o treino.",
+   "entra": "O latente limpo.",
+   "sai": "O latente ruidoso e o ruído que foi colocado.",
+   "termos": [
+    [
+     "Ruído adicionado",
+     "O sinal aleatório conhecido que serve de gabarito."
+    ]
+   ],
+   "tecnico": "Processo direto de difusão: ruído gaussiano somado ao latente em um timestep sorteado."
+  },
+  {
+   "node": "unett",
+   "fase": "Treinar o modelo",
+   "title": "U-Net (treino)",
+   "edges": [
+    "e-addn-unett"
+   ],
+   "resumo": "A U-Net recebe o latente ruidoso, junto com o texto da legenda, e tenta adivinhar qual ruído foi colocado.",
+   "entra": "O latente ruidoso e o texto da legenda.",
+   "sai": "Sua previsão do ruído.",
+   "termos": [
+    [
+     "Previsão",
+     "O palpite do modelo sobre o ruído presente."
+    ]
+   ],
+   "tecnico": "U-Net treinada para predizer o ruído, condicionada por cross-attention nos embeddings de texto."
+  },
+  {
+   "node": "perda",
+   "fase": "Treinar o modelo",
+   "title": "Perda",
+   "edges": [
+    "e-unett-perda",
+    "e-addn-perda"
+   ],
+   "resumo": "Compara o ruído previsto com o ruído real. A diferença é o erro, e os pesos da U-Net são ajustados um pouco para errar menos. Repetido com milhões de exemplos, o modelo aprende a limpar ruído.",
+   "entra": "O ruído previsto e o ruído real.",
+   "sai": "Um ajuste nos pesos da U-Net.",
+   "termos": [
+    [
+     "Perda",
+     "Número que mede o tamanho do erro."
+    ],
+    [
+     "Pesos",
+     "Números internos do modelo, ajustados durante o treino."
+    ]
+   ],
+   "tecnico": "Função de perda entre o ruído predito e o real; backpropagation e otimizador atualizam os pesos da U-Net."
+  }
+ ]
+}
