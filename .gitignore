@@ -1,0 +1,47 @@
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Segredos e ambiente
+.env
+.env.*
+!.env.example
+*.pem
+credentials.json
+secrets.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.python-version
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Modelos, dados e caches locais
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+.cache/
+models/
+data/raw/
+
+# Editores
+.idea/
+.vscode/
+*.swp
+*~
