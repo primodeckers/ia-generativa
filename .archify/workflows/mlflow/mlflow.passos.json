@@ -1,0 +1,196 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver o código de treino, e siga até o monitoramento, que fecha o ciclo.",
+ "steps": [
+  {
+   "node": "codigo",
+   "fase": "Treino e Tracking",
+   "title": "Código de treino",
+   "edges": [],
+   "resumo": "Tudo começa com o script ou notebook que treina o modelo. O MLflow não muda o jeito de treinar: você só adiciona algumas linhas para registrar o que acontece.",
+   "entra": "Dados e hiperparâmetros escolhidos por você.",
+   "sai": "Um modelo treinado e informações sobre como ele foi treinado.",
+   "exemplo": "Um notebook que treina um classificador com taxa de aprendizado 0,01.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Execução (run)",
+     "Uma rodada de treino registrada no MLflow."
+    ],
+    [
+     "Experimento",
+     "Grupo de runs que tentam resolver o mesmo problema."
+    ]
+   ],
+   "tecnico": "Código de treino dentro de um run, aberto em um experiment (por exemplo, com start_run), que passa a ser o escopo de tudo que for registrado."
+  },
+  {
+   "node": "log",
+   "fase": "Treino e Tracking",
+   "title": "Autolog e log",
+   "edges": [
+    "e-codigo-log"
+   ],
+   "resumo": "Durante o treino, o MLflow anota parâmetros, métricas e arquivos gerados. O autolog faz isso sozinho para bibliotecas conhecidas; também dá para registrar manualmente o que você quiser.",
+   "entra": "Chamadas de autolog ou de log feitas pelo código.",
+   "sai": "Parâmetros, métricas e artefatos associados ao run.",
+   "exemplo": "Taxa de aprendizado 0,01 e acurácia 0,91 gravadas no run.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Parâmetro",
+     "Configuração usada no treino."
+    ],
+    [
+     "Métrica",
+     "Número que mede o resultado, como a acurácia."
+    ],
+    [
+     "Artefato",
+     "Arquivo produzido, como gráfico ou modelo."
+    ]
+   ],
+   "tecnico": "O autolog ativa o log automático de params, metrics e artifacts por framework; o log manual usa chamadas como log_param, log_metric e log_artifact."
+  },
+  {
+   "node": "servidor",
+   "fase": "Treino e Tracking",
+   "title": "Servidor de Tracking",
+   "edges": [
+    "e-log-servidor"
+   ],
+   "resumo": "O servidor de Tracking recebe o que foi registrado e guarda tudo de forma organizada. Os dados descritivos ficam em um banco, e os arquivos grandes ficam em um armazenamento separado.",
+   "entra": "Runs com parâmetros, métricas e artefatos.",
+   "sai": "Histórico consultável de todos os experimentos.",
+   "termos": [
+    [
+     "Backend store",
+     "Banco onde ficam os metadados dos runs."
+    ],
+    [
+     "Artifact store",
+     "Local onde ficam os arquivos, como modelos e gráficos."
+    ]
+   ],
+   "tecnico": "O tracking server grava metadados (params, metrics, tags) no backend store e os artifacts no artifact store, que podem ser sistemas distintos."
+  },
+  {
+   "node": "ui",
+   "fase": "Treino e Tracking",
+   "title": "Interface web",
+   "edges": [
+    "e-servidor-ui"
+   ],
+   "resumo": "A interface web mostra os experimentos e permite comparar runs lado a lado, em tabelas e gráficos. Assim fica fácil ver qual combinação de parâmetros deu o melhor resultado.",
+   "entra": "Runs guardados no servidor de Tracking.",
+   "sai": "A escolha do melhor run.",
+   "exemplo": "Comparar dez runs e ver que o de taxa 0,01 teve a maior acurácia.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Comparação",
+     "Visualização de vários runs com suas métricas e parâmetros."
+    ],
+    [
+     "Tag",
+     "Rótulo livre colocado em um run."
+    ]
+   ],
+   "tecnico": "A UI do Tracking lista os runs de um experiment, permite filtrar, ordenar e comparar params e metrics, e abrir os artifacts de cada run."
+  },
+  {
+   "node": "pacote",
+   "fase": "Modelos",
+   "title": "Modelo empacotado",
+   "edges": [
+    "e-ui-pacote"
+   ],
+   "resumo": "O melhor run vira um modelo empacotado em um formato padrão do MLflow. O pacote guarda o modelo e as instruções de como carregá-lo e usá-lo, independentemente da biblioteca em que foi treinado.",
+   "entra": "O modelo do run escolhido.",
+   "sai": "Um modelo no formato MLflow Models, pronto para ser registrado.",
+   "termos": [
+    [
+     "MLflow Models",
+     "Formato padrão para empacotar modelos."
+    ],
+    [
+     "Flavor",
+     "Forma de carregar o modelo, como scikit-learn ou uma função Python genérica."
+    ]
+   ],
+   "tecnico": "O MLflow Model é um diretório com o arquivo MLmodel que descreve um ou mais flavors, além de dependências do ambiente; o flavor python_function é a interface genérica."
+  },
+  {
+   "node": "registry",
+   "fase": "Modelos",
+   "title": "Model Registry",
+   "edges": [
+    "e-pacote-registry"
+   ],
+   "resumo": "O Model Registry é o catálogo central dos modelos. Cada vez que um modelo é registrado, ele ganha uma nova versão, com histórico. Aliases como champion ou staging marcam qual versão está em uso em cada etapa.",
+   "entra": "Modelos empacotados vindos dos runs.",
+   "sai": "Versões com histórico e aliases apontando para elas.",
+   "exemplo": "A versão 3 do modelo recebe o alias champion e passa a ser a oficial.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Versão",
+     "Número que identifica cada registro de um modelo."
+    ],
+    [
+     "Alias",
+     "Apelido, como champion, que aponta para uma versão."
+    ]
+   ],
+   "tecnico": "No registered model, cada model version é imutável e rastreia o run de origem; o alias é um ponteiro nomeado que pode ser movido para promover uma versão."
+  },
+  {
+   "node": "servir",
+   "fase": "Produção",
+   "title": "Servir o modelo",
+   "edges": [
+    "e-registry-servir"
+   ],
+   "resumo": "Quem usa o modelo pede a ele pelo alias, sem precisar saber o número da versão. O MLflow consegue servir o modelo como um serviço, e também permite publicá-lo em outras plataformas de deploy.",
+   "entra": "O modelo apontado por um alias do Registry.",
+   "sai": "Um serviço que responde a pedidos de predição.",
+   "termos": [
+    [
+     "Serving",
+     "Expor o modelo como serviço para receber dados e devolver predições."
+    ],
+    [
+     "Deploy",
+     "Publicar o modelo em uma plataforma de execução."
+    ]
+   ],
+   "tecnico": "O modelo é carregado a partir do model URI do registry, por versão ou alias, e servido via REST pelo MLflow ou implantado em uma plataforma por meio de deployment targets."
+  },
+  {
+   "node": "monitor",
+   "fase": "Produção",
+   "title": "Predições e monitoramento",
+   "edges": [
+    "e-servir-monitor",
+    "e-monitor-codigo"
+   ],
+   "resumo": "O serviço devolve predições e o time acompanha a qualidade delas. Quando os dados do mundo real mudam e a qualidade cai, é hora de treinar de novo, e o ciclo recomeça com novos runs.",
+   "entra": "Dados reais enviados ao modelo.",
+   "sai": "Predições e sinais de queda de qualidade.",
+   "exemplo": "A acurácia observada cai de 0,91 para 0,80 depois de alguns meses.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Monitoramento",
+     "Acompanhar a qualidade do modelo em produção."
+    ],
+    [
+     "Retreino",
+     "Treinar de novo com dados mais recentes."
+    ]
+   ],
+   "tecnico": "A queda de desempenho, por exemplo por drift nos dados, motiva um novo run de treino; a nova versão volta ao registry e o alias é movido. Para LLMs e agentes, o MLflow oferece tracing e avaliação como extensão."
+  }
+ ]
+}

@@ -77,7 +77,8 @@ Temas para virar workflow (passo a passo). Marque `[x]` quando estiver pronto em
 - [ ] PyTorch, TensorFlow e JAX
 - [ ] Hugging Face, Ollama e llama.cpp, LangChain e LlamaIndex
 - [ ] ONNX, Docker e Kubernetes para IA
-- [ ] Experimentos: MLflow, Weights & Biases
+- [x] Experimentos: MLflow
+- [ ] Experimentos: Weights & Biases
 
 ## Dados, ética e segurança
 - [ ] Coleta, limpeza e rotulagem; dados sintéticos
