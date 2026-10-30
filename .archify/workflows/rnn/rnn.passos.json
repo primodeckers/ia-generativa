@@ -1,0 +1,97 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 e acompanhe um item entrando; depois veja como a memória volta para o laço.",
+ "steps": [
+  {
+   "node": "entrada",
+   "fase": "Ler a sequência",
+   "title": "Sequência",
+   "edges": [],
+   "resumo": "A RNN recebe a sequência um item por vez (uma palavra, uma letra, uma medida), sempre na ordem em que aparecem.",
+   "entra": "Uma sequência de itens (texto, áudio, série de números).",
+   "sai": "Um item por vez, em cada passo de tempo.",
+   "exemplo": "“O gato subiu”: primeiro “O”, depois “gato”, depois “subiu”.",
+   "termos": [
+    [
+     "Sequência",
+     "Dados em que a ordem importa, como as palavras de uma frase."
+    ],
+    [
+     "Passo de tempo",
+     "Cada momento em que a rede processa um item."
+    ]
+   ],
+   "tecnico": "Sequência de entradas processada um passo por vez; em cada passo a rede recebe um vetor (por exemplo, o embedding de um token)."
+  },
+  {
+   "node": "celula",
+   "fase": "Ler a sequência",
+   "title": "Célula recorrente",
+   "edges": [
+    "e1",
+    "e4"
+   ],
+   "resumo": "É o coração da rede: a mesma célula é reaproveitada a cada passo. Ela lê o item atual junto com a memória do passo anterior e decide o que fazer com os dois.",
+   "entra": "O item atual e a memória do passo anterior.",
+   "sai": "Uma saída e uma memória atualizada.",
+   "exemplo": "Ao ler “gato”, a célula combina essa palavra com o que lembra de “O”.",
+   "termos": [
+    [
+     "Recorrente",
+     "Que se repete: o resultado de um passo volta como entrada do próximo."
+    ],
+    [
+     "Pesos compartilhados",
+     "Os mesmos parâmetros são usados em todos os passos."
+    ]
+   ],
+   "tecnico": "Atualização com tanh combinando a entrada atual e o estado oculto anterior. Os mesmos pesos valem para todos os passos (compartilhamento de pesos)."
+  },
+  {
+   "node": "saida",
+   "fase": "Ler a sequência",
+   "title": "Saída do passo",
+   "edges": [
+    "e2"
+   ],
+   "resumo": "A cada passo a célula pode produzir uma resposta, como a próxima palavra mais provável ou uma classificação.",
+   "entra": "O estado calculado pela célula.",
+   "sai": "Uma previsão para esse passo.",
+   "exemplo": "Depois de “O gato”, o modelo pode propor “subiu” como continuação provável.",
+   "termos": [
+    [
+     "Previsão",
+     "Palpite do modelo, como a próxima palavra."
+    ],
+    [
+     "Softmax",
+     "Função que transforma números em probabilidades que somam 1."
+    ]
+   ],
+   "tecnico": "Camada linear com softmax, gerando uma distribuição sobre as classes (ou o vocabulário) a cada passo."
+  },
+  {
+   "node": "estado",
+   "fase": "Lembrar",
+   "title": "Memória (estado)",
+   "edges": [
+    "e3"
+   ],
+   "resumo": "O novo resumo do que a rede já viu. Ele é guardado e volta para a célula no próximo passo, formando o laço que dá memória à rede.",
+   "entra": "O estado novo calculado pela célula.",
+   "sai": "O mesmo estado, devolvido à célula no passo seguinte.",
+   "termos": [
+    [
+     "Estado oculto",
+     "Vetor que resume o passado da sequência."
+    ],
+    [
+     "Gradiente que some",
+     "Em sequências longas, o sinal de aprendizado encolhe e a rede esquece o começo; LSTM e GRU foram criadas para isso."
+    ]
+   ],
+   "tecnico": "Estado oculto (hidden state), iniciado em zero. O treino usa retropropagação no tempo (BPTT), sujeita a gradientes que somem ou explodem."
+  }
+ ]
+}

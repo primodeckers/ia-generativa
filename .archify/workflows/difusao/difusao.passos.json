@@ -1,0 +1,231 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para seguir o caminho do prompt até a imagem final, ou pelo 7 para ver como o modelo aprende a limpar ruído.",
+ "steps": [
+  {
+   "node": "prompt",
+   "fase": "Entender o pedido",
+   "title": "Prompt",
+   "edges": [],
+   "resumo": "O ponto de partida: o texto em que o usuário descreve a imagem que quer ver.",
+   "entra": "O texto digitado.",
+   "sai": "A descrição, pronta para ser transformada em números.",
+   "exemplo": "“Um gato astronauta pintado a óleo”",
+   "termos": [
+    [
+     "Prompt",
+     "Texto de entrada que orienta o que o modelo deve criar."
+    ],
+    [
+     "Condicionamento",
+     "Dar ao modelo uma informação extra para guiar o resultado."
+    ]
+   ],
+   "tecnico": "Texto usado como condição (conditioning) do modelo generativo, codificado por um encoder de texto."
+  },
+  {
+   "node": "textenc",
+   "fase": "Entender o pedido",
+   "title": "Codificador de texto",
+   "edges": [
+    "e-prompt-text"
+   ],
+   "resumo": "Converte as palavras em números que carregam o significado do pedido. Assim, o modelo de imagem consegue usar a descrição como guia.",
+   "entra": "O texto do prompt.",
+   "sai": "Uma sequência de vetores que representa o sentido do texto.",
+   "termos": [
+    [
+     "Codificador de texto",
+     "Rede que transforma texto em vetores de números."
+    ],
+    [
+     "Embedding",
+     "Vetor de números que representa um significado."
+    ]
+   ],
+   "tecnico": "Transformer de texto (ex.: CLIP ou T5) que mapeia os tokens para embeddings contextuais, depois usados como condição via atenção cruzada."
+  },
+  {
+   "node": "ruidosa",
+   "fase": "Gerar a imagem",
+   "title": "Imagem ruidosa",
+   "edges": [],
+   "resumo": "A geração começa com uma imagem feita só de ruído, como a chuva de pontos de uma TV sem sinal. Dela vai surgir a imagem final.",
+   "entra": "Nada no começo: é sorteada. Nas rodadas seguintes, recebe a imagem um pouco mais limpa.",
+   "sai": "A imagem atual, ainda ruidosa, para a próxima limpeza.",
+   "termos": [
+    [
+     "Ruído gaussiano",
+     "Números aleatórios que seguem uma curva em forma de sino."
+    ],
+    [
+     "Espaço latente",
+     "Versão comprimida da imagem, em que o modelo costuma trabalhar para ser mais rápido."
+    ]
+   ],
+   "tecnico": "Ruído gaussiano puro no início (em modelos latentes, no espaço latente). Nas iterações seguintes, é o estado parcialmente limpo do processo reverso."
+  },
+  {
+   "node": "denoise",
+   "fase": "Gerar a imagem",
+   "title": "Remove ruído",
+   "edges": [
+    "e-ruido-denoise",
+    "e-text-denoise",
+    "e-pesos-denoise",
+    "e-denoise-ruido"
+   ],
+   "resumo": "O coração do modelo: uma rede estima o ruído presente na imagem, guiada pelo texto, e tira só um pouco dele. O resultado volta para o início e o processo se repete dezenas de vezes, até a imagem aparecer.",
+   "entra": "A imagem ruidosa, o texto codificado e os pesos aprendidos.",
+   "sai": "Uma imagem um pouco menos ruidosa.",
+   "exemplo": "Por exemplo, 50 rodadas de limpeza.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Passo de difusão",
+     "Cada rodada de limpeza do processo."
+    ],
+    [
+     "Orientação (guidance)",
+     "Técnica que reforça a influência do texto sobre o resultado."
+    ],
+    [
+     "U-Net",
+     "Tipo de rede, muito usada aqui, que enxerga a imagem em várias escalas."
+    ]
+   ],
+   "tecnico": "Rede (em geral uma U-Net ou um transformer) que prediz o ruído a cada passo de tempo e o subtrai conforme o scheduler. Frequentemente usa classifier-free guidance."
+  },
+  {
+   "node": "decode",
+   "fase": "Gerar a imagem",
+   "title": "Decodificador",
+   "edges": [
+    "e-denoise-decode"
+   ],
+   "resumo": "Depois da última limpeza, o resultado ainda está na forma comprimida usada pelo modelo. O decodificador a expande de volta em pixels que podemos ver.",
+   "entra": "O resultado final das rodadas de limpeza.",
+   "sai": "Uma imagem em pixels.",
+   "termos": [
+    [
+     "Decodificador",
+     "Rede que transforma a versão comprimida em imagem completa."
+    ],
+    [
+     "Pixel",
+     "Cada pontinho da imagem, descrito por números de cor."
+    ]
+   ],
+   "tecnico": "Decodificador de um autoencoder variacional (VAE) que leva o latente limpo de volta ao espaço de pixels, em geral ampliando cada dimensão 8 vezes."
+  },
+  {
+   "node": "final",
+   "fase": "Gerar a imagem",
+   "title": "Imagem final",
+   "edges": [
+    "e-decode-final"
+   ],
+   "resumo": "O resultado: uma imagem nova, que nunca existiu antes, criada a partir do ruído e da descrição do usuário.",
+   "entra": "Os pixels vindos do decodificador.",
+   "sai": "A imagem entregue ao usuário.",
+   "termos": [
+    [
+     "Semente (seed)",
+     "Número que define o ruído inicial. Com a mesma semente e o mesmo prompt, o resultado se repete."
+    ],
+    [
+     "Imagem inédita",
+     "Imagem gerada, e não copiada de um exemplo."
+    ]
+   ],
+   "tecnico": "Amostra gerada pelo modelo condicionado ao texto. Sementes (seeds) diferentes para o ruído inicial levam a imagens diferentes."
+  },
+  {
+   "node": "real",
+   "fase": "Aprender (treino)",
+   "title": "Imagem real",
+   "edges": [],
+   "resumo": "Para aprender, o modelo parte de imagens de verdade, tiradas de um conjunto enorme de exemplos.",
+   "entra": "Imagens (muitas vezes com legenda) do conjunto de treino.",
+   "sai": "Uma imagem limpa para ser borrada.",
+   "termos": [
+    [
+     "Conjunto de treino",
+     "Coleção de exemplos usada para o modelo aprender."
+    ],
+    [
+     "Legenda",
+     "Texto que descreve a imagem e serve de condição no treino."
+    ]
+   ],
+   "tecnico": "Imagem real do conjunto de dados, com a legenda correspondente para o treino condicional."
+  },
+  {
+   "node": "borra",
+   "fase": "Aprender (treino)",
+   "title": "Adiciona ruído",
+   "edges": [
+    "e-real-borra"
+   ],
+   "resumo": "Coloca ruído na imagem real, aos poucos, em uma quantidade sorteada: às vezes um pouco, às vezes quase tudo. Assim o modelo vê exemplos de todos os níveis de bagunça.",
+   "entra": "A imagem real.",
+   "sai": "A imagem com ruído e a informação de quanto ruído foi colocado.",
+   "termos": [
+    [
+     "Processo direto",
+     "O caminho que estraga a imagem com ruído. É fácil e não precisa de aprendizado."
+    ],
+    [
+     "Nível de ruído",
+     "Quanto da imagem já foi coberto por ruído."
+    ]
+   ],
+   "tecnico": "Processo direto: adiciona ruído gaussiano à imagem, em uma quantidade definida por um noise schedule, em um passo de tempo sorteado."
+  },
+  {
+   "node": "aprende",
+   "fase": "Aprender (treino)",
+   "title": "Rede tenta limpar",
+   "edges": [
+    "e-borra-aprende"
+   ],
+   "resumo": "A rede tenta adivinhar qual ruído foi colocado. O palpite é comparado com o ruído verdadeiro, e o erro serve para corrigir a rede. Isso se repete com milhões de imagens.",
+   "entra": "A imagem ruidosa, o nível de ruído e o texto.",
+   "sai": "O erro entre o ruído previsto e o verdadeiro, usado para ajustar a rede.",
+   "termos": [
+    [
+     "Função de perda",
+     "Número que diz o quanto o modelo errou. Quanto menor, melhor."
+    ],
+    [
+     "Gradiente descendente",
+     "Método que ajusta os pesos na direção que reduz o erro."
+    ]
+   ],
+   "tecnico": "Minimiza o erro quadrático entre o ruído adicionado e o ruído previsto pela rede, por gradiente descendente (ex.: Adam)."
+  },
+  {
+   "node": "pesos",
+   "fase": "Aprender (treino)",
+   "title": "Pesos do modelo",
+   "edges": [
+    "e-aprende-pesos"
+   ],
+   "resumo": "O que o modelo aprendeu fica guardado em números chamados pesos. São eles que a etapa de remover ruído usa na hora de criar imagens.",
+   "entra": "Os ajustes de cada rodada de treino.",
+   "sai": "O modelo pronto para uso.",
+   "termos": [
+    [
+     "Peso (parâmetro)",
+     "Número ajustado no treino; guarda o que o modelo aprendeu."
+    ],
+    [
+     "Checkpoint",
+     "Cópia salva dos pesos em um momento do treino."
+    ]
+   ],
+   "tecnico": "Parâmetros da rede de remoção de ruído (centenas de milhões a bilhões), salvos como checkpoint. Ficam fixos na geração."
+  }
+ ]
+}

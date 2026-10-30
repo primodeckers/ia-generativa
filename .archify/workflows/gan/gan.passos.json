@@ -1,0 +1,141 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para seguir o caminho do falsificador, e continue até o veredito para ver como os dois lados aprendem juntos.",
+ "steps": [
+  {
+   "node": "ruido",
+   "fase": "Falsificador (gerador)",
+   "title": "Ruído aleatório",
+   "edges": [],
+   "resumo": "O ponto de partida do falsificador: uma lista de números sorteados ao acaso, sem significado nenhum. Cada sorteio diferente dá uma imagem diferente.",
+   "entra": "Nada: é sorteado na hora.",
+   "sai": "Um vetor de números aleatórios.",
+   "exemplo": "Cem números sorteados, como 0,3; −1,2; 0,8...",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Ruído",
+     "Números aleatórios, sem padrão."
+    ],
+    [
+     "Vetor latente",
+     "Lista de números que serve de semente para a imagem criada."
+    ]
+   ],
+   "tecnico": "Vetor aleatório (distribuição gaussiana ou uniforme) amostrado a cada passo de treino e fornecido ao gerador."
+  },
+  {
+   "node": "gerador",
+   "fase": "Falsificador (gerador)",
+   "title": "Gerador",
+   "edges": [
+    "e-ruido-gerador"
+   ],
+   "resumo": "Uma rede neural que transforma o ruído em uma imagem. No começo ela faz borrões; com o treino aprende a criar imagens cada vez mais convincentes.",
+   "entra": "O ruído aleatório.",
+   "sai": "Uma imagem candidata.",
+   "termos": [
+    [
+     "Gerador",
+     "Rede que cria imagens a partir de ruído."
+    ],
+    [
+     "Rede neural",
+     "Sistema de cálculos em camadas, ajustado por exemplos."
+    ]
+   ],
+   "tecnico": "Rede geradora, em geral com camadas de convolução transposta, que transforma o vetor de ruído em uma imagem."
+  },
+  {
+   "node": "falsa",
+   "fase": "Falsificador (gerador)",
+   "title": "Imagem falsa",
+   "edges": [
+    "e-gerador-falsa"
+   ],
+   "resumo": "A tentativa do gerador de passar por uma imagem de verdade. Ela segue para o detetive, que vai dizer se acreditou ou não.",
+   "entra": "A saída do gerador.",
+   "sai": "Uma imagem para ser examinada.",
+   "termos": [
+    [
+     "Imagem sintética",
+     "Imagem criada por um modelo, e não registrada no mundo real."
+    ],
+    [
+     "Amostra",
+     "Um exemplo individual, real ou criado."
+    ]
+   ],
+   "tecnico": "Imagem sintética produzida pelo gerador, que forma uma distribuição implícita dos dados."
+  },
+  {
+   "node": "real",
+   "fase": "Detetive (discriminador)",
+   "title": "Imagens reais",
+   "edges": [],
+   "resumo": "O conjunto de treino: fotos verdadeiras que o detetive usa como referência do que é autêntico.",
+   "entra": "Fotos de verdade, reunidas antes do treino.",
+   "sai": "Imagens reais para o detetive comparar.",
+   "termos": [
+    [
+     "Conjunto de treino",
+     "Coleção de exemplos reais usada para o modelo aprender."
+    ],
+    [
+     "Distribuição real",
+     "O tipo de imagem que existe de verdade nos dados."
+    ]
+   ],
+   "tecnico": "Amostras reais sorteadas em minilotes (mini-batches) do conjunto de treino."
+  },
+  {
+   "node": "discr",
+   "fase": "Detetive (discriminador)",
+   "title": "Discriminador",
+   "edges": [
+    "e-falsa-discr",
+    "e-real-discr",
+    "e-veredito-discr"
+   ],
+   "resumo": "A rede que faz o papel de detetive: recebe imagens reais e falsas, sem saber qual é qual, e aprende a distingui-las. Ele melhora a cada rodada, usando o veredito para se corrigir.",
+   "entra": "Imagens reais e imagens falsas, misturadas.",
+   "sai": "Uma pontuação: o quanto ele acha que a imagem é real.",
+   "termos": [
+    [
+     "Discriminador",
+     "Rede que classifica uma imagem como real ou falsa."
+    ],
+    [
+     "Classificador",
+     "Modelo que escolhe entre categorias."
+    ]
+   ],
+   "tecnico": "Rede discriminadora, geralmente com saída sigmoide, que estima a probabilidade de a entrada ser real."
+  },
+  {
+   "node": "veredito",
+   "fase": "Detetive (discriminador)",
+   "title": "Veredito",
+   "edges": [
+    "e-discr-veredito",
+    "e-veredito-discr",
+    "e-veredito-gerador"
+   ],
+   "resumo": "A resposta do detetive: real ou falsa. Ela vira o sinal de aprendizado dos dois lados: o detetive aprende a acertar mais, e o gerador aprende o que mudar para enganá-lo.",
+   "entra": "A pontuação do discriminador.",
+   "sai": "Um erro que ajusta o detetive e outro que ajusta o gerador.",
+   "termos": [
+    [
+     "Jogo adversário",
+     "Dois modelos competindo: o ganho de um é a perda do outro."
+    ],
+    [
+     "Equilíbrio",
+     "Ponto em que o detetive já não consegue distinguir, e acerta em cerca de metade das vezes."
+    ]
+   ],
+   "tecnico": "Jogo minimax entre geradora e discriminadora. Na prática, a geradora costuma usar a perda não saturante; ambas são atualizadas por gradiente, de forma alternada."
+  }
+ ]
+}

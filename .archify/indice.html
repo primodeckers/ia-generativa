@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Índice · IA generativa</title>
+<style>
+  :root {
+    --bg: #f7f8fa; --card: #ffffff; --text: #1b2430; --muted: #5b6676;
+    --line: #dfe3ea; --accent: #0b7285; --accent-bg: #e3f4f7;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12161c; --card: #1a2029; --text: #e7ebf1; --muted: #9aa5b5;
+      --line: #2b3441; --accent: #5cc8da; --accent-bg: #16323a;
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 960px; margin: 0 auto; padding: 40px 20px 64px; }
+  h1 { font-size: 1.9rem; margin: 0 0 6px; }
+  .lead { color: var(--muted); margin: 0 0 32px; }
+  h2 { font-size: 1.05rem; text-transform: uppercase; letter-spacing: .06em;
+       color: var(--muted); margin: 36px 0 12px; }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+  a.card {
+    display: block; padding: 14px 16px; background: var(--card);
+    border: 1px solid var(--line); border-radius: 10px;
+    color: inherit; text-decoration: none;
+    transition: border-color .15s, transform .15s;
+  }
+  a.card:hover, a.card:focus-visible { border-color: var(--accent); transform: translateY(-1px); outline: none; }
+  a.card strong { display: block; color: var(--accent); }
+  a.card span { color: var(--muted); font-size: .92rem; }
+  a.main { border-color: var(--accent); background: var(--accent-bg); }
+  footer { margin-top: 40px; color: var(--muted); font-size: .88rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>IA generativa</h1>
+  <p class="lead">Fluxos interativos de como funcionam os modelos de IA generativa e as redes neurais. Clique nas caixas ou ligue o Live para percorrer cada passo.</p>
+
+  <h2>Como um LLM funciona</h2>
+  <div class="grid">
+    <a class="card main" href="workflows/transformer-llm/transformer-llm-passo-a-passo.html">
+      <strong>Transformer / LLM, passo a passo</strong>
+      <span>Do texto à próxima palavra, e como aprende. Clique nas caixas ou ligue o Live.</span>
+    </a>
+  </div>
+
+  <h2>Linguagem e treino</h2>
+  <div class="grid">
+    <a class="card" href="workflows/evolucao-linguagem/evolucao-linguagem-passo-a-passo.html">
+      <strong>Evolução dos modelos de linguagem</strong>
+      <span>Do n-gram ao Transformer, e o problema de cada etapa.</span>
+    </a>
+    <a class="card" href="workflows/gradiente-desaparecendo/gradiente-desaparecendo-passo-a-passo.html">
+      <strong>Gradiente desaparecendo</strong>
+      <span>Por que as redes esqueciam o começo, e como a LSTM resolve.</span>
+    </a>
+  </div>
+
+  <h2>Famílias de modelos generativos</h2>
+  <div class="grid">
+    <a class="card" href="workflows/difusao/difusao-passo-a-passo.html">
+      <strong>Difusão</strong>
+      <span>De ruído a imagem, passo a passo.</span>
+    </a>
+    <a class="card" href="workflows/gan/gan-passo-a-passo.html">
+      <strong>GAN</strong>
+      <span>Falsificador contra detetive.</span>
+    </a>
+    <a class="card" href="workflows/vae/vae-passo-a-passo.html">
+      <strong>VAE</strong>
+      <span>Resumir, sortear e recriar.</span>
+    </a>
+  </div>
+
+  <h2>Tipos de rede neural</h2>
+  <div class="grid">
+    <a class="card" href="workflows/ffn/ffn-passo-a-passo.html">
+      <strong>FFN</strong>
+      <span>Camadas só para frente.</span>
+    </a>
+    <a class="card" href="workflows/cnn/cnn-passo-a-passo.html">
+      <strong>CNN</strong>
+      <span>Filtros que acham bordas e formas.</span>
+    </a>
+    <a class="card" href="workflows/rnn/rnn-passo-a-passo.html">
+      <strong>RNN</strong>
+      <span>Memória que volta em laço.</span>
+    </a>
+    <a class="card" href="workflows/lstm/lstm-passo-a-passo.html">
+      <strong>LSTM</strong>
+      <span>Três portões e memória longa.</span>
+    </a>
+    <a class="card" href="workflows/gru/gru-passo-a-passo.html">
+      <strong>GRU</strong>
+      <span>Dois portões e uma memória.</span>
+    </a>
+    <a class="card" href="workflows/autoencoder/autoencoder-passo-a-passo.html">
+      <strong>Autoencoder</strong>
+      <span>Comprimir e recriar.</span>
+    </a>
+  </div>
+
+  <footer>12 workflows. Os textos explicativos foram escritos por IA; confira antes de publicar.</footer>
+</main>
+</body>
+</html>
