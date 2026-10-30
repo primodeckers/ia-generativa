@@ -1,0 +1,246 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver um passo de treino, depois veja como os otimizadores e a taxa de aprendizado mudam a atualização.",
+ "steps": [
+  {
+   "node": "lote",
+   "fase": "Um passo de treino",
+   "title": "Minilote",
+   "edges": [],
+   "resumo": "Treinar uma rede é ajustar seus pesos aos poucos. Em cada passo, a rede recebe apenas um pequeno grupo de exemplos do conjunto de treino, chamado minilote, em vez de todos os dados de uma vez.",
+   "entra": "O conjunto de dados de treino.",
+   "sai": "Um pequeno grupo de exemplos com suas respostas corretas.",
+   "exemplo": "Um grupo de 32 fotos de gatos e cachorros, cada uma com seu rótulo.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Minilote",
+     "Pequeno grupo de exemplos usado em um único passo de treino."
+    ],
+    [
+     "Peso",
+     "Número interno da rede que é ajustado durante o treino."
+    ]
+   ],
+   "tecnico": "Amostragem de um mini-batch embaralhado a cada passo. O tamanho do lote afeta o ruído do gradiente e o uso de memória."
+  },
+  {
+   "node": "frente",
+   "fase": "Um passo de treino",
+   "title": "Passagem para frente",
+   "edges": [
+    "e-lote-frente"
+   ],
+   "resumo": "A rede processa os exemplos do minilote, camada por camada, e produz uma previsão para cada um. Nesse momento os pesos ainda não mudam: a rede só mostra o que ela faz hoje.",
+   "entra": "Minilote e pesos atuais.",
+   "sai": "Uma previsão para cada exemplo.",
+   "termos": [
+    [
+     "Previsão",
+     "Resposta que a rede dá para um exemplo."
+    ],
+    [
+     "Passagem para frente",
+     "Cálculo que vai da entrada até a saída da rede."
+    ]
+   ],
+   "tecnico": "Forward pass: as ativações são calculadas camada a camada e guardadas, pois serão necessárias na retropropagação."
+  },
+  {
+   "node": "perda",
+   "fase": "Um passo de treino",
+   "title": "Perda",
+   "edges": [
+    "e-frente-perda"
+   ],
+   "resumo": "Compara a previsão com a resposta correta e resume o tamanho do erro em um único número. Quanto menor a perda, melhor a rede está indo. É esse número que o treino tenta diminuir.",
+   "entra": "Previsões e respostas corretas.",
+   "sai": "Um valor de perda para o minilote.",
+   "termos": [
+    [
+     "Perda (loss)",
+     "Número que mede o quanto a rede errou."
+    ],
+    [
+     "Função de perda",
+     "Regra usada para calcular esse erro."
+    ]
+   ],
+   "tecnico": "Função de perda, como entropia cruzada para classificação ou erro quadrático médio para regressão, calculada sobre o minilote."
+  },
+  {
+   "node": "grad",
+   "fase": "Um passo de treino",
+   "title": "Gradiente",
+   "edges": [
+    "e-perda-grad"
+   ],
+   "resumo": "A retropropagação percorre a rede de trás para frente e descobre, para cada peso, quanto a perda aumentaria ou diminuiria se ele mudasse um pouco. Esse conjunto de indicações é o gradiente: aponta a direção em que o erro mais cresce.",
+   "entra": "O valor da perda e as contas da passagem para frente.",
+   "sai": "Um gradiente para cada peso.",
+   "termos": [
+    [
+     "Gradiente",
+     "Indica, para cada peso, em que direção o erro cresce mais rápido."
+    ],
+    [
+     "Retropropagação",
+     "Método que calcula os gradientes indo da saída para a entrada."
+    ]
+   ],
+   "tecnico": "Backpropagation aplica a regra da cadeia para obter o gradiente da perda em relação a todos os parâmetros, em geral por diferenciação automática (autograd)."
+  },
+  {
+   "node": "update",
+   "fase": "Um passo de treino",
+   "title": "Atualização",
+   "edges": [
+    "e-grad-update",
+    "e-mom-update",
+    "e-decay-update",
+    "e-update-lote"
+   ],
+   "resumo": "Cada peso é empurrado um pouco na direção contrária ao gradiente, para que o erro diminua. O tamanho desse empurrão é controlado pela taxa de aprendizado. Depois, o ciclo recomeça com um novo minilote, milhares de vezes.",
+   "entra": "Pesos atuais, gradientes e a taxa de aprendizado.",
+   "sai": "Pesos ligeiramente melhores.",
+   "termos": [
+    [
+     "Taxa de aprendizado",
+     "Número que define o tamanho de cada passo."
+    ],
+    [
+     "Época",
+     "Uma volta completa por todos os dados de treino."
+    ]
+   ],
+   "tecnico": "O otimizador aplica a atualização aos parâmetros e em seguida os gradientes são zerados antes do próximo minilote. O laço se repete por muitas épocas."
+  },
+  {
+   "node": "sgd",
+   "fase": "Variações do otimizador",
+   "title": "SGD puro",
+   "edges": [
+    "e-grad-sgd"
+   ],
+   "resumo": "A forma mais simples de usar o gradiente: dar um passo na direção oposta a ele, com o tamanho dado pela taxa de aprendizado. Funciona, mas pode oscilar em vales estreitos e ficar lento onde o terreno é quase plano.",
+   "entra": "Gradiente do minilote e taxa de aprendizado.",
+   "sai": "Uma atualização para cada peso.",
+   "termos": [
+    [
+     "SGD",
+     "Gradiente descendente estocástico: usa um minilote por passo."
+    ],
+    [
+     "Oscilação",
+     "Zigue-zague do treino ao longo de um vale estreito."
+    ]
+   ],
+   "tecnico": "Stochastic gradient descent: o gradiente de um minilote é uma estimativa ruidosa do gradiente total, e todos os pesos usam a mesma taxa de aprendizado."
+  },
+  {
+   "node": "mom",
+   "fase": "Variações do otimizador",
+   "title": "Momentum",
+   "edges": [
+    "e-sgd-mom"
+   ],
+   "resumo": "Acrescenta memória ao SGD: o passo leva em conta a direção dos passos anteriores, como uma bola rolando ladeira abaixo que ganha velocidade. Isso suaviza as oscilações e acelera onde a direção se mantém.",
+   "entra": "Gradiente atual e o histórico dos passos anteriores.",
+   "sai": "Um passo mais suave e mais rápido.",
+   "termos": [
+    [
+     "Momentum",
+     "Memória das direções recentes, que dá inércia ao treino."
+    ],
+    [
+     "Inércia",
+     "Tendência de continuar na direção em que já se estava indo."
+    ]
+   ],
+   "tecnico": "Mantém uma média móvel dos gradientes (velocidade) e a usa como direção de atualização. É controlada pelo coeficiente de momentum, em geral perto de 0,9."
+  },
+  {
+   "node": "adam",
+   "fase": "Variações do otimizador",
+   "title": "Adam",
+   "edges": [
+    "e-mom-adam"
+   ],
+   "resumo": "Além da memória da direção, o Adam ajusta o tamanho do passo de cada peso. Pesos com gradientes grandes e instáveis dão passos menores, e pesos com gradientes pequenos dão passos maiores. Por isso costuma funcionar bem sem muito ajuste.",
+   "entra": "Gradiente atual e médias do gradiente e do seu tamanho.",
+   "sai": "Um passo adaptado a cada peso.",
+   "termos": [
+    [
+     "Adam",
+     "Otimizador que combina momentum com passo adaptativo por peso."
+    ],
+    [
+     "Passo adaptativo",
+     "Tamanho do passo que muda de peso para peso."
+    ]
+   ],
+   "tecnico": "Adam mantém duas médias móveis por parâmetro: a do gradiente e a do seu quadrado, com correção de viés no início. A taxa de aprendizado ainda vale e costuma usar agendamento. A variante AdamW separa o decaimento de pesos."
+  },
+  {
+   "node": "fixa",
+   "fase": "Taxa de aprendizado",
+   "title": "Taxa fixa",
+   "edges": [],
+   "resumo": "A forma mais simples: usar a mesma taxa de aprendizado do começo ao fim. É fácil de entender, mas um valor bom no início pode ser grande demais para o ajuste fino no final do treino.",
+   "entra": "Um valor escolhido pela pessoa.",
+   "sai": "A mesma taxa em todos os passos.",
+   "termos": [
+    [
+     "Hiperparâmetro",
+     "Valor definido antes do treino, e não aprendido pela rede."
+    ]
+   ],
+   "tecnico": "Learning rate constante. É um dos hiperparâmetros mais sensíveis: alto demais causa divergência e baixo demais deixa o treino lento."
+  },
+  {
+   "node": "warm",
+   "fase": "Taxa de aprendizado",
+   "title": "Warmup",
+   "edges": [
+    "e-fixa-warm"
+   ],
+   "resumo": "No começo, a taxa parte de um valor pequeno e sobe gradualmente. Os primeiros passos são os mais arriscados, pois os pesos são aleatórios e os gradientes podem ser instáveis. Subir devagar evita um início desastroso.",
+   "entra": "A taxa-alvo e o número de passos de aquecimento.",
+   "sai": "Uma taxa crescente nos primeiros passos.",
+   "termos": [
+    [
+     "Warmup",
+     "Fase inicial em que a taxa de aprendizado aumenta aos poucos."
+    ],
+    [
+     "Agendador",
+     "Regra que muda a taxa durante o treino."
+    ]
+   ],
+   "tecnico": "Learning rate warmup, em geral linear, durante algumas centenas ou milhares de passos. É comum em transformers e com Adam."
+  },
+  {
+   "node": "decay",
+   "fase": "Taxa de aprendizado",
+   "title": "Decaimento",
+   "edges": [
+    "e-warm-decay"
+   ],
+   "resumo": "Depois do aquecimento, a taxa vai diminuindo ao longo do treino. Passos grandes ajudam a avançar rápido no início, e passos pequenos ajudam a acomodar os pesos perto do fim, com mais precisão.",
+   "entra": "A taxa atingida após o warmup e o total de passos.",
+   "sai": "Uma taxa que cai até o fim do treino.",
+   "termos": [
+    [
+     "Decaimento",
+     "Redução gradual da taxa de aprendizado."
+    ],
+    [
+     "Ajuste fino",
+     "Pequenos ajustes finais para refinar o resultado."
+    ]
+   ],
+   "tecnico": "Agendas comuns de decaimento: linear, em degraus e cosseno (cosine annealing). A taxa resultante é usada pelo otimizador em cada atualização."
+  }
+ ]
+}

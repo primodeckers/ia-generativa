@@ -1,0 +1,194 @@
+{
+  "titulo": "Passo a passo",
+  "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+  "inicio": "Comece pelo 1 para entender o problema, ou pelo 4 para ver o bloco residual por dentro.",
+  "steps": [
+    {
+      "node": "deep",
+      "fase": "O problema",
+      "title": "Rede profunda",
+      "edges": [],
+      "resumo": "O ponto de partida: a ideia de que mais camadas permitem aprender características mais ricas, de bordas simples até objetos inteiros. Por isso as redes de reconhecimento de imagens foram ficando cada vez mais profundas.",
+      "entra": "Uma imagem e uma pilha de camadas, uma depois da outra.",
+      "sai": "Uma previsão, depois de passar por todas as camadas.",
+      "termos": [
+        ["Profundidade", "Número de camadas empilhadas da rede."],
+        ["Rede convolucional", "Rede que analisa imagens com filtros que deslizam pela figura."]
+      ],
+      "tecnico": "Redes convolucionais sem atalhos (plain networks): cada camada recebe apenas a saída da camada anterior."
+    },
+    {
+      "node": "degr",
+      "fase": "O problema",
+      "title": "Degradação",
+      "edges": ["e-deep-degr"],
+      "resumo": "Ao aumentar demais a profundidade, a rede passou a errar mais, e não só nas imagens novas: errava mais até no próprio treino. Isso não é decorar demais (overfitting). É uma dificuldade de otimização: a rede maior é capaz de fazer o que a menor faz, mas o treino não a encontra.",
+      "entra": "Uma rede comum, com muitas camadas a mais.",
+      "sai": "Erro de treino maior do que o de uma rede mais rasa.",
+      "termos": [
+        ["Degradação", "Piora do erro de treino ao adicionar camadas a uma rede."],
+        ["Overfitting", "Decorar o treino e ir mal em dados novos. Aqui o erro piora até no treino, então não é isso."]
+      ],
+      "tecnico": "Problema de degradação descrito no artigo da ResNet: redes planas mais profundas apresentam erro de treino maior que redes rasas, apontando para dificuldade de otimização."
+    },
+    {
+      "node": "grad",
+      "fase": "O problema",
+      "title": "Gradiente fraco",
+      "edges": ["e-degr-grad"],
+      "resumo": "Um fator que ajuda a explicar a dificuldade: o sinal de correção do treino (o gradiente) precisa voltar por todas as camadas. Em redes muito fundas ele pode ficar fraco no caminho, e as primeiras camadas quase não aprendem.",
+      "entra": "O erro calculado na saída da rede.",
+      "sai": "Um sinal de correção que chega enfraquecido às primeiras camadas.",
+      "termos": [
+        ["Gradiente", "Indica em que direção ajustar cada peso para reduzir o erro."],
+        ["Retropropagação", "Envio do erro da saída de volta, camada por camada, para ajustar os pesos."]
+      ],
+      "tecnico": "Na retropropagação o gradiente atravessa uma sequência de camadas e pode diminuir (vanishing gradient). A normalização em lote e boas inicializações ajudam, mas não resolvem sozinhas a degradação."
+    },
+    {
+      "node": "entrada",
+      "fase": "Bloco residual",
+      "title": "Entrada do bloco",
+      "edges": ["e-degr-entrada", "e-estagios-entrada"],
+      "resumo": "A solução da ResNet: em vez de empilhar camadas puras, agrupá-las em blocos que guardam a própria entrada. A entrada segue por dois caminhos ao mesmo tempo: um passa pelas convoluções e o outro vai direto, por um atalho.",
+      "entra": "Os mapas de características vindos do bloco anterior.",
+      "sai": "A mesma informação, enviada por dois caminhos.",
+      "termos": [
+        ["Bloco residual", "Pequeno grupo de camadas com um atalho que soma a entrada à saída."],
+        ["Mapa de características", "Grade de números que indica onde cada padrão foi detectado na imagem."]
+      ],
+      "tecnico": "A ResNet (He et al., 2015) reformula cada bloco para aprender uma função residual em relação à entrada, em vez de aprender o mapeamento completo."
+    },
+    {
+      "node": "convs",
+      "fase": "Bloco residual",
+      "title": "Duas convoluções",
+      "edges": ["e-entrada-convs"],
+      "resumo": "O caminho principal tem duas convoluções, cada uma seguida de normalização em lote para estabilizar os números. Só a primeira tem ReLU logo depois; a segunda espera a soma com o atalho.",
+      "entra": "Os mapas de características do bloco.",
+      "sai": "Uma correção (o resíduo) com o mesmo formato da entrada.",
+      "termos": [
+        ["Convolução", "Filtro pequeno que desliza pela imagem detectando padrões."],
+        ["Normalização em lote", "Reescala os valores de cada camada para o treino ficar mais estável."],
+        ["ReLU", "Função que zera os valores negativos e mantém os positivos."]
+      ],
+      "tecnico": "Sequência conv 3x3, batch normalization, ReLU, conv 3x3, batch normalization. O ReLU final só é aplicado depois da soma."
+    },
+    {
+      "node": "atalho",
+      "fase": "Bloco residual",
+      "title": "Atalho (skip)",
+      "edges": ["e-entrada-atalho"],
+      "resumo": "O atalho leva a entrada, sem mudanças, até a soma. Quando o bloco muda o tamanho da imagem ou o número de canais, a entrada não casaria mais com a saída, e o atalho usa uma convolução 1 por 1 para ajustar. Esse atalho também dá ao gradiente um caminho direto de volta.",
+      "entra": "A entrada do bloco.",
+      "sai": "A entrada, copiada ou ajustada para o formato da saída.",
+      "termos": [
+        ["Skip connection", "Ligação que pula camadas e leva um valor direto adiante."],
+        ["Convolução 1 por 1", "Filtro que combina os canais de cada ponto e muda quantos canais existem."]
+      ],
+      "tecnico": "Identity shortcut quando as dimensões coincidem; projection shortcut com convolução 1x1 (e stride) quando mudam a resolução ou os canais. Na retropropagação, o gradiente também flui pelo atalho."
+    },
+    {
+      "node": "soma",
+      "fase": "Bloco residual",
+      "title": "Soma",
+      "edges": ["e-convs-soma", "e-atalho-soma"],
+      "resumo": "Aqui os dois caminhos se encontram: a saída das convoluções é somada, ponto a ponto, com a entrada. Por isso o bloco só precisa aprender o que falta mudar (o resíduo). Se nada precisar mudar, basta o resíduo ficar perto de zero.",
+      "entra": "A correção das convoluções e a entrada vinda do atalho.",
+      "sai": "Entrada mais correção.",
+      "exemplo": "Se a entrada já está boa, o bloco aprende uma correção quase nula e passa a entrada adiante.",
+      "ilustrativo": true,
+      "termos": [
+        ["Resíduo", "O que falta somar à entrada para chegar à saída desejada."],
+        ["Soma elemento a elemento", "Soma de cada valor com o valor da mesma posição no outro mapa."]
+      ],
+      "tecnico": "Adição elemento a elemento entre a saída do ramo convolucional e a do atalho. Facilita aprender uma identidade, o que ajuda a evitar a degradação."
+    },
+    {
+      "node": "saida",
+      "fase": "Bloco residual",
+      "title": "ReLU e saída",
+      "edges": ["e-soma-saida"],
+      "resumo": "Depois da soma, aplica-se o ReLU e o resultado sai do bloco, pronto para o bloco seguinte. Entra como entrada de outro bloco igual, e assim a rede é montada com muitos deles em fila.",
+      "entra": "O resultado da soma.",
+      "sai": "Mapas de características para o próximo bloco.",
+      "termos": [
+        ["ReLU", "Função que zera os valores negativos."],
+        ["Empilhar blocos", "Repetir o mesmo bloco em sequência para aumentar a profundidade."]
+      ],
+      "tecnico": "A ativação ReLU é aplicada após a soma. A mesma ideia de atalho reaparece nos Transformers, que somam a entrada ao resultado da atenção e da camada feed-forward."
+    },
+    {
+      "node": "stem",
+      "fase": "A rede completa",
+      "title": "Camada inicial",
+      "edges": [],
+      "resumo": "A porta de entrada da rede completa: uma primeira convolução com filtro grande, seguida de normalização, ReLU e um pooling. Ela reduz rapidamente o tamanho da imagem antes dos blocos residuais.",
+      "entra": "A imagem original.",
+      "sai": "Mapas de características menores.",
+      "termos": [
+        ["Stem", "Parte inicial da rede, antes dos blocos principais."],
+        ["Pooling", "Resume pequenas regiões em um único valor, reduzindo o tamanho."]
+      ],
+      "tecnico": "Na ResNet original, a camada inicial usa convolução 7x7 com stride 2, seguida de max pooling, reduzindo a resolução antes dos estágios."
+    },
+    {
+      "node": "estagios",
+      "fase": "A rede completa",
+      "title": "Estágios de blocos",
+      "edges": ["e-stem-estagios"],
+      "resumo": "A pilha de blocos residuais é dividida em estágios. A cada novo estágio a imagem fica com menos pixels e a rede passa a ter mais canais, ou seja, mais tipos de padrão. Nessa passagem, o atalho usa a convolução 1 por 1 para ajustar.",
+      "entra": "Mapas de características vindos da camada inicial.",
+      "sai": "Mapas pequenos e com muitos canais, ricos em significado.",
+      "termos": [
+        ["Estágio", "Grupo de blocos que trabalham na mesma resolução."],
+        ["Canal", "Um dos tipos de padrão que a rede acompanha em cada ponto da imagem."]
+      ],
+      "tecnico": "Quatro estágios de blocos residuais. Ao entrar em um novo estágio, um bloco usa stride 2 para reduzir a resolução e aumenta o número de canais, e o atalho de projeção 1x1 acompanha essa mudança."
+    },
+    {
+      "node": "bottleneck",
+      "fase": "A rede completa",
+      "title": "Bottleneck",
+      "edges": ["e-estagios-bottleneck"],
+      "resumo": "Nas versões mais profundas (ResNet-50 em diante), cada bloco usa três convoluções: uma 1 por 1 que reduz os canais, uma 3 por 3 que trabalha sobre poucos canais e uma 1 por 1 que os devolve ao tamanho maior. Assim o bloco fica mais barato de calcular.",
+      "entra": "Mapas de características do estágio.",
+      "sai": "Mapas com o mesmo formato, calculados com menos custo.",
+      "termos": [
+        ["Bottleneck", "Bloco que estreita os canais no meio e os alarga no fim."],
+        ["ResNet-50", "Versão da ResNet com 50 camadas e blocos bottleneck."]
+      ],
+      "tecnico": "O bloco bottleneck usa convoluções 1x1, 3x3 e 1x1, reduzindo e depois restaurando a dimensão. As versões mais rasas, como a ResNet-18 e a ResNet-34, usam o bloco básico com duas convoluções 3x3."
+    },
+    {
+      "node": "pool",
+      "fase": "A rede completa",
+      "title": "Pooling médio global",
+      "edges": ["e-bottleneck-pool"],
+      "resumo": "No fim dos estágios, tira-se a média de cada canal sobre toda a imagem. Cada canal vira um único número, e a imagem inteira vira uma lista curta que resume o que a rede viu.",
+      "entra": "Mapas de características finais.",
+      "sai": "Um vetor com um valor por canal.",
+      "termos": [
+        ["Pooling médio global", "Média de todos os valores de cada canal, resultando em um número por canal."],
+        ["Vetor", "Lista de números."]
+      ],
+      "tecnico": "Global average pooling substitui grandes camadas totalmente conectadas, reduzindo os parâmetros e entregando um vetor de tamanho fixo ao classificador."
+    },
+    {
+      "node": "classe",
+      "fase": "A rede completa",
+      "title": "Classificação",
+      "edges": ["e-pool-classe"],
+      "resumo": "Uma última camada totalmente conectada transforma o vetor em uma pontuação para cada classe possível. A classe com maior probabilidade é a resposta da rede.",
+      "entra": "O vetor resumido da imagem.",
+      "sai": "Uma probabilidade para cada classe.",
+      "exemplo": "Para uma foto, a rede pode dar 90% para “gato” e valores menores para as outras classes.",
+      "ilustrativo": true,
+      "termos": [
+        ["Camada totalmente conectada", "Camada em que cada entrada se liga a cada saída."],
+        ["Softmax", "Função que transforma as pontuações em probabilidades que somam 100%."]
+      ],
+      "tecnico": "Camada linear com uma saída por classe, seguida de softmax. No ImageNet são 1000 classes."
+    }
+  ]
+}

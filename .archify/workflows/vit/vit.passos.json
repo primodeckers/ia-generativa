@@ -1,0 +1,133 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 e acompanhe a imagem virar uma sequência, passar pelo encoder e terminar em uma classe.",
+ "steps": [
+  {
+   "node": "patches",
+   "fase": "Imagem vira sequência",
+   "title": "Imagem em patches",
+   "edges": [],
+   "resumo": "A imagem é recortada em quadradinhos do mesmo tamanho, chamados patches. Cada patch faz o papel de uma palavra em um texto.",
+   "entra": "Uma imagem.",
+   "sai": "Uma grade de patches, por exemplo de 16 por 16 pixels.",
+   "exemplo": "Uma imagem de 224 por 224 pixels com patches de 16 por 16 vira 196 patches.",
+   "termos": [
+    ["Patch", "Pedaço quadrado da imagem, tratado como uma unidade."],
+    ["Pixel", "Menor ponto da imagem, com valores de cor."]
+   ],
+   "tecnico": "A imagem é dividida em patches de tamanho fixo, sem sobreposição. O número de patches define o comprimento da sequência."
+  },
+  {
+   "node": "embed",
+   "fase": "Imagem vira sequência",
+   "title": "Embedding do patch",
+   "edges": ["e-patches-embed"],
+   "resumo": "Cada patch é esticado em uma lista de números e passa por uma projeção linear, que o transforma em um vetor de tamanho fixo. É o equivalente ao embedding de um token em um LLM.",
+   "entra": "Patches da imagem.",
+   "sai": "Um vetor por patch.",
+   "termos": [
+    ["Achatar", "Esticar o pedaço de imagem em uma única lista de números."],
+    ["Projeção linear", "Camada que converte a lista em um vetor do tamanho que o modelo usa."],
+    ["Embedding", "Vetor de números que representa um item, aqui um patch."]
+   ],
+   "tecnico": "Cada patch é achatado e multiplicado por uma matriz de pesos aprendida (projeção linear), o que dá o embedding do patch. Todos os patches usam a mesma projeção."
+  },
+  {
+   "node": "pos",
+   "fase": "Imagem vira sequência",
+   "title": "Posição",
+   "edges": ["e-embed-pos"],
+   "resumo": "A atenção sozinha não sabe onde cada patch estava na imagem. Por isso soma-se a cada vetor um embedding de posição, que marca o lugar do patch.",
+   "entra": "Vetores dos patches.",
+   "sai": "Vetores que também carregam a posição.",
+   "termos": [
+    ["Embedding de posição", "Vetor que indica em que lugar da imagem o patch estava."],
+    ["Aprendido", "Valores ajustados durante o treino, e não definidos à mão."]
+   ],
+   "tecnico": "No ViT original, os embeddings de posição são parâmetros aprendidos, um por posição, somados elemento a elemento aos embeddings dos patches."
+  },
+  {
+   "node": "cls",
+   "fase": "Imagem vira sequência",
+   "title": "Token [CLS]",
+   "edges": ["e-pos-cls"],
+   "resumo": "Um token especial, o [CLS], é colocado no início da sequência. Ele não vem de nenhum patch: serve de espaço para o modelo juntar o resumo da imagem inteira.",
+   "entra": "Sequência de patches com posição.",
+   "sai": "Sequência com o [CLS] à frente, pronta para o encoder.",
+   "termos": [
+    ["[CLS]", "Token especial de classe, aprendido, que reúne a informação da imagem."],
+    ["Sequência", "Lista ordenada de vetores que o Transformer recebe."]
+   ],
+   "tecnico": "Um vetor aprendido é concatenado no início da sequência, e a posição dele também é aprendida. A sequência completa tem um item a mais que o número de patches."
+  },
+  {
+   "node": "attn",
+   "fase": "Encoder Transformer",
+   "title": "Autoatenção",
+   "edges": ["e-cls-attn"],
+   "resumo": "Cada patch olha todos os outros, inclusive o [CLS], e pesa o quanto cada um importa. Assim, um patch de olho pode se relacionar com outro patch do rosto, mesmo longe dele. Ao contrário dos LLMs, não há máscara causal: todos veem todos.",
+   "entra": "A sequência de vetores.",
+   "sai": "Vetores enriquecidos com contexto da imagem toda.",
+   "termos": [
+    ["Autoatenção", "Mecanismo em que cada item da sequência pondera todos os outros."],
+    ["Máscara causal", "Regra dos LLMs que impede olhar para a frente. No ViT ela não existe."],
+    ["Viés indutivo", "Suposição embutida no modelo. A CNN supõe vizinhança local; o ViT assume bem menos."]
+   ],
+   "tecnico": "Multi-head self-attention bidirecional, com queries, keys e values. Sem máscara causal, cada patch atende a todos. Isso dá menos viés indutivo que a CNN, e por isso o ViT costuma exigir muitos dados ou um grande pré-treino."
+  },
+  {
+   "node": "ffn",
+   "fase": "Encoder Transformer",
+   "title": "Feed-forward",
+   "edges": ["e-attn-ffn", "e-ffn-attn"],
+   "resumo": "Uma pequena rede refina cada vetor separadamente. Atalhos residuais e normalização mantêm o treino estável. O par atenção e feed-forward forma um bloco, repetido várias vezes, como mostra a seta tracejada.",
+   "entra": "Vetores com contexto.",
+   "sai": "Vetores refinados, que entram no próximo bloco.",
+   "termos": [
+    ["Feed-forward", "Rede de camadas densas aplicada a cada posição."],
+    ["Conexão residual", "Soma a entrada de volta à saída, preservando informação."],
+    ["Normalização", "LayerNorm: mantém os valores numa escala estável."]
+   ],
+   "tecnico": "MLP por posição com ativação GELU, envolvido por conexões residuais e LayerNorm. A pilha de blocos é idêntica em estrutura à do Transformer de linguagem, só sem máscara causal."
+  },
+  {
+   "node": "head",
+   "fase": "Saída",
+   "title": "Cabeça MLP",
+   "edges": ["e-ffn-head"],
+   "resumo": "Depois do último bloco, só o vetor do token [CLS] é usado. Ele já resume a imagem e entra em uma pequena rede, a cabeça de classificação, que dá uma pontuação para cada classe.",
+   "entra": "O vetor do [CLS] na saída do encoder.",
+   "sai": "Uma pontuação por classe.",
+   "termos": [
+    ["Cabeça de classificação", "Rede final que converte o vetor resumo em pontuações de classes."],
+    ["MLP", "Multilayer Perceptron: camadas densas empilhadas."]
+   ],
+   "tecnico": "Um MLP aplicado apenas ao vetor [CLS] final produz os logits, um por classe. Os vetores dos demais patches não entram na decisão."
+  },
+  {
+   "node": "classe",
+   "fase": "Saída",
+   "title": "Classe",
+   "edges": ["e-head-classe"],
+   "resumo": "A classe com a maior pontuação é a resposta do modelo. Em resumo: imagem em patches, vetores, encoder com atenção e, no fim, a classe. É o mesmo caminho de um Transformer de texto, trocando palavras por patches.",
+   "entra": "Pontuações de cada classe.",
+   "sai": "O rótulo previsto.",
+   "termos": [
+    ["Logit", "Pontuação bruta de uma classe, antes de virar probabilidade."],
+    ["Softmax", "Função que transforma pontuações em probabilidades que somam 100%."]
+   ],
+   "tecnico": "Softmax sobre os logits dá a distribuição de classes; a previsão é o argmax. No treino, usa-se a cross-entropy contra o rótulo correto."
+  }
+ ],
+ "fontes": [
+  {
+   "titulo": "Dosovitskiy et al., An Image is Worth 16x16 Words (2020)",
+   "url": "https://arxiv.org/abs/2010.11929"
+  },
+  {
+   "titulo": "Vaswani et al., Attention Is All You Need (2017)",
+   "url": "https://arxiv.org/abs/1706.03762"
+  }
+ ]
+}

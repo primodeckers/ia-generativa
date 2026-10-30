@@ -19,27 +19,27 @@ Temas para virar workflow (passo a passo). Marque `[x]` quando estiver pronto em
 - [x] Viés e variância
 
 ## Como as redes aprendem
-- [ ] ⭐ Gradiente descendente e otimizadores (SGD, Adam)
+- [x] ⭐ Gradiente descendente e otimizadores (SGD, Adam)
 - [ ] Funções de ativação
 - [ ] Normalização (batch e layer norm), dropout
-- [ ] ⭐ Transfer learning e fine-tuning
-- [ ] ⭐ Quantização
+- [x] ⭐ Transfer learning e fine-tuning
+- [x] ⭐ Quantização
 - [ ] Destilação de conhecimento e pruning
 - [ ] Treino distribuído em várias GPUs (data/model parallelism)
 
 ## Arquiteturas de redes neurais
 - [ ] Perceptron e MLP
-- [ ] ⭐ ResNet (conexões residuais)
-- [ ] ⭐ U-Net
-- [ ] ⭐ Vision Transformer (ViT)
+- [x] ⭐ ResNet (conexões residuais)
+- [x] ⭐ U-Net
+- [x] ⭐ Vision Transformer (ViT)
 - [ ] BERT contra GPT (encoder, decoder, encoder-decoder)
-- [ ] ⭐ Mixture of Experts (MoE)
+- [x] ⭐ Mixture of Experts (MoE)
 - [ ] Mamba / modelos de espaço de estados
 - [ ] Redes em grafos (GNN)
 - [ ] Flow matching e consistency models
 
 ## LLMs por dentro
-- [ ] ⭐ KV cache e FlashAttention
+- [x] ⭐ KV cache e FlashAttention
 - [ ] Multi-head attention, RoPE e janela de contexto
 - [ ] Temperatura, top-k e top-p
 - [ ] Chain-of-thought e modelos de raciocínio
@@ -47,7 +47,7 @@ Temas para virar workflow (passo a passo). Marque `[x]` quando estiver pronto em
 - [ ] Avaliação: benchmarks e LLM-as-judge
 
 ## Aplicações com LLMs
-- [ ] ⭐ MCP (Model Context Protocol)
+- [x] ⭐ MCP (Model Context Protocol)
 - [ ] Memória de agentes e multiagentes
 - [ ] Prompt engineering e structured output
 - [ ] Guardrails e segurança (prompt injection, jailbreak)
