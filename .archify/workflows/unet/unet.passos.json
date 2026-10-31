@@ -1,0 +1,192 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para seguir a imagem pelo encoder, gargalo e decoder. O passo 4 mostra o que muda na difusão.",
+ "steps": [
+  {
+   "node": "imagem",
+   "fase": "Entrada",
+   "title": "Imagem",
+   "edges": [],
+   "resumo": "A U-Net recebe uma imagem como entrada. Ela nasceu na área biomédica, para segmentar imagens como exames, e hoje também aparece dentro dos modelos de difusão.",
+   "entra": "Uma imagem, ou seja, uma grade de pixels.",
+   "sai": "A imagem, pronta para entrar no encoder.",
+   "exemplo": "Uma imagem de microscópio com várias células.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Segmentação",
+     "Tarefa de dizer a que classe pertence cada pixel."
+    ],
+    [
+     "Pixel",
+     "Menor ponto de uma imagem."
+    ],
+    [
+     "U-Net",
+     "Rede neural em forma de U (daí o nome): um lado comprime a imagem e o outro a expande."
+    ]
+   ],
+   "tecnico": "Tensor de entrada com altura, largura e canais. A U-Net é uma rede totalmente convolucional, então aceita imagens de tamanhos variados."
+  },
+  {
+   "node": "enc1",
+   "fase": "Encoder (contração)",
+   "title": "Nível 1",
+   "edges": [
+    "e-imagem-enc1"
+   ],
+   "resumo": "O encoder começa a comprimir a imagem. Blocos de convolução procuram padrões simples, como bordas e texturas, e depois o pooling reduz a resolução. O resultado é menor, mas guarda mais informação por posição.",
+   "entra": "A imagem original.",
+   "sai": "Mapas de características menores e com mais canais.",
+   "termos": [
+    [
+     "Convolução",
+     "Filtro que desliza pela imagem para detectar padrões."
+    ],
+    [
+     "Pooling",
+     "Operação que reduz a resolução, mantendo o que é mais importante."
+    ]
+   ],
+   "tecnico": "Duas convoluções com ativação não linear, seguidas de max pooling. O número de canais aumenta a cada nível e a resolução diminui."
+  },
+  {
+   "node": "enc2",
+   "fase": "Encoder (contração)",
+   "title": "Nível 2",
+   "edges": [
+    "e-enc1-enc2"
+   ],
+   "resumo": "O processo se repete: mais convoluções e nova redução de resolução. Como cada ponto passa a cobrir uma área maior da imagem, a rede enxerga mais contexto, como a forma de um objeto inteiro.",
+   "entra": "Mapas do nível 1.",
+   "sai": "Mapas ainda menores, com padrões mais abstratos.",
+   "termos": [
+    [
+     "Contexto",
+     "Visão de uma região maior da imagem."
+    ],
+    [
+     "Mapa de características",
+     "Resultado de um filtro aplicado à imagem."
+    ]
+   ],
+   "tecnico": "Cada nível amplia o campo receptivo, isto é, a região da entrada que influencia cada posição. O custo é a perda de detalhes finos de localização."
+  },
+  {
+   "node": "cond",
+   "fase": "Difusão",
+   "title": "Tempo e texto",
+   "edges": [],
+   "resumo": "Esta caixa só existe na versão da U-Net usada em difusão, como no Stable Diffusion. Ali a rede também precisa saber em que passo do processo está e qual texto guia a imagem. Na segmentação comum, ela não é usada.",
+   "entra": "O passo de tempo e o texto codificado (prompt).",
+   "sai": "Sinais que condicionam o que a rede calcula.",
+   "exemplo": "Passo 30 de 50, com o texto “um gato de chapéu”.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Passo de tempo",
+     "Indica quanto ruído ainda resta na imagem."
+    ],
+    [
+     "Prompt",
+     "Texto que descreve a imagem desejada."
+    ]
+   ],
+   "tecnico": "O passo de tempo entra como embedding somado às camadas de convolução. O texto entra por atenção cruzada, em que a imagem consulta os vetores do texto. Esses sinais atuam em vários níveis, não só no gargalo."
+  },
+  {
+   "node": "gargalo",
+   "fase": "Gargalo",
+   "title": "Gargalo",
+   "edges": [
+    "e-enc2-gargalo",
+    "e-cond-gargalo"
+   ],
+   "resumo": "É o ponto mais fundo do U: a representação mais compacta e mais abstrata da imagem. Aqui a rede sabe o que há na cena, mas já perdeu boa parte de onde cada detalhe fica.",
+   "entra": "Mapas comprimidos do encoder.",
+   "sai": "A representação mais compacta, que o decoder vai expandir.",
+   "termos": [
+    [
+     "Gargalo",
+     "Parte mais estreita da rede, com menor resolução."
+    ],
+    [
+     "Representação",
+     "Forma interna como a rede descreve a imagem."
+    ]
+   ],
+   "tecnico": "Último nível de contração, com resolução mínima e maior número de canais. Em difusão, é onde a atenção sobre o texto e o tempo costuma ter efeito global."
+  },
+  {
+   "node": "dec2",
+   "fase": "Decoder (expansão)",
+   "title": "Nível 2",
+   "edges": [
+    "e-gargalo-dec2",
+    "e-skip2"
+   ],
+   "resumo": "O decoder começa a devolver a resolução à imagem. Em seguida, junta o que veio de baixo com os mapas do nível correspondente do encoder, pela skip connection. Assim ele recupera detalhes finos que a compressão tinha perdido.",
+   "entra": "A representação do gargalo e os mapas do nível 2 do encoder.",
+   "sai": "Mapas com resolução maior, misturando contexto e detalhe.",
+   "termos": [
+    [
+     "Skip connection",
+     "Atalho que leva mapas do encoder direto ao decoder."
+    ],
+    [
+     "Upsampling",
+     "Aumento da resolução dos mapas."
+    ]
+   ],
+   "tecnico": "Upsampling ou convolução transposta, seguido de concatenação dos mapas do encoder no mesmo nível e de novas convoluções. A concatenação junta canais, em vez de somar valores."
+  },
+  {
+   "node": "dec1",
+   "fase": "Decoder (expansão)",
+   "title": "Nível 1",
+   "edges": [
+    "e-dec2-dec1",
+    "e-skip1"
+   ],
+   "resumo": "Mais uma subida de resolução, de novo com um atalho vindo do primeiro nível do encoder. As bordas e os contornos ficam nítidos, e os mapas voltam ao tamanho da imagem original.",
+   "entra": "Mapas do nível 2 do decoder e do nível 1 do encoder.",
+   "sai": "Mapas com o tamanho da imagem original.",
+   "termos": [
+    [
+     "Refinamento",
+     "Ajuste dos detalhes e das bordas."
+    ],
+    [
+     "Resolução",
+     "Quantidade de pixels da imagem ou do mapa."
+    ]
+   ],
+   "tecnico": "Nova concatenação via skip connection e convoluções de refinamento. Uma convolução final com filtro de tamanho 1 converte os canais na saída desejada."
+  },
+  {
+   "node": "mascara",
+   "fase": "Saída",
+   "title": "Máscara",
+   "edges": [
+    "e-dec1-mascara"
+   ],
+   "resumo": "A saída tem o mesmo tamanho da entrada e traz um rótulo para cada pixel, formando a máscara de segmentação. Na difusão, a saída tem o mesmo formato da entrada, mas representa a estimativa do ruído a remover.",
+   "entra": "Mapas finais do decoder.",
+   "sai": "Um rótulo por pixel, ou a estimativa de ruído em difusão.",
+   "exemplo": "Pixels de célula em branco e de fundo em preto.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Máscara de segmentação",
+     "Imagem em que cada pixel recebe o rótulo de sua classe."
+    ],
+    [
+     "Ruído",
+     "Variação aleatória que a difusão adiciona e depois remove."
+    ]
+   ],
+   "tecnico": "Mapa de probabilidades por classe, em que se escolhe a classe mais provável por pixel. No Stable Diffusion, a U-Net atua no espaço latente e prevê o ruído a cada passo."
+  }
+ ]
+}

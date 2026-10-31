@@ -1,0 +1,276 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para entender a origem do problema, pelo 5 para ver os tipos de erro, ou pelo 8 para ver como reduzi-lo.",
+ "steps": [
+  {
+   "node": "treino",
+   "fase": "Por que acontece",
+   "title": "Treino",
+   "edges": [],
+   "resumo": "Um modelo de linguagem aprende a continuar textos com a palavra mais provável, com base em enormes quantidades de texto. Ele foi treinado para soar plausível, e não para verificar se algo é verdade.",
+   "entra": "Grandes volumes de texto de treino.",
+   "sai": "Um modelo que gera texto fluente e provável.",
+   "termos": [
+    [
+     "Modelo de linguagem",
+     "Modelo que prevê qual texto vem a seguir."
+    ],
+    [
+     "Plausível",
+     "Que parece certo, mesmo sem ser verificado."
+    ]
+   ],
+   "tecnico": "Pré-treinamento com o objetivo de prever o próximo token. Esse objetivo premia a probabilidade do texto, não a veracidade dele."
+  },
+  {
+   "node": "lacunas",
+   "fase": "Por que acontece",
+   "title": "Lacunas",
+   "edges": [
+    "e-treino-lacunas"
+   ],
+   "resumo": "Os dados de treino têm falhas: faltam assuntos, há erros e o conhecimento fica parado no tempo. Além disso, algumas perguntas são ambíguas ou simplesmente não têm resposta, e o modelo fica sem base sólida.",
+   "entra": "O modelo treinado e uma pergunta do usuário.",
+   "sai": "Uma situação em que o modelo não tem a informação certa.",
+   "exemplo": "Perguntar sobre um acontecimento posterior à data de corte do modelo.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Data de corte",
+     "Momento até o qual o modelo viu dados de treino."
+    ],
+    [
+     "Pergunta ambígua",
+     "Pergunta que admite vários sentidos."
+    ]
+   ],
+   "tecnico": "Cobertura incompleta e ruidosa dos dados de treino, mais conhecimento paramétrico desatualizado e consultas subespecificadas."
+  },
+  {
+   "node": "pressao",
+   "fase": "Por que acontece",
+   "title": "Pressão",
+   "edges": [
+    "e-lacunas-pressao"
+   ],
+   "resumo": "O modelo foi moldado para ser útil e sempre produzir uma resposta. Sem um jeito natural de ficar calado, ele tende a completar a frase mesmo sem saber, em vez de admitir a dúvida.",
+   "entra": "Uma pergunta sem base suficiente.",
+   "sai": "Uma tentativa de resposta, mesmo sem certeza.",
+   "termos": [
+    [
+     "Calibração",
+     "Alinhamento entre a confiança do modelo e a chance de ele estar certo."
+    ]
+   ],
+   "tecnico": "A geração sempre produz algum token provável. Sem calibração nem incentivo à abstenção, a incerteza não vira recusa."
+  },
+  {
+   "node": "alucina",
+   "fase": "Por que acontece",
+   "title": "Alucinação",
+   "edges": [
+    "e-pressao-alucina"
+   ],
+   "resumo": "O resultado é uma resposta que soa segura e bem escrita, mas está errada ou foi inventada. O tom confiante é o que torna o erro difícil de perceber.",
+   "entra": "Uma tentativa de resposta sem base sólida.",
+   "sai": "Um texto fluente e incorreto.",
+   "termos": [
+    [
+     "Alucinação",
+     "Resposta que soa certa, mas é inventada ou errada."
+    ],
+    [
+     "Fluente",
+     "Bem escrito e natural de ler."
+    ]
+   ],
+   "tecnico": "Saída coerente em linguagem e infiel à realidade ou ao contexto fornecido. É uma consequência da geração probabilística, e não um defeito pontual."
+  },
+  {
+   "node": "fato",
+   "fase": "Tipos",
+   "title": "Fato inventado",
+   "edges": [
+    "e-alucina-fato"
+   ],
+   "resumo": "O modelo cria um dado que não existe, como um nome, uma data, uma citação ou uma referência de artigo. Costuma vir com formato e detalhes convincentes.",
+   "entra": "Um pedido por um fato específico.",
+   "sai": "Um fato com cara de verdadeiro, mas falso.",
+   "exemplo": "Uma referência com autores e título que parecem reais, mas o artigo não existe.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Referência",
+     "Indicação da fonte de uma informação."
+    ]
+   ],
+   "tecnico": "Fabricação factual, como citações e referências bibliográficas plausíveis em formato, mas inexistentes."
+  },
+  {
+   "node": "raciocinio",
+   "fase": "Tipos",
+   "title": "Erro de raciocínio",
+   "edges": [
+    "e-alucina-raciocinio"
+   ],
+   "resumo": "Os fatos até podem estar certos, mas a conclusão não decorre deles. Um passo falho no meio da explicação leva a um resultado errado, escrito com toda a segurança.",
+   "entra": "Um problema que exige vários passos.",
+   "sai": "Uma resposta cujo caminho tem um passo errado.",
+   "exemplo": "Uma conta de várias etapas com um passo intermediário errado.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Cadeia de raciocínio",
+     "Sequência de passos até a conclusão."
+    ]
+   ],
+   "tecnico": "Falha em inferência ou aritmética multi-etapas: um erro intermediário se propaga porque a geração segue token a token."
+  },
+  {
+   "node": "contradiz",
+   "fase": "Tipos",
+   "title": "Contradiz o contexto",
+   "edges": [
+    "e-alucina-contradiz"
+   ],
+   "resumo": "Mesmo quando o usuário fornece um texto, o modelo pode responder algo que o texto não diz ou que diz o contrário. Ele deixa de ser fiel ao material recebido.",
+   "entra": "Um texto fornecido e uma pergunta sobre ele.",
+   "sai": "Uma resposta que não confere com o texto.",
+   "exemplo": "Um resumo que afirma o oposto do que o documento diz.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Fidelidade",
+     "Quanto a resposta respeita o material fornecido."
+    ]
+   ],
+   "tecnico": "Infidelidade ao contexto do prompt (falha de grounding): o modelo prioriza o conhecimento paramétrico ou gera conteúdo não sustentado pela fonte."
+  },
+  {
+   "node": "rlhf",
+   "fase": "Como mitigar",
+   "title": "Treino honesto",
+   "edges": [
+    "e-treino-rlhf"
+   ],
+   "resumo": "Depois do treino inicial, o modelo é ajustado com avaliações humanas que premiam respostas honestas, inclusive admitir que não sabe. Isso ajuda, mas não resolve sozinho.",
+   "entra": "Respostas do modelo avaliadas por pessoas.",
+   "sai": "Um modelo mais cuidadoso com o que afirma.",
+   "termos": [
+    [
+     "RLHF",
+     "Reinforcement Learning from Human Feedback (aprendizado por reforço com feedback humano)."
+    ],
+    [
+     "Recompensa",
+     "Sinal que indica o que é uma boa resposta."
+    ]
+   ],
+   "tecnico": "Pós-treinamento com RLHF (Reinforcement Learning from Human Feedback) ou métodos afins, com recompensas que penalizam afirmações falsas e valorizam a abstenção quando há incerteza."
+  },
+  {
+   "node": "contexto",
+   "fase": "Como mitigar",
+   "title": "Contexto e ferramentas",
+   "edges": [
+    "e-lacunas-contexto",
+    "e-rlhf-contexto"
+   ],
+   "resumo": "Em vez de confiar na memória do modelo, entregue a ele fontes confiáveis na hora, com busca em documentos (como no workflow de RAG, Retrieval-Augmented Generation, geração aumentada por recuperação). Ferramentas de busca e de cálculo fazem o que o modelo faz mal.",
+   "entra": "A pergunta, documentos confiáveis e ferramentas.",
+   "sai": "Uma resposta apoiada em fontes e resultados reais.",
+   "termos": [
+    [
+     "RAG",
+     "Retrieval-Augmented Generation (geração aumentada por recuperação): buscar trechos relevantes e colocá-los no prompt."
+    ],
+    [
+     "Ferramenta",
+     "Função externa, como calculadora ou busca, que o modelo pode chamar."
+    ]
+   ],
+   "tecnico": "Geração aumentada por recuperação (RAG) para fundamentar a resposta, e chamadas de função para busca e cálculo determinísticos."
+  },
+  {
+   "node": "naosei",
+   "fase": "Como mitigar",
+   "title": "Instrução",
+   "edges": [
+    "e-pressao-naosei",
+    "e-contexto-naosei"
+   ],
+   "resumo": "Peça no prompt que o modelo responda apenas com base nas fontes e diga “não sei” quando faltar informação. Dar permissão explícita para não responder alivia a pressão de inventar.",
+   "entra": "O prompt com a regra de admitir a dúvida.",
+   "sai": "Mais respostas do tipo “não sei” no lugar de invenções.",
+   "exemplo": "“Se a resposta não estiver nos textos abaixo, diga que não sabe.”",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Prompt de sistema",
+     "Instruções fixas que orientam o comportamento do modelo."
+    ]
+   ],
+   "tecnico": "Instruções de abstenção e de restrição às fontes no prompt. Reduzem o problema, mas o modelo pode descumpri-las."
+  },
+  {
+   "node": "temp",
+   "fase": "Como mitigar",
+   "title": "Temperatura baixa",
+   "edges": [
+    "e-naosei-temp"
+   ],
+   "resumo": "A temperatura controla o quanto o modelo se arrisca ao escolher palavras. Um valor baixo deixa a saída mais previsível e conservadora, o que ajuda em tarefas factuais.",
+   "entra": "A configuração de geração.",
+   "sai": "Respostas mais estáveis e menos criativas.",
+   "termos": [
+    [
+     "Temperatura",
+     "Ajuste que controla a aleatoriedade das respostas."
+    ]
+   ],
+   "tecnico": "Parâmetro de amostragem. Valores baixos concentram a escolha nos tokens mais prováveis, mas isso não impede um erro provável."
+  },
+  {
+   "node": "verifica",
+   "fase": "Como mitigar",
+   "title": "Verificação",
+   "edges": [
+    "e-temp-verifica",
+    "e-raciocinio-verifica"
+   ],
+   "resumo": "Peça as fontes e confira se existem e dizem o que o modelo afirma. Uma pessoa, ou outro modelo, revisa os pontos críticos. Quanto maior o risco, mais importante é essa etapa.",
+   "entra": "A resposta do modelo e suas fontes.",
+   "sai": "Uma resposta conferida, com erros apontados.",
+   "termos": [
+    [
+     "Revisão humana",
+     "Checagem feita por uma pessoa."
+    ],
+    [
+     "Modelo verificador",
+     "Segundo modelo que confere a resposta do primeiro."
+    ]
+   ],
+   "tecnico": "Checagem de citações e de afirmações contra as fontes, por humano ou por um modelo avaliador (LLM-as-judge, Large Language Model como juiz), que também pode errar."
+  },
+  {
+   "node": "residual",
+   "fase": "Como mitigar",
+   "title": "Risco residual",
+   "edges": [
+    "e-verifica-residual"
+   ],
+   "resumo": "Cada camada reduz a chance de alucinação, mas nenhuma a elimina por completo. Por isso, em decisões importantes, trate a saída do modelo como um rascunho a ser conferido.",
+   "entra": "O conjunto de defesas aplicadas.",
+   "sai": "Um risco menor, mas nunca igual a zero.",
+   "termos": [
+    [
+     "Defesa em camadas",
+     "Combinar várias proteções, cada uma cobrindo falhas das outras."
+    ]
+   ],
+   "tecnico": "Não existe eliminação total: as mitigações se combinam e reduzem a taxa de erro, que continua acima de zero e precisa ser medida em avaliações."
+  }
+ ]
+}

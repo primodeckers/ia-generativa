@@ -1,0 +1,211 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver de onde vem o conhecimento, ou pelo 5 para ver como ele é adaptado à nova tarefa.",
+ "steps": [
+  {
+   "node": "dados",
+   "fase": "Origem",
+   "title": "Dados enormes",
+   "edges": [],
+   "resumo": "O ponto de partida é um conjunto de dados muito grande e geral, como milhões de imagens variadas ou uma quantidade imensa de texto. Ele não é feito para a sua tarefa; serve para o modelo aprender o básico do mundo.",
+   "entra": "Imagens ou textos coletados em larga escala.",
+   "sai": "Material de treino geral, pronto para o pré-treino.",
+   "exemplo": "Uma coleção enorme de fotos de objetos do dia a dia.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Conjunto de dados",
+     "Coleção de exemplos usada para treinar um modelo."
+    ],
+    [
+     "Tarefa de origem",
+     "A tarefa geral em que o modelo foi treinado primeiro."
+    ]
+   ],
+   "tecnico": "Corpus amplo e diverso, em geral com rótulos ou com aprendizado autossupervisionado. Quanto mais variado, mais as características aprendidas se generalizam."
+  },
+  {
+   "node": "pre",
+   "fase": "Origem",
+   "title": "Pré-treino",
+   "edges": [
+    "e-dados-pre"
+   ],
+   "resumo": "O modelo é treinado do zero nesse conjunto grande. Nas primeiras camadas ele aprende coisas simples e úteis em muitos problemas, como bordas e texturas em imagens ou regras de gramática em texto. Nas camadas finais, aprende coisas mais específicas.",
+   "entra": "Os dados enormes e gerais.",
+   "sai": "Pesos que guardam o que o modelo aprendeu.",
+   "termos": [
+    [
+     "Pré-treino",
+     "Primeira fase de treino, longa e cara, feita uma vez."
+    ],
+    [
+     "Características",
+     "Padrões úteis que o modelo aprende dos dados."
+    ]
+   ],
+   "tecnico": "Treino em larga escala em que as camadas iniciais capturam características gerais e as finais, características mais ligadas à tarefa de origem. Esse custo é pago uma vez e reaproveitado."
+  },
+  {
+   "node": "modelo",
+   "fase": "Origem",
+   "title": "Modelo pré-treinado",
+   "edges": [
+    "e-pre-modelo"
+   ],
+   "resumo": "O resultado é um modelo pronto, dividido em duas partes: o corpo, que reúne o conhecimento geral, e a cabeça antiga, que dá a resposta da tarefa original. Ele costuma ser publicado para que outras pessoas o reutilizem.",
+   "entra": "Os pesos aprendidos no pré-treino.",
+   "sai": "Um modelo com corpo e cabeça, pronto para ser reaproveitado.",
+   "exemplo": "Um modelo que reconhece mil tipos de objetos em fotos.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Corpo (backbone)",
+     "Parte do modelo que extrai características gerais."
+    ],
+    [
+     "Cabeça",
+     "Camada final que produz a resposta da tarefa."
+    ]
+   ],
+   "tecnico": "Modelo composto por um corpo (backbone) que gera representações e uma cabeça de saída ligada à tarefa original. Costuma ser distribuído em repositórios públicos de modelos."
+  },
+  {
+   "node": "novos",
+   "fase": "Adaptar",
+   "title": "Poucos dados novos",
+   "edges": [],
+   "resumo": "Aqui entra a sua tarefa de verdade, mas com poucos exemplos, o que seria pouco para treinar um modelo do zero. A ideia do transfer learning é justamente usar o conhecimento do modelo pronto para compensar essa falta de dados.",
+   "entra": "Exemplos rotulados da sua tarefa.",
+   "sai": "Um conjunto pequeno de treino, separado também para validação e teste.",
+   "exemplo": "Duzentas fotos de peças de uma fábrica, divididas em defeituosas e boas.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Tarefa nova",
+     "O problema específico que você quer resolver."
+    ],
+    [
+     "Rótulo",
+     "A resposta correta associada a cada exemplo."
+    ]
+   ],
+   "tecnico": "Conjunto pequeno e rotulado do domínio-alvo, dividido em treino, validação e teste antes de qualquer ajuste para permitir uma avaliação honesta."
+  },
+  {
+   "node": "troca",
+   "fase": "Adaptar",
+   "title": "Trocar a cabeça",
+   "edges": [
+    "e-modelo-troca",
+    "e-novos-troca"
+   ],
+   "resumo": "A cabeça antiga é removida e uma nova é colocada no lugar, com o formato da sua tarefa: por exemplo, duas saídas se for separar peças boas de defeituosas. O corpo é mantido, porque as características gerais continuam valendo.",
+   "entra": "O modelo pré-treinado e a definição da nova tarefa.",
+   "sai": "Um modelo com o corpo original e uma cabeça nova, ainda sem treino.",
+   "termos": [
+    [
+     "Cabeça nova",
+     "Camada final criada para a sua tarefa, começando sem treino."
+    ],
+    [
+     "Reaproveitar",
+     "Manter o corpo para não aprender tudo de novo."
+    ]
+   ],
+   "tecnico": "Substituição da camada de saída por outra com o número de classes ou o formato da nova tarefa, com pesos inicializados do zero, enquanto o corpo mantém os pesos pré-treinados."
+  },
+  {
+   "node": "congelar",
+   "fase": "Adaptar",
+   "title": "Opção A: congelar",
+   "edges": [
+    "e-troca-congelar"
+   ],
+   "resumo": "Na extração de características, o corpo fica congelado, ou seja, não muda, e só a cabeça nova é treinada. É rápida, barata, e funciona bem com pouquíssimos dados, porque há poucos pesos para ajustar.",
+   "entra": "Modelo com cabeça nova e os poucos dados novos.",
+   "sai": "Uma cabeça treinada sobre características que não mudaram.",
+   "termos": [
+    [
+     "Congelar",
+     "Impedir que certas camadas sejam atualizadas no treino."
+    ],
+    [
+     "Extração de características",
+     "Usar o corpo apenas para produzir representações."
+    ]
+   ],
+   "tecnico": "Treino apenas dos parâmetros da cabeça, com o corpo em modo de inferência. Tem baixo custo e pouco risco de overfitting, mas as características não se adaptam ao novo domínio."
+  },
+  {
+   "node": "fino",
+   "fase": "Adaptar",
+   "title": "Opção B: ajuste fino",
+   "edges": [
+    "e-troca-fino"
+   ],
+   "resumo": "No ajuste fino, parte das camadas do corpo, ou todas, é descongelada e treinada junto com a cabeça, com uma taxa de aprendizado bem pequena para fazer só correções leves. Rende mais quando a nova tarefa é diferente da original, mas exige mais dados e cuidado. Quando o modelo é grande demais para ajustar inteiro, existe o ajuste fino eficiente, como no workflow de LoRA (Low-Rank Adaptation, adaptação de baixo rank), que treina só pequenos adaptadores.",
+   "entra": "Modelo com cabeça nova e os dados novos.",
+   "sai": "Um modelo cujo corpo foi levemente adaptado à tarefa.",
+   "termos": [
+    [
+     "Ajuste fino (fine-tuning)",
+     "Continuar o treino do modelo pronto na tarefa nova."
+    ],
+    [
+     "Taxa de aprendizado",
+     "Tamanho de cada passo de correção; aqui, bem pequeno."
+    ]
+   ],
+   "tecnico": "Descongelamento parcial ou total do corpo com taxa de aprendizado baixa, muitas vezes menor para as camadas iniciais. Variantes como LoRA treinam apenas adaptadores de poucos parâmetros."
+  },
+  {
+   "node": "aval",
+   "fase": "Conferir",
+   "title": "Avaliar",
+   "edges": [
+    "e-congelar-aval",
+    "e-fino-aval"
+   ],
+   "resumo": "Qualquer que seja a opção, o resultado é testado em dados da nova tarefa que o modelo nunca viu. Vale comparar as duas opções e também um modelo simples de referência, para saber se o reaproveitamento realmente ajudou.",
+   "entra": "O modelo adaptado e os dados de validação e teste.",
+   "sai": "Métricas na nova tarefa, para escolher entre A e B.",
+   "exemplo": "Acerto de 94% nas peças de teste com o ajuste fino contra 88% só com a cabeça.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Dados de teste",
+     "Exemplos separados, nunca usados no treino."
+    ],
+    [
+     "Linha de base",
+     "Modelo simples usado como comparação."
+    ]
+   ],
+   "tecnico": "Avaliação com métricas adequadas à tarefa em validação e teste separados, comparando extração de características, ajuste fino e uma linha de base treinada do zero."
+  },
+  {
+   "node": "cuidados",
+   "fase": "Conferir",
+   "title": "Riscos",
+   "edges": [
+    "e-aval-cuidados"
+   ],
+   "resumo": "Dois riscos pedem atenção. Com o ajuste fino, o modelo pode esquecer o que sabia antes, o chamado esquecimento catastrófico. E, com poucos dados, ele pode decorar os exemplos em vez de aprender, o overfitting. Taxa pequena, poucas épocas e parada antecipada ajudam.",
+   "entra": "Resultados da avaliação, incluindo a diferença entre treino e validação.",
+   "sai": "Decisão sobre qual versão usar e se é preciso ajustar o treino.",
+   "termos": [
+    [
+     "Esquecimento catastrófico",
+     "Perder conhecimento anterior ao treinar na tarefa nova."
+    ],
+    [
+     "Overfitting",
+     "Decorar os exemplos de treino e errar em dados novos."
+    ]
+   ],
+   "tecnico": "Mitigação com taxa de aprendizado baixa, congelamento parcial, regularização, aumento de dados e parada antecipada com base na validação. Uma grande distância entre treino e validação indica overfitting."
+  }
+ ]
+}

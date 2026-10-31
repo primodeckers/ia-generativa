@@ -1,0 +1,277 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para seguir um pedido até a resposta, ou pelo 8 para ver o papel do hardware.",
+ "steps": [
+  {
+   "node": "users",
+   "fase": "Entrada",
+   "title": "Usuários",
+   "edges": [],
+   "resumo": "O ponto de partida: muitas pessoas e aplicativos enviando prompts ao mesmo tempo para o mesmo modelo. Servir um Large Language Model (LLM, modelo de linguagem de grande escala) é, antes de tudo, atender todos eles de forma eficiente.",
+   "entra": "Prompts de diferentes usuários, chegando a qualquer momento.",
+   "sai": "Pedidos de geração de texto.",
+   "exemplo": "Um chat atende muitos usuários ao mesmo tempo, cada um com um prompt de tamanho diferente.",
+   "termos": [
+    [
+     "Requisição",
+     "Um pedido de geração enviado ao servidor."
+    ],
+    [
+     "Inferência",
+     "Uso do modelo já treinado para gerar respostas."
+    ]
+   ],
+   "tecnico": "Cada requisição traz um prompt e parâmetros de geração, como o número máximo de tokens. As requisições chegam em momentos e tamanhos diferentes."
+  },
+  {
+   "node": "api",
+   "fase": "Entrada",
+   "title": "API e balanceador",
+   "edges": [
+    "e-users-api"
+   ],
+   "resumo": "A porta de entrada. A API (Application Programming Interface, interface de programação de aplicações) recebe os pedidos e o balanceador de carga os distribui entre as réplicas do servidor de inferência, para que nenhuma fique sobrecarregada.",
+   "entra": "Pedidos dos usuários.",
+   "sai": "Pedidos encaminhados a uma réplica do servidor.",
+   "termos": [
+    [
+     "API",
+     "Application Programming Interface (interface de programação de aplicações): interface pela qual os aplicativos enviam pedidos ao serviço."
+    ],
+    [
+     "Balanceador de carga",
+     "Componente que reparte os pedidos entre várias réplicas."
+    ]
+   ],
+   "tecnico": "Camada de rede que autentica, valida e roteia as requisições para réplicas do servidor, cada uma com sua cópia do modelo."
+  },
+  {
+   "node": "queue",
+   "fase": "Entrada",
+   "title": "Fila de requisições",
+   "edges": [
+    "e-api-queue"
+   ],
+   "resumo": "Quando chegam mais pedidos do que o servidor consegue processar de uma vez, eles esperam na fila. O agendador escolhe quais entram a seguir.",
+   "entra": "Pedidos encaminhados pela API.",
+   "sai": "Pedidos aguardando atendimento, na ordem definida pela política.",
+   "termos": [
+    [
+     "Fila",
+     "Lista de pedidos esperando sua vez."
+    ],
+    [
+     "Tempo de espera",
+     "Quanto o pedido aguarda na fila antes de ser processado."
+    ]
+   ],
+   "tecnico": "A fila fica à frente do agendador. Seu tamanho e a política de ordenação influenciam diretamente a latência percebida pelo usuário."
+  },
+  {
+   "node": "sched",
+   "fase": "Servidor de inferência",
+   "title": "Agendador",
+   "edges": [
+    "e-queue-sched"
+   ],
+   "resumo": "Monta o lote de trabalho. Com o batching contínuo, novas requisições entram no lote a cada passo de geração, sem esperar o lote inteiro terminar. Assim a GPU (Graphics Processing Unit, unidade de processamento gráfico) quase nunca fica ociosa.",
+   "entra": "Pedidos da fila e o espaço livre disponível na memória.",
+   "sai": "O lote atual de requisições, com novas entradas a cada passo.",
+   "exemplo": "Quando uma resposta curta termina, seu lugar no lote é ocupado de imediato por um pedido que estava esperando.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Lote (batch)",
+     "Conjunto de requisições processadas juntas."
+    ],
+    [
+     "Batching contínuo",
+     "Entrada e saída de requisições do lote a cada passo, sem esperar o lote terminar."
+    ]
+   ],
+   "tecnico": "O scheduler decide a cada iteração quais requisições rodam. Lotes maiores aumentam a vazão, mas podem aumentar a latência de cada pedido: é o dilema entre latência e vazão."
+  },
+  {
+   "node": "prefill",
+   "fase": "Servidor de inferência",
+   "title": "Prefill",
+   "edges": [
+    "e-sched-prefill"
+   ],
+   "resumo": "A primeira fase de cada pedido: o modelo lê o prompt inteiro de uma só vez. Como todas as palavras são processadas em paralelo, esta fase aproveita bem a capacidade de cálculo da GPU.",
+   "entra": "O prompt de uma requisição recém-admitida no lote.",
+   "sai": "O KV cache (Key-Value cache, cache de chaves e valores) do prompt e o primeiro token a ser gerado.",
+   "termos": [
+    [
+     "Prefill",
+     "Fase que processa todo o prompt de uma vez."
+    ],
+    [
+     "KV cache",
+     "Key-Value cache (cache de chaves e valores): memória das chaves e valores já calculados, para não refazer o trabalho."
+    ]
+   ],
+   "tecnico": "Passada paralela sobre todos os tokens do prompt que preenche o KV cache. Quanto maior o prompt, mais longa a fase, e ela determina em boa parte o tempo até o primeiro token. Veja o workflow “kv-cache”."
+  },
+  {
+   "node": "decode",
+   "fase": "Servidor de inferência",
+   "title": "Decode",
+   "edges": [
+    "e-prefill-decode",
+    "e-gpu-decode"
+   ],
+   "resumo": "Depois do prefill, o modelo gera a resposta um token por vez. Cada novo token reaproveita o KV cache dos anteriores em vez de recalcular tudo, e vários pedidos do lote avançam juntos.",
+   "entra": "O KV cache e o último token gerado de cada requisição do lote.",
+   "sai": "Um novo token por requisição, a cada passo.",
+   "termos": [
+    [
+     "Decode",
+     "Fase que gera a resposta token a token."
+    ],
+    [
+     "Geração autorregressiva",
+     "Cada token depende de todos os anteriores."
+    ]
+   ],
+   "tecnico": "Cada passo gera um token por requisição ativa e acrescenta uma entrada ao KV cache (Key-Value cache, cache de chaves e valores). É a fase mais limitada pela largura de banda da memória, pois os pesos e o cache são lidos a cada passo."
+  },
+  {
+   "node": "paged",
+   "fase": "Servidor de inferência",
+   "title": "KV cache paginado",
+   "edges": [
+    "e-decode-paged"
+   ],
+   "resumo": "O KV cache cresce a cada token, e o tamanho final de cada resposta é desconhecido. A PagedAttention divide o cache em páginas pequenas, alocadas conforme necessário, o que reduz o desperdício de memória.",
+   "entra": "As chaves e valores de novos tokens.",
+   "sai": "Páginas de memória alocadas por requisição.",
+   "termos": [
+    [
+     "PagedAttention",
+     "Técnica que guarda o KV cache em páginas, como a memória de um sistema operacional."
+    ],
+    [
+     "Fragmentação",
+     "Memória reservada que acaba sem uso."
+    ],
+    [
+     "KV cache",
+     "Key-Value cache (cache de chaves e valores): memória das chaves e valores já calculados."
+    ]
+   ],
+   "tecnico": "Blocos de tamanho fixo mapeados por uma tabela de páginas, sem exigir memória contígua nem reserva antecipada do tamanho máximo. Libera mais espaço para outras requisições no lote."
+  },
+  {
+   "node": "quant",
+   "fase": "Hardware",
+   "title": "Quantização",
+   "edges": [],
+   "resumo": "Guarda os números do modelo com menos precisão, o que reduz o espaço ocupado e pode acelerar a geração. Assim o modelo cabe em menos memória, ou em menos GPUs. Há uma pequena troca possível em qualidade.",
+   "entra": "Pesos do modelo em alta precisão.",
+   "sai": "Pesos em formato compacto, de menor precisão.",
+   "termos": [
+    [
+     "Quantização",
+     "Representar números com menos bits."
+    ],
+    [
+     "Pesos",
+     "Os números aprendidos que formam o modelo."
+    ]
+   ],
+   "tecnico": "Conversão dos pesos (e, em alguns casos, do KV cache (Key-Value cache, cache de chaves e valores)) para formatos de menor precisão, como 8 ou 4 bits. Reduz a memória lida a cada passo. Veja o workflow “quantizacao”."
+  },
+  {
+   "node": "tp",
+   "fase": "Hardware",
+   "title": "Paralelismo de tensor",
+   "edges": [
+    "e-quant-tp"
+   ],
+   "resumo": "Quando o modelo não cabe em uma só GPU, suas camadas são divididas entre várias. Cada GPU calcula uma parte do trabalho, e elas trocam resultados ao longo do caminho.",
+   "entra": "O modelo, já compactado ou não.",
+   "sai": "Partes do modelo distribuídas entre as GPUs.",
+   "termos": [
+    [
+     "Paralelismo de tensor",
+     "Dividir as matrizes de uma camada entre várias GPUs."
+    ],
+    [
+     "Comunicação entre GPUs",
+     "Troca de resultados parciais entre elas."
+    ]
+   ],
+   "tecnico": "Cada matriz de pesos é particionada entre dispositivos, com sincronização entre eles a cada camada. Depende de conexões rápidas entre as GPUs (unidades de processamento gráfico)."
+  },
+  {
+   "node": "gpu",
+   "fase": "Hardware",
+   "title": "GPU",
+   "edges": [
+    "e-tp-gpu",
+    "e-paged-gpu"
+   ],
+   "resumo": "É onde os cálculos acontecem. Na geração, o limite costuma ser a memória da GPU: ela guarda os pesos e o KV cache, e a velocidade com que lê esses dados define o ritmo.",
+   "entra": "Pesos do modelo e páginas do KV cache.",
+   "sai": "Os cálculos de cada passo, devolvidos ao servidor.",
+   "termos": [
+    [
+     "GPU",
+     "Graphics Processing Unit (unidade de processamento gráfico): processador feito para muitos cálculos em paralelo."
+    ],
+    [
+     "Largura de banda de memória",
+     "Velocidade com que a GPU lê seus dados."
+    ]
+   ],
+   "tecnico": "A geração é limitada principalmente por memória (capacidade e largura de banda), mais do que por cálculo. Por isso quantização e KV cache (Key-Value cache) paginado ajudam tanto."
+  },
+  {
+   "node": "stream",
+   "fase": "Entrada",
+   "title": "Streaming",
+   "edges": [
+    "e-decode-stream",
+    "e-stream-users"
+   ],
+   "resumo": "Cada token gerado é enviado ao usuário assim que fica pronto, em vez de esperar a resposta completa. Por isso a resposta aparece “digitando” na tela.",
+   "entra": "Tokens gerados pelo decode.",
+   "sai": "Texto chegando aos poucos ao usuário.",
+   "termos": [
+    [
+     "Streaming",
+     "Envio da resposta em partes, conforme ela é gerada."
+    ],
+    [
+     "Token",
+     "Pedaço de texto gerado a cada passo."
+    ]
+   ],
+   "tecnico": "Normalmente feito com Server-Sent Events (SSE, eventos enviados pelo servidor) ou conexões persistentes. O usuário percebe a espera até o primeiro token, não até o fim da resposta."
+  },
+  {
+   "node": "metrics",
+   "fase": "Entrada",
+   "title": "Métricas",
+   "edges": [
+    "e-stream-metrics"
+   ],
+   "resumo": "Três medidas resumem o desempenho: a latência até o primeiro token, os tokens por segundo de cada usuário e a vazão total do servidor. Melhorar uma costuma custar outra.",
+   "entra": "Tempos medidos durante o atendimento.",
+   "sai": "Indicadores para ajustar o servidor.",
+   "termos": [
+    [
+     "Latência até o primeiro token",
+     "Tempo entre o pedido e o início da resposta."
+    ],
+    [
+     "Vazão",
+     "Total de tokens que o servidor entrega por segundo, somando todos os usuários."
+    ]
+   ],
+   "tecnico": "Lotes maiores elevam a vazão total, mas podem aumentar a latência de cada pedido. O ajuste do tamanho do lote equilibra experiência individual e custo por token."
+  }
+ ]
+}

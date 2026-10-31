@@ -1,0 +1,339 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver quem participa e pelo 9 para seguir uma chamada de tool do começo ao fim.",
+ "steps": [
+  {
+   "node": "user",
+   "fase": "Aplicação",
+   "title": "Usuário",
+   "edges": [],
+   "resumo": "Tudo começa com uma pessoa pedindo algo a uma aplicação com Inteligência Artificial (IA). O MCP (Model Context Protocol, protocolo de contexto de modelo) existe para que esse pedido possa usar ferramentas e dados externos sem que cada aplicação precise de uma integração própria para cada um deles.",
+   "entra": "Um pedido em linguagem natural.",
+   "sai": "O pedido, entregue à aplicação.",
+   "exemplo": "Pergunte à sua assistente quais são os próximos eventos da agenda.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "MCP",
+     "Model Context Protocol (protocolo de contexto de modelo): protocolo aberto, criado pela Anthropic, que padroniza a ligação entre aplicações com modelos de linguagem e ferramentas ou dados."
+    ],
+    [
+     "LLM",
+     "Large Language Model (modelo de linguagem de grande escala): modelo que entende o pedido e gera respostas."
+    ]
+   ],
+   "tecnico": "Sem um padrão, cada aplicação precisaria de uma integração própria para cada ferramenta. O MCP troca isso por uma interface comum."
+  },
+  {
+   "node": "host",
+   "fase": "Aplicação",
+   "title": "Aplicação com LLM",
+   "edges": [
+    "e-user-host"
+   ],
+   "resumo": "É a aplicação que a pessoa usa e que contém o modelo de linguagem, chamada de host. Ela coordena a conversa e decide quais servidores MCP estarão disponíveis.",
+   "entra": "O pedido do usuário.",
+   "sai": "A conversa com o modelo e as conexões com servidores MCP.",
+   "termos": [
+    [
+     "LLM",
+     "Large Language Model (modelo de linguagem de grande escala): o modelo que a aplicação hospeda."
+    ],
+    [
+     "Host",
+     "A aplicação com LLM que hospeda e controla as conexões MCP."
+    ],
+    [
+     "Ferramenta",
+     "Algo que o modelo pode acionar para agir fora do texto."
+    ]
+   ],
+   "tecnico": "O host gerencia o ciclo de vida das conexões e mantém o contexto da conversa enviado ao modelo."
+  },
+  {
+   "node": "client",
+   "fase": "Aplicação",
+   "title": "Cliente MCP",
+   "edges": [
+    "e-host-client"
+   ],
+   "resumo": "Para cada servidor ao qual a aplicação se conecta, ela cria um cliente MCP. O cliente é quem fala o protocolo com aquele servidor, mantendo uma conexão própria com ele.",
+   "entra": "Ordem do host para conectar a um servidor.",
+   "sai": "Uma conexão MCP dedicada a um servidor.",
+   "termos": [
+    [
+     "MCP",
+     "Model Context Protocol (protocolo de contexto de modelo): protocolo que padroniza a ligação entre aplicações e servidores."
+    ],
+    [
+     "Cliente MCP",
+     "Parte do host que conversa com um único servidor."
+    ],
+    [
+     "Conexão",
+     "Canal de troca de mensagens entre cliente e servidor."
+    ]
+   ],
+   "tecnico": "As mensagens seguem JSON-RPC 2.0 (JavaScript Object Notation – Remote Procedure Call, chamada de procedimento remoto em JSON). O transporte pode ser local, por stdio (standard input/output, entrada e saída padrão), ou remoto, por HTTP (Hypertext Transfer Protocol, protocolo de transferência de hipertexto)."
+  },
+  {
+   "node": "init",
+   "fase": "Uma chamada",
+   "title": "Descoberta",
+   "edges": [
+    "e-client-init",
+    "e-init-srv"
+   ],
+   "resumo": "Ao conectar, cliente e servidor se apresentam e combinam o que cada um suporta. Em seguida o cliente pede a lista do que o servidor oferece, para que o modelo saiba quais ferramentas existem.",
+   "entra": "Conexão aberta com o servidor.",
+   "sai": "Lista das capacidades disponíveis, como as tools.",
+   "exemplo": "O servidor responde que oferece uma tool de buscar eventos e outra de criar eventos.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Inicialização",
+     "Troca inicial em que cliente e servidor declaram suas capacidades."
+    ],
+    [
+     "Descoberta",
+     "Consulta do cliente sobre as tools que o servidor oferece."
+    ]
+   ],
+   "tecnico": "A inicialização usa a mensagem initialize; depois o cliente lista as tools, por exemplo com tools/list."
+  },
+  {
+   "node": "srv",
+   "fase": "Servidor",
+   "title": "Servidor MCP",
+   "edges": [
+    "e-init-srv"
+   ],
+   "resumo": "É um programa que expõe capacidades por meio do protocolo. Ele fica entre a aplicação e as fontes reais, traduzindo pedidos padronizados em ações sobre APIs (Application Programming Interface, interface de programação de aplicações), arquivos ou bancos de dados.",
+   "entra": "Mensagens do cliente.",
+   "sai": "Capacidades expostas e respostas padronizadas.",
+   "termos": [
+    [
+     "MCP",
+     "Model Context Protocol (protocolo de contexto de modelo): protocolo que padroniza a ligação entre aplicações e servidores."
+    ],
+    [
+     "Servidor MCP",
+     "Programa que expõe tools, resources e prompts por meio do MCP."
+    ]
+   ],
+   "tecnico": "Um mesmo servidor serve qualquer cliente MCP, o que evita reescrever a integração para cada aplicação."
+  },
+  {
+   "node": "tools",
+   "fase": "Servidor",
+   "title": "Tools",
+   "edges": [
+    "e-srv-tools"
+   ],
+   "resumo": "São ações que o modelo pode pedir ao servidor, como buscar algo, criar um registro ou enviar uma mensagem. Cada tool tem nome e descrição, para que o modelo entenda quando usá-la.",
+   "entra": "Uma chamada de tool com seus argumentos.",
+   "sai": "O resultado da ação.",
+   "exemplo": "Uma tool chamada buscar_eventos que recebe um intervalo de datas.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Tool",
+     "Ação que o servidor oferece e o modelo pode acionar."
+    ],
+    [
+     "Argumentos",
+     "Valores que a tool recebe para executar."
+    ]
+   ],
+   "tecnico": "Cada tool é descrita com nome, descrição e um esquema de entrada em JSON Schema (esquema em JSON, JavaScript Object Notation)."
+  },
+  {
+   "node": "resources",
+   "fase": "Servidor",
+   "title": "Resources",
+   "edges": [],
+   "resumo": "São dados e contexto que o servidor pode fornecer, como o conteúdo de um arquivo ou de uma tabela. Servem para dar ao modelo informação para ler, em vez de uma ação para executar.",
+   "entra": "Pedido de leitura de um dado.",
+   "sai": "Conteúdo para ser usado como contexto.",
+   "exemplo": "O texto de um arquivo de anotações do projeto.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Resource",
+     "Dado ou contexto que o servidor disponibiliza para leitura."
+    ],
+    [
+     "Contexto",
+     "Informação extra que o modelo considera ao responder."
+    ]
+   ],
+   "tecnico": "Cada resource é identificado por um URI (Uniform Resource Identifier, identificador uniforme de recurso) e pode ser lido pelo cliente."
+  },
+  {
+   "node": "prompts",
+   "fase": "Servidor",
+   "title": "Prompts",
+   "edges": [],
+   "resumo": "São modelos de instrução prontos que o servidor oferece, para tarefas que se repetem. Ajudam a pessoa ou a aplicação a pedir algo do jeito certo, sem escrever tudo do zero.",
+   "entra": "Escolha de um modelo e seus parâmetros.",
+   "sai": "Uma instrução pronta para ser enviada ao modelo.",
+   "exemplo": "Um modelo chamado resumir_reunião que recebe a data da reunião.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Prompt",
+     "Modelo de instrução reutilizável oferecido pelo servidor."
+    ],
+    [
+     "Parâmetro",
+     "Valor que preenche uma parte do modelo."
+    ]
+   ],
+   "tecnico": "Prompts são modelos parametrizáveis que o servidor lista e o cliente solicita pelo nome."
+  },
+  {
+   "node": "decide",
+   "fase": "Uma chamada",
+   "title": "LLM decide",
+   "edges": [
+    "e-init-decide"
+   ],
+   "resumo": "Com a lista de ferramentas em mãos, o modelo lê o pedido e decide se precisa de alguma delas. Se precisar, escolhe qual e com quais argumentos.",
+   "entra": "Pedido do usuário e lista de tools.",
+   "sai": "A escolha de uma tool e dos seus argumentos.",
+   "exemplo": "Para o pedido da agenda, o modelo escolhe buscar_eventos com o intervalo da semana.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "LLM",
+     "Large Language Model (modelo de linguagem de grande escala): o modelo que decide o que fazer."
+    ],
+    [
+     "Argumentos",
+     "Valores que o modelo informa para a tool, como datas ou nomes."
+    ],
+    [
+     "Raciocínio",
+     "Decisão do modelo sobre o que fazer a seguir."
+    ]
+   ],
+   "tecnico": "O modelo recebe as descrições das tools no contexto e emite uma chamada estruturada de tool, em vez de texto comum."
+  },
+  {
+   "node": "approve",
+   "fase": "Uma chamada",
+   "title": "Aprovação",
+   "edges": [
+    "e-decide-approve"
+   ],
+   "resumo": "Antes de executar, a aplicação pode pedir a confirmação da pessoa, principalmente para ações com efeito real. Quando a ação é segura, a aplicação pode seguir sem perguntar.",
+   "entra": "A chamada de tool proposta pelo modelo.",
+   "sai": "Autorização para executar, ou recusa.",
+   "exemplo": "Pedir confirmação antes de enviar um e-mail, mas não antes de ler a agenda.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Aprovação",
+     "Confirmação humana ou da aplicação antes de agir."
+    ],
+    [
+     "Efeito colateral",
+     "Mudança no mundo real causada por uma ação."
+    ]
+   ],
+   "tecnico": "A decisão de pedir aprovação cabe à aplicação host; o protocolo não obriga um único comportamento."
+  },
+  {
+   "node": "call",
+   "fase": "Uma chamada",
+   "title": "Chamada",
+   "edges": [
+    "e-approve-call"
+   ],
+   "resumo": "Com a autorização, o cliente MCP envia ao servidor a requisição para executar a tool, com o nome e os argumentos escolhidos pelo modelo.",
+   "entra": "Tool aprovada e seus argumentos.",
+   "sai": "Uma requisição enviada ao servidor.",
+   "termos": [
+    [
+     "Requisição",
+     "Mensagem que pede ao servidor para fazer algo."
+    ],
+    [
+     "JSON-RPC",
+     "JavaScript Object Notation – Remote Procedure Call (chamada de procedimento remoto): formato de mensagens em JSON para chamar operações remotas."
+    ]
+   ],
+   "tecnico": "A chamada é uma mensagem JSON-RPC 2.0, como tools/call, enviada pelo transporte (stdio, entrada e saída padrão, ou HTTP, protocolo de transferência de hipertexto)."
+  },
+  {
+   "node": "exec",
+   "fase": "Servidor",
+   "title": "Execução",
+   "edges": [
+    "e-call-exec"
+   ],
+   "resumo": "O servidor recebe a requisição e executa a tool de verdade. É aqui que ele acessa a API (interface de programação de aplicações), o arquivo ou o banco de dados necessário e monta o resultado.",
+   "entra": "Requisição com nome da tool e argumentos.",
+   "sai": "O resultado da tool, em formato padronizado.",
+   "termos": [
+    [
+     "Execução",
+     "O servidor realizando a ação pedida."
+    ],
+    [
+     "Resultado",
+     "Resposta devolvida ao cliente."
+    ]
+   ],
+   "tecnico": "O servidor valida os argumentos, executa a lógica da tool e responde com uma mensagem JSON-RPC (JavaScript Object Notation – Remote Procedure Call) contendo o conteúdo do resultado ou um erro."
+  },
+  {
+   "node": "sources",
+   "fase": "Servidor",
+   "title": "Fontes reais",
+   "edges": [
+    "e-exec-sources"
+   ],
+   "resumo": "São os sistemas onde estão de fato os dados e as ações: APIs, arquivos e bancos de dados. O servidor MCP faz a ponte entre eles e o padrão do protocolo.",
+   "entra": "Consultas e comandos do servidor.",
+   "sai": "Dados ou confirmações dos sistemas reais.",
+   "termos": [
+    [
+     "API",
+     "Application Programming Interface (interface de programação de aplicações): interface de um serviço que permite pedir dados ou ações."
+    ],
+    [
+     "Banco de dados",
+     "Sistema que guarda dados de forma organizada."
+    ]
+   ],
+   "tecnico": "O acesso às fontes usa as credenciais e os protocolos próprios de cada sistema, ocultos atrás do servidor MCP (Model Context Protocol, protocolo de contexto de modelo)."
+  },
+  {
+   "node": "result",
+   "fase": "Uma chamada",
+   "title": "Resultado",
+   "edges": [
+    "e-exec-result",
+    "e-result-host"
+   ],
+   "resumo": "O resultado volta pelo cliente até o modelo, que o usa para escrever a resposta final. Se precisar de mais informação, o modelo pode decidir chamar outra tool, repetindo o ciclo.",
+   "entra": "Resultado devolvido pelo servidor.",
+   "sai": "A resposta final ao usuário, montada pelo modelo.",
+   "exemplo": "O modelo responde com os eventos da semana, listados em ordem.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Retorno",
+     "Volta do resultado ao modelo, que o aproveita na resposta."
+    ],
+    [
+     "Ciclo",
+     "Repetição de decidir, chamar e receber, se necessário."
+    ]
+   ],
+   "tecnico": "O cliente entrega o resultado ao host, que o inclui no contexto do modelo para gerar a resposta."
+  }
+ ]
+}

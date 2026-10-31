@@ -1,0 +1,143 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver de onde o viés vem, ou pelo 4 para ver como ele é medido.",
+ "steps": [
+  {
+   "node": "hist",
+   "fase": "De onde vem",
+   "title": "Dados históricos",
+   "edges": [],
+   "resumo": "Aqui, “viés” significa tratamento injusto de grupos de pessoas, e não o viés estatístico do workflow sobre viés e variância. O ponto de partida são os dados do passado, que carregam as desigualdades e as decisões do mundo real em que foram gerados.",
+   "entra": "Registros de decisões anteriores feitas por pessoas ou sistemas.",
+   "sai": "Um conjunto de dados que pode refletir desigualdades antigas.",
+   "exemplo": "Em uma triagem de currículos, os dados mostram que, no passado, certos grupos foram contratados com menos frequência.",
+   "ilustrativo": true,
+   "termos": [
+    ["Viés (neste workflow)", "Tratamento injusto de grupos de pessoas pelo modelo."],
+    ["Dados históricos", "Registros do passado usados para treinar o modelo."]
+   ],
+   "tecnico": "Rótulos derivados de decisões históricas incorporam o viés dessas decisões, e o modelo é treinado para imitá-las."
+  },
+  {
+   "node": "amostra",
+   "fase": "De onde vem",
+   "title": "Amostra e rótulos",
+   "edges": ["e-hist-amostra"],
+   "resumo": "Alguns grupos podem aparecer pouco nos dados, e então o modelo aprende menos sobre eles. Além disso, os rótulos, isto é, as respostas “certas” usadas no treino, às vezes dependem de julgamento subjetivo de quem os atribuiu.",
+   "entra": "Os dados históricos coletados.",
+   "sai": "Dados de treino com grupos sub-representados e rótulos que podem ser subjetivos.",
+   "exemplo": "Poucos currículos de um grupo no treino, e a nota “bom candidato” dada de forma subjetiva pelos recrutadores.",
+   "ilustrativo": true,
+   "termos": [
+    ["Sub-representação", "Quando um grupo aparece muito pouco nos dados."],
+    ["Rótulo", "A resposta esperada associada a cada exemplo de treino."]
+   ],
+   "tecnico": "Viés de amostragem e viés de rotulagem: a distribuição dos dados de treino difere da população e os rótulos refletem critérios humanos subjetivos."
+  },
+  {
+   "node": "proxy",
+   "fase": "De onde vem",
+   "title": "Variáveis proxy",
+   "edges": ["e-amostra-proxy"],
+   "resumo": "Mesmo sem usar uma característica sensível, como raça ou gênero, outras variáveis podem funcionar como substitutas dela. O modelo aprende esse padrão e passa a reproduzir a desigualdade de forma indireta.",
+   "entra": "As variáveis de entrada do modelo, como CEP (Código de Endereçamento Postal), escola ou histórico.",
+   "sai": "Um modelo que aprende o padrão dos dados, incluindo as desigualdades.",
+   "exemplo": "O CEP pode funcionar como proxy da origem de uma pessoa, e o modelo passa a usá-lo para decidir.",
+   "ilustrativo": true,
+   "termos": [
+    ["Proxy", "Variável que substitui indiretamente outra, como o CEP para origem."],
+    ["Atributo sensível", "Característica protegida, como raça, gênero ou idade."]
+   ],
+   "tecnico": "Variáveis correlacionadas com atributos sensíveis permitem que o modelo os reconstrua, mesmo que esses atributos tenham sido removidos dos dados."
+  },
+  {
+   "node": "grupos",
+   "fase": "Como medir",
+   "title": "Comparar por grupo",
+   "edges": ["e-proxy-grupos"],
+   "resumo": "Para saber se o modelo é justo, é preciso olhar além da média geral. Compara-se o desempenho e as decisões entre grupos, como a taxa de erro e a taxa de aprovação de cada um.",
+   "entra": "As previsões do modelo e o grupo de cada pessoa.",
+   "sai": "Métricas separadas por grupo.",
+   "exemplo": "O modelo aprova 40% dos pedidos de um grupo e 25% de outro, com taxas de erro diferentes.",
+   "ilustrativo": true,
+   "termos": [
+    ["Taxa de erro", "Proporção de decisões erradas dentro de um grupo."],
+    ["Taxa de aprovação", "Proporção de pessoas do grupo que recebem decisão favorável."]
+   ],
+   "tecnico": "Avaliação desagregada: as métricas de desempenho e a taxa de decisões positivas são calculadas para cada subgrupo, e não apenas para o conjunto inteiro."
+  },
+  {
+   "node": "criterios",
+   "fase": "Como medir",
+   "title": "Critérios de justiça",
+   "edges": ["e-grupos-criterios"],
+   "resumo": "Existem várias definições de justiça. Uma delas é a paridade de resultados, em que os grupos têm taxas parecidas de decisões favoráveis. Outra é a igualdade de oportunidades, em que pessoas qualificadas têm chances iguais. Elas podem entrar em conflito, então é preciso escolher conforme o contexto.",
+   "entra": "As métricas por grupo.",
+   "sai": "Um critério de justiça escolhido para o caso de uso.",
+   "termos": [
+    ["Paridade de resultados", "Os grupos recebem decisões favoráveis em taxas parecidas."],
+    ["Igualdade de oportunidades", "Quem é qualificado tem a mesma chance de ser aprovado, qualquer que seja o grupo."]
+   ],
+   "tecnico": "Critérios como paridade demográfica e igualdade de oportunidades são, em geral, incompatíveis quando as taxas-base diferem entre grupos, o que torna a escolha uma decisão de contexto."
+  },
+  {
+   "node": "antes",
+   "fase": "Como mitigar",
+   "title": "Antes do treino",
+   "edges": ["e-criterios-antes"],
+   "resumo": "A primeira frente age nos dados. Revisam-se a coleta e os rótulos, e balanceia-se a presença dos grupos, por exemplo coletando mais exemplos dos grupos sub-representados ou dando mais peso a eles.",
+   "entra": "O critério de justiça escolhido e os dados de treino.",
+   "sai": "Dados revisados e mais equilibrados.",
+   "termos": [
+    ["Balanceamento", "Ajuste para que os grupos tenham presença mais equilibrada nos dados."],
+    ["Pré-processamento", "Tratamento dos dados antes do treino."]
+   ],
+   "tecnico": "Intervenções de pré-processamento: reamostragem, reponderação de exemplos e revisão de rótulos e variáveis proxy."
+  },
+  {
+   "node": "durante",
+   "fase": "Como mitigar",
+   "title": "Durante o treino",
+   "edges": ["e-antes-durante"],
+   "resumo": "A segunda frente age no próprio treino. O modelo é treinado com restrições ou com um termo de regularização que penaliza diferenças injustas entre grupos, buscando equilibrar acerto e justiça.",
+   "entra": "Os dados preparados e a meta de justiça.",
+   "sai": "Um modelo treinado com a justiça como parte do objetivo.",
+   "termos": [
+    ["Restrição de justiça", "Regra que limita a diferença permitida entre grupos."],
+    ["Regularização", "Penalidade que orienta o modelo durante o treino."]
+   ],
+   "tecnico": "Treino com restrições de justiça ou com regularização por justiça adicionada à função de perda, geralmente com algum custo em desempenho."
+  },
+  {
+   "node": "depois",
+   "fase": "Como mitigar",
+   "title": "Depois do treino",
+   "edges": ["e-durante-depois"],
+   "resumo": "A terceira frente age sobre as decisões do modelo já treinado. Podem-se ajustar os limiares de decisão por grupo e incluir revisão humana nos casos mais delicados ou incertos.",
+   "entra": "As pontuações do modelo treinado.",
+   "sai": "Decisões finais ajustadas, com revisão humana quando necessário.",
+   "exemplo": "Casos próximos do limite de aprovação são encaminhados para uma pessoa revisar.",
+   "ilustrativo": true,
+   "termos": [
+    ["Limiar", "Valor de corte da pontuação a partir do qual se aprova."],
+    ["Revisão humana", "Uma pessoa confere a decisão antes de ela valer."]
+   ],
+   "tecnico": "Pós-processamento: limiares de decisão ajustados por grupo e encaminhamento de casos de baixa confiança para revisão humana."
+  },
+  {
+   "node": "monitor",
+   "fase": "Como medir",
+   "title": "Monitorar e documentar",
+   "edges": ["e-depois-monitor"],
+   "resumo": "Depois que o modelo entra em uso, a justiça continua sendo medida, porque os dados e o público mudam com o tempo. Também se documenta o que foi feito e quais são os limites do modelo. Mitigar tem custo, e não existe modelo sem viés: o objetivo é conhecer, reduzir e controlar o problema.",
+   "entra": "As decisões do modelo em produção.",
+   "sai": "Alertas, relatórios e documentação sobre o comportamento do modelo.",
+   "termos": [
+    ["Model card", "Documento que descreve uso, dados, desempenho e limites do modelo."],
+    ["Monitoramento", "Acompanhamento contínuo do modelo depois de colocado em uso."]
+   ],
+   "tecnico": "Monitoramento contínuo das métricas por grupo em produção, com detecção de drift, e documentação por meio de model cards e registros de decisões de projeto."
+  }
+ ]
+}

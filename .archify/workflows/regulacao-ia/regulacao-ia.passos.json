@@ -1,0 +1,312 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver a regulação por risco, pelo 7 para os direitos autorais ou pelo 10 para o que fazer na prática.",
+ "steps": [
+  {
+   "node": "classificar",
+   "fase": "Regulação por risco",
+   "title": "Classificar risco",
+   "edges": [],
+   "resumo": "Este é um panorama conceitual, não aconselhamento jurídico; as regras variam por país e mudam com o tempo. Uma ideia comum de regulação, presente por exemplo no AI Act (Artificial Intelligence Act, Lei de Inteligência Artificial) da União Europeia, é classificar cada sistema de Inteligência Artificial (IA) pelo risco que o seu uso representa. Quanto maior o risco, mais exigências. Há também regras específicas para modelos de uso geral.",
+   "entra": "A descrição do que o sistema faz e em que contexto é usado.",
+   "sai": "Um nível de risco, que define quais obrigações se aplicam.",
+   "termos": [
+    [
+     "Abordagem baseada em risco",
+     "Regras mais fortes para usos com maior potencial de dano."
+    ],
+    [
+     "Modelo de uso geral",
+     "Modelo amplo, usado em muitas tarefas, que também tem regras próprias."
+    ]
+   ],
+   "tecnico": "A classificação depende da finalidade e do contexto de uso do sistema, e não apenas da tecnologia empregada."
+  },
+  {
+   "node": "inaceitavel",
+   "fase": "Regulação por risco",
+   "title": "Risco inaceitável",
+   "edges": [
+    "e-class-inac"
+   ],
+   "resumo": "No nível mais alto ficam usos considerados incompatíveis com direitos e valores básicos. Nesses casos a regra não é cumprir exigências extras: é a proibição da prática.",
+   "entra": "Sistemas classificados no nível mais grave.",
+   "sai": "Prática proibida, que não pode ser colocada em uso.",
+   "termos": [
+    [
+     "Prática proibida",
+     "Uso de IA que a lei veda por completo."
+    ],
+    [
+     "Direitos fundamentais",
+     "Direitos básicos das pessoas, que a regulação busca proteger."
+    ]
+   ],
+   "tecnico": "Nesse nível a consequência é a vedação do uso, e não um conjunto de controles de conformidade."
+  },
+  {
+   "node": "alto",
+   "fase": "Regulação por risco",
+   "title": "Alto risco",
+   "edges": [
+    "e-inac-alto"
+   ],
+   "resumo": "Usos que podem afetar de forma importante a vida das pessoas são permitidos, mas com exigências maiores: documentação, gestão de risco, qualidade dos dados e supervisão humana.",
+   "entra": "Sistemas de uso sensível, em áreas de grande impacto.",
+   "sai": "Obrigações de documentação, controle e acompanhamento.",
+   "termos": [
+    [
+     "Gestão de risco",
+     "Processo contínuo de identificar e reduzir riscos."
+    ],
+    [
+     "Qualidade de dados",
+     "Dados adequados, representativos e bem tratados. Veja o tema Fairness."
+    ]
+   ],
+   "tecnico": "Os requisitos incluem documentação técnica, gestão de risco, governança de dados e supervisão humana. Ver também explicabilidade, para justificar decisões."
+  },
+  {
+   "node": "limitado",
+   "fase": "Regulação por risco",
+   "title": "Risco limitado",
+   "edges": [
+    "e-alto-lim"
+   ],
+   "resumo": "Aqui o foco é a transparência: a pessoa precisa saber que está interagindo com IA ou que um conteúdo foi gerado por IA. As exigências são mais leves.",
+   "entra": "Sistemas que interagem com pessoas ou geram conteúdo.",
+   "sai": "Aviso claro ao usuário sobre o uso de IA.",
+   "termos": [
+    [
+     "Transparência",
+     "Informar de forma clara que há IA envolvida."
+    ],
+    [
+     "Conteúdo gerado",
+     "Texto, imagem, áudio ou vídeo produzido por IA."
+    ]
+   ],
+   "tecnico": "A obrigação central é a divulgação ao usuário, que pode envolver avisos na interface ou marcação do conteúdo gerado."
+  },
+  {
+   "node": "minimo",
+   "fase": "Regulação por risco",
+   "title": "Risco mínimo",
+   "edges": [
+    "e-lim-min"
+   ],
+   "resumo": "A maior parte dos usos cotidianos cai aqui, como filtros de spam ou recomendações simples. Há poucas exigências específicas, embora outras leis continuem valendo.",
+   "entra": "Sistemas de baixo impacto para as pessoas.",
+   "sai": "Poucas obrigações específicas de IA.",
+   "termos": [
+    [
+     "Uso cotidiano",
+     "Aplicações de baixo impacto, comuns no dia a dia."
+    ],
+    [
+     "Boas práticas",
+     "Recomendações voluntárias, que muitas organizações adotam."
+    ]
+   ],
+   "tecnico": "Sem obrigações específicas de Inteligência Artificial (IA) nesse nível, mas leis gerais, como proteção de dados e consumo, seguem aplicáveis."
+  },
+  {
+   "node": "lgpd",
+   "fase": "Regulação por risco",
+   "title": "LGPD",
+   "edges": [
+    "e-min-lgpd"
+   ],
+   "resumo": "A LGPD (Lei Geral de Proteção de Dados) é a lei brasileira de proteção de dados pessoais. Ela se aplica ao uso de dados pessoais por sistemas de IA em qualquer nível de risco, e não depende dessa classificação. O tema Privacidade e IA aprofunda o assunto.",
+   "entra": "Dados pessoais usados para treinar ou operar o sistema.",
+   "sai": "Obrigações como base legal, finalidade e direitos do titular.",
+   "termos": [
+    [
+     "LGPD",
+     "Lei Geral de Proteção de Dados: a lei brasileira que regula o tratamento de dados pessoais."
+    ],
+    [
+     "Titular",
+     "Pessoa a quem os dados pessoais se referem."
+    ]
+   ],
+   "tecnico": "O tratamento de dados pessoais exige base legal, finalidade definida e respeito aos direitos do titular, inclusive no treinamento e na operação de modelos."
+  },
+  {
+   "node": "treino",
+   "fase": "Direitos autorais",
+   "title": "Dados de treino",
+   "edges": [],
+   "resumo": "Muitos modelos são treinados com grandes volumes de obras protegidas por direitos autorais. Discute-se se isso exige licença, se há exceções legais e se o consentimento dos autores é necessário. Há disputas na Justiça em vários países e ainda não existe posição definitiva.",
+   "entra": "Textos, imagens, músicas e outras obras usadas no treinamento.",
+   "sai": "Um modelo treinado, cujo uso é alvo do debate.",
+   "termos": [
+    [
+     "Direitos autorais",
+     "Direitos do autor sobre sua obra."
+    ],
+    [
+     "Exceção",
+     "Hipótese legal em que certo uso é permitido sem licença."
+    ]
+   ],
+   "tecnico": "O debate gira em torno de licenciamento, exceções legais e consentimento para a mineração de dados em obras protegidas, com resultados diferentes conforme a jurisdição."
+  },
+  {
+   "node": "saida",
+   "fase": "Direitos autorais",
+   "title": "Saída gerada",
+   "edges": [
+    "e-treino-saida"
+   ],
+   "resumo": "Sobre o conteúdo que a IA produz, em muitos lugares a autoria exige contribuição humana. O status das obras geradas por IA é debatido e varia por país.",
+   "entra": "Pedido do usuário e o modelo treinado.",
+   "sai": "Texto, imagem ou outro conteúdo gerado.",
+   "termos": [
+    [
+     "Autoria",
+     "Condição de ser o autor de uma obra."
+    ],
+    [
+     "Contribuição humana",
+     "Participação criativa de uma pessoa na obra."
+    ]
+   ],
+   "tecnico": "A proteção costuma depender de contribuição criativa humana; o enquadramento de obras geradas por Inteligência Artificial (IA) ainda está em discussão em várias jurisdições."
+  },
+  {
+   "node": "orgs",
+   "fase": "Direitos autorais",
+   "title": "Organizações",
+   "edges": [
+    "e-saida-orgs"
+   ],
+   "resumo": "Diante da incerteza, organizações adotam práticas como licenciar dados, registrar a origem dos dados usados e oferecer opt-out, para que autores peçam a exclusão de suas obras do treino.",
+   "entra": "Os riscos jurídicos e as expectativas de autores e usuários.",
+   "sai": "Práticas de licenciamento, registro de origem e opt-out.",
+   "termos": [
+    [
+     "Opt-out",
+     "Mecanismo para o autor recusar o uso de sua obra."
+    ],
+    [
+     "Origem dos dados",
+     "Registro de onde cada dado veio e sob quais condições."
+    ]
+   ],
+   "tecnico": "Entre as práticas estão acordos de licenciamento, registro de proveniência dos dados e mecanismos de opt-out, que também facilitam a documentação."
+  },
+  {
+   "node": "mapear",
+   "fase": "Na prática",
+   "title": "Mapear caso de uso",
+   "edges": [
+    "e-mapear-class"
+   ],
+   "resumo": "Na prática, o primeiro passo é descrever o que o sistema faz, para quem e com quais dados, e estimar o nível de risco desse uso.",
+   "entra": "A ideia ou o sistema de IA da organização.",
+   "sai": "Uma descrição do caso de uso e seu risco provável.",
+   "termos": [
+    [
+     "Caso de uso",
+     "Situação concreta em que a IA será usada."
+    ],
+    [
+     "Inventário de IA",
+     "Lista dos sistemas de IA em uso na organização."
+    ]
+   ],
+   "tecnico": "O mapeamento registra finalidade, público afetado, dados envolvidos e o enquadramento de risco provável."
+  },
+  {
+   "node": "documentar",
+   "fase": "Na prática",
+   "title": "Documentar",
+   "edges": [
+    "e-mapear-doc",
+    "e-alto-doc"
+   ],
+   "resumo": "Registre os dados usados, o modelo e como ele foi avaliado, inclusive testes de viés. Quanto maior o risco, mais essa documentação é exigida. Veja o tema Fairness.",
+   "entra": "Informações sobre dados, modelo e testes.",
+   "sai": "Documentação que permite auditar e prestar contas.",
+   "termos": [
+    [
+     "Documentação técnica",
+     "Registro de dados, modelo e avaliações."
+    ],
+    [
+     "Auditoria",
+     "Verificação independente do que foi feito."
+    ]
+   ],
+   "tecnico": "Inclui origem e qualidade dos dados, descrição do modelo, métricas de avaliação e histórico de versões."
+  },
+  {
+   "node": "transparencia",
+   "fase": "Na prática",
+   "title": "Transparência",
+   "edges": [
+    "e-doc-transp"
+   ],
+   "resumo": "Informe ao usuário quando ele está lidando com IA e quando um conteúdo foi gerado por ela. Explicar como as decisões são tomadas também ajuda. Veja o tema Explicabilidade.",
+   "entra": "A documentação e o contexto de uso.",
+   "sai": "Avisos e explicações claros ao usuário.",
+   "termos": [
+    [
+     "Aviso de IA",
+     "Mensagem que informa o uso de IA."
+    ],
+    [
+     "Explicabilidade",
+     "Capacidade de explicar por que o sistema deu certa resposta."
+    ]
+   ],
+   "tecnico": "A transparência combina avisos na interface, marcação do conteúdo gerado e explicações compreensíveis sobre as decisões."
+  },
+  {
+   "node": "supervisao",
+   "fase": "Na prática",
+   "title": "Supervisão humana",
+   "edges": [
+    "e-transp-sup"
+   ],
+   "resumo": "Pessoas devem poder revisar, corrigir e interromper o sistema, e o desempenho deve ser acompanhado ao longo do tempo, pois problemas podem surgir depois da entrega.",
+   "entra": "O sistema em operação e seus resultados.",
+   "sai": "Revisões, correções e alertas de problemas.",
+   "termos": [
+    [
+     "Humano no circuito",
+     "Pessoa que revisa ou aprova decisões da IA."
+    ],
+    [
+     "Monitoramento",
+     "Acompanhamento contínuo do desempenho em uso."
+    ]
+   ],
+   "tecnico": "Envolve revisão humana, canais de contestação e monitoramento contínuo de desempenho, incidentes e mudanças nos dados."
+  },
+  {
+   "node": "juridica",
+   "fase": "Na prática",
+   "title": "Orientação jurídica",
+   "edges": [
+    "e-sup-jur"
+   ],
+   "resumo": "As regras variam por país e mudam com o tempo. Por isso, busque orientação de profissionais de direito para o seu caso e sua jurisdição.",
+   "entra": "O panorama do caso de uso e suas evidências.",
+   "sai": "Orientação sobre as obrigações aplicáveis.",
+   "termos": [
+    [
+     "Jurisdição",
+     "Território cujas leis se aplicam ao caso."
+    ],
+    [
+     "Conformidade",
+     "Estar de acordo com as leis e normas aplicáveis."
+    ]
+   ],
+   "tecnico": "Um especialista confirma o enquadramento, as obrigações vigentes e a relação com outras leis, como a de proteção de dados."
+  }
+ ]
+}

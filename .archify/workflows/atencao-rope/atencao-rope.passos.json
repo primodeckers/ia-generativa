@@ -1,0 +1,260 @@
+{
+  "titulo": "Passo a passo",
+  "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+  "inicio": "Comece pelo 1 para seguir a atenção, pelo 4 para entender a ordem, ou pelo 8 para ver o limite de contexto.",
+  "steps": [
+    {
+      "node": "tokens",
+      "fase": "Atenção multi-head",
+      "title": "Tokens",
+      "edges": [],
+      "resumo": "O ponto de partida: o texto já quebrado em tokens, cada um representado por um vetor, uma lista de números que carrega seu significado.",
+      "entra": "Um vetor por token do texto.",
+      "sai": "Os mesmos vetores, prontos para a atenção.",
+      "exemplo": "“O gato subiu no telhado” vira cinco vetores, um por token.",
+      "ilustrativo": true,
+      "termos": [
+        [
+          "Token",
+          "Pedaço de texto: uma palavra, parte dela ou um símbolo."
+        ],
+        [
+          "Vetor",
+          "Lista de números que representa um token."
+        ]
+      ],
+      "tecnico": "Sequência de embeddings, um por token, que entra em cada camada de atenção do Transformer."
+    },
+    {
+      "node": "qkv",
+      "fase": "Atenção multi-head",
+      "title": "Consulta, chave, valor",
+      "edges": [
+        "e-tokens-qkv"
+      ],
+      "resumo": "Cada token gera três versões de si mesmo: a consulta (o que ele procura), a chave (o que ele oferece) e o valor (o conteúdo que passa adiante).",
+      "entra": "O vetor de cada token.",
+      "sai": "Três vetores por token: consulta, chave e valor.",
+      "exemplo": "No “no” de “O gato subiu no”, a consulta pergunta algo como “quem fez a ação?”.",
+      "ilustrativo": true,
+      "termos": [
+        [
+          "Consulta (query)",
+          "O que este token procura nos outros."
+        ],
+        [
+          "Chave (key)",
+          "O que este token oferece para ser encontrado."
+        ],
+        [
+          "Valor (value)",
+          "A informação que ele entrega a quem o escolher."
+        ]
+      ],
+      "tecnico": "Três projeções lineares aprendidas aplicam-se a cada vetor, produzindo queries, keys e values."
+    },
+    {
+      "node": "rope",
+      "fase": "Posição com RoPE",
+      "title": "RoPE",
+      "edges": [
+        "e-qkv-rope"
+      ],
+      "resumo": "Antes de comparar, a RoPE (Rotary Position Embedding, embedding de posição rotacional) gira as consultas e as chaves conforme a posição de cada token. Assim, a comparação passa a depender da distância entre os tokens, e não do lugar absoluto.",
+      "entra": "Consultas e chaves, ainda sem noção de ordem.",
+      "sai": "Consultas e chaves giradas pela posição.",
+      "exemplo": "Dois tokens a três posições de distância se comparam da mesma forma em qualquer ponto do texto.",
+      "ilustrativo": true,
+      "termos": [
+        [
+          "RoPE",
+          "Rotary Position Embedding (embedding de posição rotacional): codifica a posição girando vetores."
+        ],
+        [
+          "Posição relativa",
+          "Distância entre dois tokens, e não o número de cada um."
+        ]
+      ],
+      "tecnico": "Rotary Position Embedding aplica rotações dependentes da posição às queries e keys; só elas são giradas, os values não."
+    },
+    {
+      "node": "ordem",
+      "fase": "Posição com RoPE",
+      "title": "Ordem perdida",
+      "edges": [
+        "e-tokens-ordem"
+      ],
+      "resumo": "O problema que o RoPE resolve: a atenção sozinha trata o texto como um conjunto de tokens e não sabe qual veio primeiro. Sem posição, “o cão mordeu o homem” e “o homem mordeu o cão” pareceriam iguais.",
+      "entra": "Tokens sem informação de posição.",
+      "sai": "A necessidade de injetar a ordem.",
+      "exemplo": "“Cão mordeu homem” e “homem mordeu cão” teriam os mesmos tokens.",
+      "ilustrativo": true,
+      "termos": [
+        [
+          "Permutação",
+          "Troca da ordem dos itens."
+        ],
+        [
+          "Invariância",
+          "Resultado que não muda quando a ordem muda."
+        ]
+      ],
+      "tecnico": "A self-attention é equivariante a permutações da entrada, por isso exige alguma codificação posicional."
+    },
+    {
+      "node": "pesos",
+      "fase": "Atenção multi-head",
+      "title": "Pesos de atenção",
+      "edges": [
+        "e-rope-pesos"
+      ],
+      "resumo": "A consulta de cada token é comparada com as chaves de todos os outros. Quanto mais parecidas, maior o peso: um número que diz quanto aquele token importa agora.",
+      "entra": "Consultas e chaves com posição.",
+      "sai": "Um peso de atenção para cada par de tokens.",
+      "exemplo": "“no” dá peso alto a “subiu” e a “gato”, e baixo a “O”.",
+      "ilustrativo": true,
+      "termos": [
+        [
+          "Peso de atenção",
+          "Número entre 0 e 1 que indica a importância de um token para outro."
+        ],
+        [
+          "Softmax",
+          "Função que transforma pontuações em pesos que somam 100%."
+        ]
+      ],
+      "tecnico": "Pontuações entre queries e keys passam por softmax e viram a distribuição de atenção de cada token."
+    },
+    {
+      "node": "mistura",
+      "fase": "Atenção multi-head",
+      "title": "Mistura dos valores",
+      "edges": [
+        "e-pesos-mistura"
+      ],
+      "resumo": "Cada token reúne os valores dos outros, misturados na proporção dos pesos. O resultado é um novo vetor que já carrega informação do contexto.",
+      "entra": "Pesos de atenção e valores.",
+      "sai": "Um vetor enriquecido com contexto por token.",
+      "exemplo": "O vetor de “no” passa a incluir muito de “subiu” e um pouco de “gato”.",
+      "ilustrativo": true,
+      "termos": [
+        [
+          "Soma ponderada",
+          "Soma em que cada parcela é multiplicada por um peso."
+        ],
+        [
+          "Contexto",
+          "Informação vinda dos demais tokens."
+        ]
+      ],
+      "tecnico": "Média ponderada dos values pelos pesos de atenção, calculada por cabeça."
+    },
+    {
+      "node": "cabecas",
+      "fase": "Atenção multi-head",
+      "title": "Várias cabeças",
+      "edges": [
+        "e-mistura-cabecas"
+      ],
+      "resumo": "Todo esse processo roda várias vezes em paralelo, cada vez com projeções próprias. Cada cabeça pode focar um tipo de relação, como sujeito e verbo ou um pronome e quem ele cita. No fim, os resultados são juntados e combinados.",
+      "entra": "O resultado de cada cabeça.",
+      "sai": "Um vetor único por token, com tudo combinado.",
+      "exemplo": "Uma cabeça pode ligar “ele” a “gato” enquanto outra liga “subiu” a “gato”.",
+      "ilustrativo": true,
+      "termos": [
+        [
+          "Cabeça de atenção",
+          "Uma cópia independente do cálculo de atenção."
+        ],
+        [
+          "Multi-head",
+          "Várias cabeças rodando lado a lado."
+        ]
+      ],
+      "tecnico": "Os resultados das cabeças são concatenados e passam por uma projeção de saída que os combina."
+    },
+    {
+      "node": "janela",
+      "fase": "Janela de contexto",
+      "title": "Janela de contexto",
+      "edges": [],
+      "resumo": "O limite de tokens que o modelo enxerga de uma vez, contando o que você escreveu e o que ele já respondeu. O que passa disso fica de fora.",
+      "entra": "O texto da conversa, em tokens.",
+      "sai": "O trecho que cabe e é lido pelo modelo.",
+      "exemplo": "Uma janela de 8 mil tokens guarda poucas páginas; uma de 1 milhão guarda livros inteiros.",
+      "ilustrativo": true,
+      "termos": [
+        [
+          "Janela de contexto",
+          "Número máximo de tokens que o modelo processa de uma vez."
+        ]
+      ],
+      "tecnico": "Limite de comprimento da sequência, definido no treino e na arquitetura do modelo; varia muito entre modelos."
+    },
+    {
+      "node": "pares",
+      "fase": "Janela de contexto",
+      "title": "Todos os pares",
+      "edges": [
+        "e-pesos-pares",
+        "e-janela-pares"
+      ],
+      "resumo": "A atenção compara cada token com todos os outros. Em um texto com n tokens há cerca de n vezes n comparações, então dobrar o texto quadruplica o trabalho.",
+      "entra": "Os pesos de atenção, em toda a janela.",
+      "sai": "O número de comparações a calcular.",
+      "exemplo": "Com 1.000 tokens são cerca de 1 milhão de pares; com 2.000, cerca de 4 milhões.",
+      "ilustrativo": true,
+      "termos": [
+        [
+          "Custo quadrático",
+          "O custo cresce com o quadrado do tamanho do texto."
+        ]
+      ],
+      "tecnico": "A atenção completa tem custo de tempo quadrático no comprimento da sequência."
+    },
+    {
+      "node": "custo",
+      "fase": "Janela de contexto",
+      "title": "Custo e memória",
+      "edges": [
+        "e-pares-custo"
+      ],
+      "resumo": "Textos longos pesam na memória e deixam tudo mais lento. Para não refazer contas, o modelo guarda as chaves e os valores já calculados, o chamado KV cache (Key-Value cache, cache de chaves e valores; veja o workflow “kv-cache”), que cresce a cada token.",
+      "entra": "O tamanho do contexto.",
+      "sai": "Uso de memória e tempo de resposta.",
+      "termos": [
+        [
+          "KV cache",
+          "Key-Value cache (cache de chaves e valores): memória das chaves e valores já calculados, reaproveitada a cada novo token."
+        ],
+        [
+          "Latência",
+          "Tempo até a resposta chegar."
+        ]
+      ],
+      "tecnico": "O KV cache cresce linearmente com o comprimento do contexto e domina a memória da GPU (Graphics Processing Unit, unidade de processamento gráfico) em contextos longos."
+    },
+    {
+      "node": "estender",
+      "fase": "Janela de contexto",
+      "title": "Estender o contexto",
+      "edges": [
+        "e-custo-estender"
+      ],
+      "resumo": "Há formas de ir além do limite ou de baratear o custo: ajustar o RoPE para posições mais longas, atenção que olha só parte dos tokens, e compressão do KV cache.",
+      "entra": "Um modelo com contexto curto ou custo alto.",
+      "sai": "Um modelo que lida com textos mais longos.",
+      "termos": [
+        [
+          "Atenção esparsa",
+          "Cada token olha só um subconjunto dos outros."
+        ],
+        [
+          "Janela deslizante",
+          "Cada token olha só os mais recentes."
+        ]
+      ],
+      "tecnico": "Técnicas incluem interpolação e escalonamento de RoPE (embedding de posição rotacional), como o YaRN (Yet another RoPE extensioN), atenção por janela deslizante ou esparsa, e compressão ou quantização do KV cache (cache de chaves e valores)."
+    }
+  ]
+}

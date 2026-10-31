@@ -1,0 +1,226 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver a divisão dos dados, ou pelo 4 para entender o que é overfitting.",
+ "steps": [
+  {
+   "node": "split",
+   "fase": "Preparar e treinar",
+   "title": "Dados divididos",
+   "edges": [],
+   "resumo": "Antes de qualquer treino, separamos os dados em dois grupos: um para o modelo aprender (treino) e outro guardado para testar depois. É como estudar com uma lista de exercícios e fazer a prova com questões que você nunca viu.",
+   "entra": "O conjunto completo de exemplos com respostas conhecidas.",
+   "sai": "Um conjunto de treino e um conjunto de teste, separados.",
+   "exemplo": "De 1.000 fotos rotuladas, 800 vão para o treino e 200 ficam guardadas para o teste.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Conjunto de treino",
+     "Dados que o modelo usa para aprender."
+    ],
+    [
+     "Conjunto de teste",
+     "Dados reservados, que o modelo não viu durante o aprendizado."
+    ]
+   ],
+   "tecnico": "A divisão costuma ser aleatória, estratificada quando as classes são desbalanceadas, e feita antes de qualquer pré-processamento para evitar vazamento de dados."
+  },
+  {
+   "node": "train",
+   "fase": "Preparar e treinar",
+   "title": "Treinar modelo",
+   "edges": [
+    "e-split-train",
+    "e-remedy-train"
+   ],
+   "resumo": "O modelo ajusta seus parâmetros para errar menos nos exemplos de treino. Quanto mais ele se ajusta, melhor fica no treino, mas isso não garante que acerte coisas novas.",
+   "entra": "Dados de treino.",
+   "sai": "Um modelo treinado e seu erro no treino.",
+   "exemplo": "Depois de várias passadas pelas 800 fotos, o modelo erra só 1% delas.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Parâmetros",
+     "Valores internos que o modelo ajusta ao aprender."
+    ],
+    [
+     "Erro de treino",
+     "Quanto o modelo erra nos dados que usou para aprender."
+    ]
+   ],
+   "tecnico": "O treino minimiza uma função de perda no conjunto de treino, em geral por descida do gradiente."
+  },
+  {
+   "node": "compare",
+   "fase": "Diagnosticar",
+   "title": "Comparar erros",
+   "edges": [
+    "e-train-compare"
+   ],
+   "resumo": "Medimos o erro do modelo nos dados de treino e nos dados que ele não viu, e comparamos os dois. A distância entre eles revela se o modelo aprendeu o padrão ou só decorou os exemplos.",
+   "entra": "O modelo treinado e dados que ele não usou para aprender.",
+   "sai": "Dois números de erro: no treino e fora dele.",
+   "exemplo": "Erro de 1% no treino e de 25% nos dados novos: algo está errado.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Generalizar",
+     "Funcionar bem em dados novos, não só nos de treino."
+    ],
+    [
+     "Lacuna de generalização",
+     "Diferença entre o erro fora do treino e o erro no treino."
+    ]
+   ],
+   "tecnico": "Compara-se a métrica no treino com a métrica em dados não vistos. Para ajustar escolhas sem contaminar o teste, usa-se um conjunto de validação separado."
+  },
+  {
+   "node": "over",
+   "fase": "Diagnosticar",
+   "title": "Overfitting",
+   "edges": [
+    "e-compare-over"
+   ],
+   "resumo": "Se o erro no treino é baixo, mas o erro em dados novos é alto, o modelo decorou o treino, incluindo ruídos e acasos, em vez de aprender o padrão geral. Ele parece ótimo no treino e falha no mundo real.",
+   "entra": "Erro baixo no treino e erro alto fora dele.",
+   "sai": "O diagnóstico: o modelo está sobreajustado.",
+   "exemplo": "Um aluno que decora as respostas da lista tira 10 nela e vai mal na prova.",
+   "termos": [
+    [
+     "Overfitting",
+     "Sobreajuste: o modelo memoriza detalhes do treino que não se repetem."
+    ],
+    [
+     "Ruído",
+     "Variações aleatórias nos dados que não fazem parte do padrão real."
+    ]
+   ],
+   "tecnico": "Overfitting indica variância alta: o modelo tem capacidade excessiva para a quantidade de dados e se ajusta ao ruído."
+  },
+  {
+   "node": "under",
+   "fase": "Diagnosticar",
+   "title": "Underfitting",
+   "edges": [
+    "e-compare-under"
+   ],
+   "resumo": "O caso contrário: se o erro é alto já no treino, o modelo é simples demais ou foi pouco treinado e não captou nem o padrão básico. Aqui o remédio é dar mais capacidade ao modelo, e não limitá-lo.",
+   "entra": "Erro alto no treino e também fora dele.",
+   "sai": "O diagnóstico: o modelo está subajustado.",
+   "exemplo": "Uma reta tentando representar uma relação que é claramente curva.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Underfitting",
+     "Subajuste: o modelo não aprende nem os dados de treino."
+    ],
+    [
+     "Capacidade",
+     "Poder do modelo de representar padrões complexos."
+    ]
+   ],
+   "tecnico": "Underfitting indica viés alto. Corrige-se com um modelo mais expressivo, mais atributos informativos, menos regularização ou mais treino."
+  },
+  {
+   "node": "remedy",
+   "fase": "Corrigir e validar",
+   "title": "Remédios",
+   "edges": [
+    "e-over-remedy",
+    "e-under-remedy"
+   ],
+   "resumo": "Para overfitting, há quatro caminhos: regularização (penalizar a complexidade), parar o treino a tempo, usar mais dados e simplificar o modelo. Depois de ajustar, treina-se de novo e compara-se outra vez. Para underfitting, faz-se o oposto.",
+   "entra": "O diagnóstico de overfitting (ou de underfitting).",
+   "sai": "Uma nova configuração do modelo para treinar de novo.",
+   "exemplo": "Aumentar a penalização L2 (que pune a soma dos quadrados dos pesos) e desligar 30% dos neurônios a cada passo (dropout).",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Regularização",
+     "Técnica que penaliza modelos complexos para reduzir o overfitting."
+    ],
+    [
+     "Early stopping",
+     "Interromper o treino quando o erro de validação deixa de melhorar."
+    ],
+    [
+     "Dropout",
+     "Desligar aleatoriamente parte dos neurônios durante o treino."
+    ]
+   ],
+   "tecnico": "Regularização L1 (pune a soma dos valores absolutos dos pesos) e L2 (pune a soma dos quadrados) penalizam pesos grandes; L1 tende a zerá-los. Também ajudam o dropout, o early stopping, o aumento de dados e a redução da capacidade do modelo."
+  },
+  {
+   "node": "cv",
+   "fase": "Corrigir e validar",
+   "title": "Validação cruzada",
+   "edges": [
+    "e-remedy-cv"
+   ],
+   "resumo": "Em vez de confiar em uma única divisão, os dados são repartidos em k partes. O modelo treina k vezes, cada vez validando em uma parte diferente, e a média dos resultados dá uma estimativa mais confiável do desempenho.",
+   "entra": "Dados de treino e a configuração do modelo.",
+   "sai": "Uma média de desempenho, com sua variação entre as partes.",
+   "exemplo": "Com k igual a 5, cada parte serve uma vez de validação e as outras quatro treinam.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "k-fold",
+     "Divisão dos dados em k partes, usadas em rodízio para validar."
+    ],
+    [
+     "Validação",
+     "Etapa de avaliar o modelo para comparar configurações."
+    ]
+   ],
+   "tecnico": "Na validação cruzada k-fold, o desempenho é a média das k avaliações. Evita depender de uma divisão sortuda ou azarada e permite comparar hiperparâmetros."
+  },
+  {
+   "node": "choose",
+   "fase": "Escolher e medir",
+   "title": "Escolher modelo",
+   "edges": [
+    "e-cv-choose"
+   ],
+   "resumo": "Compara-se o desempenho médio das configurações candidatas e fica-se com a melhor. Toda essa escolha usa apenas treino e validação, sem olhar o conjunto de teste.",
+   "entra": "Médias de validação de cada configuração.",
+   "sai": "O modelo escolhido, em geral retreinado com todos os dados de treino.",
+   "exemplo": "A configuração com dropout e L2 teve a melhor média e foi escolhida.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Hiperparâmetro",
+     "Ajuste definido antes do treino, como a força da regularização."
+    ],
+    [
+     "Seleção de modelo",
+     "Escolher a melhor configuração entre várias candidatas."
+    ]
+   ],
+   "tecnico": "A seleção de modelo e o ajuste de hiperparâmetros usam apenas a validação. Olhar o teste nessa etapa causa vazamento e estimativas otimistas."
+  },
+  {
+   "node": "test",
+   "fase": "Escolher e medir",
+   "title": "Teste final",
+   "edges": [
+    "e-choose-test"
+   ],
+   "resumo": "Só agora o conjunto de teste, guardado desde o início, é usado, uma única vez, no modelo já escolhido. O resultado é a melhor estimativa honesta de como ele se comportará com dados realmente novos.",
+   "entra": "O modelo escolhido e o conjunto de teste.",
+   "sai": "A estimativa final de desempenho.",
+   "exemplo": "O modelo erra 8% nas 200 fotos de teste; esse é o número a reportar.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Estimativa honesta",
+     "Medida de desempenho em dados que não influenciaram nenhuma escolha."
+    ],
+    [
+     "Vazamento de dados",
+     "Quando informação do teste influencia o treino ou as escolhas."
+    ]
+   ],
+   "tecnico": "O teste é usado uma vez; se for reutilizado para decidir, deixa de ser imparcial e passa a funcionar como validação."
+  }
+ ]
+}

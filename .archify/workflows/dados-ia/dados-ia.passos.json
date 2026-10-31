@@ -1,0 +1,172 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver de onde vêm os dados, ou pelo 8 para entender os dados sintéticos. Lembre: entra lixo, sai lixo.",
+ "steps": [
+  {
+   "node": "coleta",
+   "fase": "Reunir",
+   "title": "Coleta",
+   "edges": [],
+   "resumo": "Tudo começa em reunir os dados: textos, imagens, registros de uso, sensores. Vale perguntar de onde vêm, se as pessoas deram consentimento e se a licença permite usar aquilo para treinar um modelo.",
+   "entra": "Fontes de dados: bancos internos, arquivos, páginas públicas, sensores.",
+   "sai": "Dados brutos, com a origem e a licença registradas.",
+   "exemplo": "Fotos de uma loja, com autorização das pessoas que aparecem.",
+   "ilustrativo": true,
+   "termos": [
+    ["Consentimento", "Autorização da pessoa para o uso dos seus dados."],
+    ["Licença de uso", "Regra que diz o que se pode fazer com um conteúdo."],
+    ["Entra lixo, sai lixo", "Dados ruins geram um modelo ruim, por melhor que seja o algoritmo."]
+   ],
+   "tecnico": "Registro de proveniência (origem, data, licença, base legal de tratamento) junto de cada fonte, com atenção a dados pessoais e a amostras que não representam o público real do modelo."
+  },
+  {
+   "node": "limpeza",
+   "fase": "Reunir",
+   "title": "Limpeza",
+   "edges": ["e-coleta-limpeza"],
+   "resumo": "Dados brutos vêm bagunçados. Aqui se removem duplicados, tratam-se valores faltantes, corrigem-se erros e investigam-se valores fora do comum. Em geral, esta etapa pesa mais no resultado final do que a escolha do algoritmo.",
+   "entra": "Dados brutos, com falhas e repetições.",
+   "sai": "Dados limpos e consistentes.",
+   "exemplo": "Uma idade registrada como 250 anos é revista: pode ser erro de digitação.",
+   "ilustrativo": true,
+   "termos": [
+    ["Duplicado", "Exemplo repetido, que dá peso demais a um mesmo caso."],
+    ["Valor faltante", "Campo que ficou vazio e precisa de tratamento."],
+    ["Valor fora do comum", "Dado muito distante dos demais, que pode ser erro ou caso real raro."]
+   ],
+   "tecnico": "Deduplicação, imputação ou remoção de valores ausentes, padronização de formatos e detecção de outliers. Duplicados entre treino e teste também causam vazamento."
+  },
+  {
+   "node": "rotulagem",
+   "fase": "Rotular",
+   "title": "Rotulagem",
+   "edges": ["e-limpeza-rotulagem"],
+   "resumo": "Em muitos projetos, pessoas anotam cada exemplo com a resposta certa, seguindo diretrizes claras. Sem regras bem escritas, cada anotador decide de um jeito e os rótulos ficam inconsistentes.",
+   "entra": "Dados limpos e um guia de anotação.",
+   "sai": "Exemplos com rótulos.",
+   "exemplo": "Marcar cada e-mail como “spam” ou “não é spam”.",
+   "ilustrativo": true,
+   "termos": [
+    ["Rótulo", "A resposta correta associada a um exemplo."],
+    ["Anotador", "Pessoa que atribui os rótulos."],
+    ["Diretrizes", "Instruções escritas, com exemplos e casos difíceis."]
+   ],
+   "tecnico": "Anotação supervisionada guiada por um manual com definições e casos-limite. Em aprendizado não supervisionado ou autossupervisionado, esta etapa pode nem existir."
+  },
+  {
+   "node": "qualidade",
+   "fase": "Rotular",
+   "title": "Controle de qualidade",
+   "edges": ["e-rotulagem-qualidade", "e-qualidade-rotulagem"],
+   "resumo": "Compara-se o que diferentes anotadores marcaram para o mesmo exemplo. Se discordam muito, as diretrizes provavelmente estão confusas. Casos duvidosos passam por revisão e voltam para a rotulagem.",
+   "entra": "Exemplos rotulados por várias pessoas.",
+   "sai": "Rótulos aprovados, e uma lista de casos para revisar.",
+   "termos": [
+    ["Concordância entre anotadores", "Quanto as pessoas marcam a mesma coisa para o mesmo exemplo."],
+    ["Revisão", "Segunda checagem dos rótulos duvidosos."]
+   ],
+   "tecnico": "Medidas de concordância entre anotadores (como o kappa) e amostragem para auditoria. Baixa concordância costuma indicar diretrizes ambíguas ou tarefa subjetiva."
+  },
+  {
+   "node": "divisao",
+   "fase": "Rotular",
+   "title": "Divisão dos dados",
+   "edges": ["e-qualidade-divisao", "e-mistura-divisao"],
+   "resumo": "Os dados são separados em três partes: treino, para aprender; validação, para ajustar escolhas; e teste, para a nota final. Nenhum exemplo pode aparecer em mais de uma parte, senão o resultado parece melhor do que é. Veja o workflow “Overfitting e validação”.",
+   "entra": "Dados rotulados e aprovados, com os sintéticos já misturados, se houver.",
+   "sai": "Três conjuntos separados: treino, validação e teste.",
+   "exemplo": "Dividir os exemplos em 80% para treino, 10% para validação e 10% para teste.",
+   "ilustrativo": true,
+   "termos": [
+    ["Vazamento de dados", "Informação do teste que escapa para o treino e infla o resultado."],
+    ["Conjunto de teste", "Parte guardada, usada só no final para medir o desempenho."]
+   ],
+   "tecnico": "Partição em treino, validação e teste, estratificada quando há classes raras. Deve-se evitar vazamento, por exemplo mantendo o mesmo usuário, documento ou sessão em um único conjunto."
+  },
+  {
+   "node": "versao",
+   "fase": "Rotular",
+   "title": "Versionamento",
+   "edges": ["e-divisao-versao"],
+   "resumo": "Cada versão do conjunto de dados é registrada, assim como o código. Com isso dá para saber com quais dados um modelo foi treinado, repetir um experimento e voltar atrás se algo der errado.",
+   "entra": "Os três conjuntos e as regras usadas para criá-los.",
+   "sai": "Uma versão identificada e reproduzível dos dados.",
+   "termos": [
+    ["Versionamento", "Registro de cada mudança, com identificação da versão."],
+    ["Reprodutibilidade", "Capacidade de refazer o experimento e obter o mesmo resultado."]
+   ],
+   "tecnico": "Versões imutáveis e identificadas dos dados, com metadados de origem, de limpeza e de rotulagem. Ferramentas de versionamento de dados fazem esse papel."
+  },
+  {
+   "node": "treino",
+   "fase": "Reunir",
+   "title": "Treino do modelo",
+   "edges": ["e-versao-treino"],
+   "resumo": "Só agora o modelo aprende, usando uma versão fixa dos dados. Se algo sair errado, a pista costuma estar nos dados, e não apenas no algoritmo: por isso o cuidado nas etapas anteriores.",
+   "entra": "A versão fixa do conjunto de treino e de validação.",
+   "sai": "Um modelo treinado, avaliado depois no conjunto de teste.",
+   "termos": [
+    ["Treinamento", "Etapa em que o modelo ajusta seus parâmetros aos dados."]
+   ],
+   "tecnico": "O treino usa o conjunto de treino e a validação para escolher ajustes. O conjunto de teste fica de fora até a avaliação final."
+  },
+  {
+   "node": "lacunas",
+   "fase": "Dados sintéticos (opcional)",
+   "title": "Lacunas",
+   "edges": ["e-limpeza-lacunas"],
+   "resumo": "Às vezes os dados reais não bastam: há classes raras com poucos exemplos, casos extremos difíceis de achar, ou dados sensíveis que não podem ser usados. Esses são os motivos para pensar em dados sintéticos.",
+   "entra": "Dados limpos e a análise do que está faltando.",
+   "sai": "Lista do que precisa ser gerado.",
+   "exemplo": "Uma doença rara com apenas 20 exemplos entre milhares de casos.",
+   "ilustrativo": true,
+   "termos": [
+    ["Classe rara", "Categoria com poucos exemplos nos dados."],
+    ["Caso extremo", "Situação incomum, mas importante de testar."]
+   ],
+   "tecnico": "Análise do desbalanceamento de classes e da cobertura de cenários. Dados sintéticos também podem proteger a privacidade, ao substituir registros reais sensíveis."
+  },
+  {
+   "node": "geracao",
+   "fase": "Dados sintéticos (opcional)",
+   "title": "Geração",
+   "edges": ["e-lacunas-geracao"],
+   "resumo": "Criam-se exemplos artificiais, seguindo regras escritas à mão ou usando um modelo gerador. Eles complementam os dados reais, mas não os substituem por completo.",
+   "entra": "A lista de lacunas a cobrir.",
+   "sai": "Exemplos artificiais.",
+   "termos": [
+    ["Dado sintético", "Exemplo criado artificialmente, e não coletado do mundo real."],
+    ["Modelo gerador", "Modelo que cria novos exemplos parecidos com os reais."]
+   ],
+   "tecnico": "Geração por regras ou simulação, por aumento de dados (data augmentation) ou por modelos generativos. Um modelo gerador só reproduz o que aprendeu."
+  },
+  {
+   "node": "cuidados",
+   "fase": "Dados sintéticos (opcional)",
+   "title": "Cuidados",
+   "edges": ["e-geracao-cuidados"],
+   "resumo": "Dados sintéticos podem repetir os vieses de quem os gerou. Além disso, se um modelo for treinado apenas com dados gerados por outros modelos, a qualidade pode degradar aos poucos. Por isso eles são checados e usados com moderação.",
+   "entra": "Exemplos artificiais recém-gerados.",
+   "sai": "Exemplos revisados, ou descartados se forem pouco realistas.",
+   "termos": [
+    ["Viés", "Tendência sistemática que favorece ou prejudica certos casos."],
+    ["Colapso do modelo", "Perda gradual de qualidade e de diversidade quando modelos treinam com dados de modelos."]
+   ],
+   "tecnico": "Verificação de realismo, diversidade e viés dos exemplos gerados, comparando com dados reais. Manter dados reais na mistura evita a degradação por treino recursivo (model collapse)."
+  },
+  {
+   "node": "mistura",
+   "fase": "Dados sintéticos (opcional)",
+   "title": "Mistura com reais",
+   "edges": ["e-cuidados-mistura"],
+   "resumo": "Os exemplos sintéticos aprovados entram junto com os reais, marcados como sintéticos. Isso permite medir depois se eles ajudaram, e a mistura acontece antes da divisão, para os dados seguirem o mesmo caminho dos demais.",
+   "entra": "Exemplos sintéticos aprovados e os dados reais.",
+   "sai": "Um conjunto combinado, com a origem de cada exemplo identificada.",
+   "termos": [
+    ["Marcação de origem", "Indicação de que um exemplo é real ou sintético."]
+   ],
+   "tecnico": "A mistura mantém uma coluna de origem. A avaliação final deve usar sobretudo dados reais, para refletir o uso verdadeiro do modelo."
+  }
+ ]
+}

@@ -1,0 +1,213 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para seguir o caminho dos dados, ou pelo 7 para ver como a rede aprende.",
+ "steps": [
+  {
+   "node": "dados",
+   "fase": "Usar (prever)",
+   "title": "Dados",
+   "edges": [],
+   "resumo": "O ponto de partida: informações em forma de números, como os pixels de uma imagem ou medidas de um imóvel.",
+   "entra": "Informações do mundo real.",
+   "sai": "Uma lista de números.",
+   "exemplo": "Uma imagem 28×28 vira 784 números.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Característica (feature)",
+     "Cada número que descreve o exemplo."
+    ],
+    [
+     "Normalização",
+     "Colocar os números numa escala parecida."
+    ]
+   ],
+   "tecnico": "Vetor de entrada de características, geralmente normalizado; imagens são achatadas (flatten) em um vetor."
+  },
+  {
+   "node": "cin",
+   "fase": "Usar (prever)",
+   "title": "Camada de entrada",
+   "edges": [
+    "e1"
+   ],
+   "resumo": "Recebe os números e os entrega à rede. Não calcula nada: tem um neurônio para cada número de entrada.",
+   "entra": "A lista de números.",
+   "sai": "Os mesmos números, prontos para entrar na rede.",
+   "termos": [
+    [
+     "Neurônio",
+     "Unidade que guarda e passa um número."
+    ],
+    [
+     "Camada",
+     "Grupo de neurônios no mesmo nível."
+    ]
+   ],
+   "tecnico": "Camada de passagem: um neurônio por característica, sem transformação."
+  },
+  {
+   "node": "h1",
+   "fase": "Usar (prever)",
+   "title": "Camada oculta 1",
+   "edges": [
+    "e2",
+    "e9"
+   ],
+   "resumo": "Cada neurônio soma todos os números recebidos, cada um multiplicado por um peso, e aplica uma regra que decide o quanto ele se ativa.",
+   "entra": "Os números da camada anterior e os pesos.",
+   "sai": "Novos números, combinações dos anteriores.",
+   "termos": [
+    [
+     "Peso",
+     "Força da conexão entre dois neurônios."
+    ],
+    [
+     "Viés (bias)",
+     "Valor somado que desloca a ativação."
+    ],
+    [
+     "Função de ativação",
+     "Regra não linear aplicada à soma, como a ReLU (Rectified Linear Unit, unidade linear retificada)."
+    ]
+   ],
+   "tecnico": "Camada totalmente conectada: combinação linear das entradas (pesos e viés) seguida de ativação não linear (por exemplo, ReLU)."
+  },
+  {
+   "node": "h2",
+   "fase": "Usar (prever)",
+   "title": "Camada oculta 2",
+   "edges": [
+    "e3"
+   ],
+   "resumo": "Repete o processo usando o resultado da primeira camada, o que permite formar padrões mais complexos e abstratos.",
+   "entra": "Saídas da camada oculta 1.",
+   "sai": "Padrões maiores.",
+   "termos": [
+    [
+     "Camada oculta",
+     "Camada entre a entrada e a saída."
+    ],
+    [
+     "Profundidade",
+     "Quantidade de camadas: mais camadas, padrões mais complexos."
+    ]
+   ],
+   "tecnico": "Mesma estrutura da camada anterior. Sem a não linearidade, as camadas empilhadas colapsariam em uma só transformação linear."
+  },
+  {
+   "node": "cout",
+   "fase": "Usar (prever)",
+   "title": "Camada de saída",
+   "edges": [
+    "e4"
+   ],
+   "resumo": "Combina os padrões finais e produz a resposta da rede, em forma de números, como uma nota para cada classe.",
+   "entra": "Saídas da camada oculta 2.",
+   "sai": "A resposta bruta da rede.",
+   "termos": [
+    [
+     "Softmax",
+     "Transforma notas em probabilidades que somam 100%."
+    ],
+    [
+     "Logit",
+     "Nota bruta, antes de virar probabilidade."
+    ]
+   ],
+   "tecnico": "Em classificação, camada linear seguida de softmax; em regressão, saída linear sem ativação."
+  },
+  {
+   "node": "prev",
+   "fase": "Usar (prever)",
+   "title": "Previsão",
+   "edges": [
+    "e5"
+   ],
+   "resumo": "A resposta final entregue ao usuário: a classe mais provável ou um valor estimado.",
+   "entra": "A resposta da camada de saída.",
+   "sai": "Uma classe ou um valor.",
+   "exemplo": "“dígito 7” com 91% de confiança.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Classificação",
+     "Escolher uma categoria."
+    ],
+    [
+     "Regressão",
+     "Estimar um número."
+    ]
+   ],
+   "tecnico": "Classificação: a classe de maior probabilidade (argmax). Regressão: o valor de saída é a própria previsão."
+  },
+  {
+   "node": "erro",
+   "fase": "Treinar",
+   "title": "Mede o erro",
+   "edges": [
+    "e6"
+   ],
+   "resumo": "No treino, a resposta da rede é comparada com a resposta certa. A diferença vira um número: quanto maior, pior a rede está.",
+   "entra": "A resposta da rede e a resposta certa.",
+   "sai": "Um número que mede o erro.",
+   "termos": [
+    [
+     "Função de perda",
+     "Fórmula que mede o tamanho do erro."
+    ],
+    [
+     "Cross-entropy",
+     "Perda usual para classificação."
+    ]
+   ],
+   "tecnico": "Função de perda: cross-entropy em classificação, ou erro quadrático médio (MSE, Mean Squared Error) em regressão."
+  },
+  {
+   "node": "retro",
+   "fase": "Treinar",
+   "title": "Retropropagação",
+   "edges": [
+    "e7"
+   ],
+   "resumo": "O erro é levado de trás para frente, camada por camada, para descobrir o quanto cada peso contribuiu para o erro e como corrigi-lo.",
+   "entra": "O erro.",
+   "sai": "A direção de correção de cada peso.",
+   "termos": [
+    [
+     "Gradiente",
+     "Indica como a perda muda quando um peso muda."
+    ],
+    [
+     "Regra da cadeia",
+     "Regra do cálculo que permite propagar o gradiente camada a camada."
+    ]
+   ],
+   "tecnico": "Backpropagation: calcula o gradiente da perda em relação a cada peso pela regra da cadeia, da saída para a entrada; os pesos são atualizados por gradiente descendente."
+  },
+  {
+   "node": "pesos",
+   "fase": "Treinar",
+   "title": "Pesos",
+   "edges": [
+    "e8",
+    "e9"
+   ],
+   "resumo": "Tudo o que a rede aprendeu fica guardado nos pesos. Eles são ajustados no treino e usados em todos os cálculos das camadas.",
+   "entra": "Os ajustes da retropropagação.",
+   "sai": "Pesos atualizados, usados nos cálculos.",
+   "termos": [
+    [
+     "Parâmetro",
+     "Número que a rede ajusta ao aprender."
+    ],
+    [
+     "Taxa de aprendizado",
+     "Tamanho de cada passo de ajuste."
+    ]
+   ],
+   "tecnico": "Parâmetros (pesos e vieses) iniciados de forma aleatória e atualizados a cada passo; fixos na inferência."
+  }
+ ]
+}

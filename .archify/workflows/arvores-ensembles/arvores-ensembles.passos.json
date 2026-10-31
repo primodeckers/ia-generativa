@@ -1,0 +1,290 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver uma árvore sozinha, pelo 5 para a floresta (árvores em paralelo) ou pelo 8 para o boosting (árvores em sequência).",
+ "steps": [
+  {
+   "node": "dados",
+   "fase": "Árvore de decisão",
+   "title": "Dados de treino",
+   "edges": [],
+   "resumo": "O ponto de partida de todos os métodos: uma tabela de exemplos em que já sabemos a resposta certa. Cada linha é um caso e cada coluna é uma característica dele.",
+   "entra": "Tabela com características e a resposta conhecida.",
+   "sai": "Os mesmos dados alimentam a árvore, a floresta e o boosting.",
+   "exemplo": "Clientes de um banco, com idade, renda e se pagaram o empréstimo.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Característica",
+     "Informação sobre cada caso, como idade ou renda."
+    ],
+    [
+     "Alvo",
+     "A resposta que queremos prever."
+    ]
+   ],
+   "tecnico": "Conjunto de treino supervisionado com variáveis preditoras e variável alvo, que pode ser de classificação ou de regressão."
+  },
+  {
+   "node": "pergunta",
+   "fase": "Árvore de decisão",
+   "title": "Pergunta sim/não",
+   "edges": [
+    "e-dados-pergunta"
+   ],
+   "resumo": "A árvore faz perguntas simples sobre uma característica, como \"a renda é maior que tal valor?\". Cada resposta separa os dados em dois grupos, e o processo se repete em cada grupo.",
+   "entra": "Os dados de treino.",
+   "sai": "Dois grupos de dados, um para cada resposta.",
+   "exemplo": "Renda acima de 5 mil? Quem diz sim vai para um lado, quem diz não vai para o outro.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Nó",
+     "Ponto da árvore onde se faz uma pergunta."
+    ],
+    [
+     "Divisão",
+     "Separação dos dados em dois grupos."
+    ]
+   ],
+   "tecnico": "Cada nó interno aplica um teste sobre uma característica e gera dois ramos, de forma recursiva, até um critério de parada."
+  },
+  {
+   "node": "criterio",
+   "fase": "Árvore de decisão",
+   "title": "Critério de divisão",
+   "edges": [
+    "e-pergunta-criterio"
+   ],
+   "resumo": "Para escolher qual pergunta fazer, a árvore testa várias e fica com a que deixa os grupos mais \"puros\", isto é, com casos de uma mesma resposta. Uma medida comum disso é a impureza de Gini.",
+   "entra": "Várias perguntas candidatas.",
+   "sai": "A pergunta que melhor separa os dados.",
+   "termos": [
+    [
+     "Impureza",
+     "Medida de quanto um grupo mistura respostas diferentes."
+    ],
+    [
+     "Gini",
+     "Uma forma comum de medir a impureza."
+    ]
+   ],
+   "tecnico": "A divisão é escolhida por maior redução de impureza, com Gini ou entropia na classificação e erro quadrático na regressão."
+  },
+  {
+   "node": "folhas",
+   "fase": "Árvore de decisão",
+   "title": "Folhas",
+   "edges": [
+    "e-criterio-folhas"
+   ],
+   "resumo": "Quando não vale mais a pena dividir, o grupo vira uma folha, que guarda a previsão. Para prever um caso novo, basta seguir as respostas da raiz até uma folha.",
+   "entra": "Um caso novo e o caminho de perguntas.",
+   "sai": "A previsão da árvore.",
+   "exemplo": "Renda alta e sem dívidas leva à folha \"deve pagar\".",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Folha",
+     "Ponto final da árvore, onde está a previsão."
+    ],
+    [
+     "Profundidade",
+     "Quantas perguntas seguidas a árvore pode fazer."
+    ]
+   ],
+   "tecnico": "A folha devolve a classe majoritária ou a média dos exemplos do grupo. Árvores muito profundas tendem a sofrer sobreajuste."
+  },
+  {
+   "node": "amostras",
+   "fase": "Random Forest",
+   "title": "Amostras aleatórias",
+   "edges": [
+    "e-dados-amostras"
+   ],
+   "resumo": "A floresta sorteia, para cada árvore, uma amostra diferente das linhas (com repetição) e também um subconjunto das características. Assim cada árvore vê os dados de um jeito um pouco diferente.",
+   "entra": "Os dados de treino.",
+   "sai": "Uma amostra diferente para cada árvore.",
+   "exemplo": "Árvore 1 recebe 800 clientes sorteados e só olha renda e idade; a árvore 2 recebe outros.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Bagging",
+     "Treinar modelos em amostras sorteadas dos dados."
+    ],
+    [
+     "Amostra com repetição",
+     "Sorteio em que o mesmo caso pode aparecer mais de uma vez."
+    ]
+   ],
+   "tecnico": "Bagging por bootstrap das linhas, somado à seleção aleatória de características em cada divisão, para reduzir a correlação entre as árvores."
+  },
+  {
+   "node": "varias",
+   "fase": "Random Forest",
+   "title": "Várias árvores",
+   "edges": [
+    "e-amostras-varias"
+   ],
+   "resumo": "Cada amostra treina uma árvore completa, sem depender das outras. Por serem independentes, podem ser treinadas ao mesmo tempo, em paralelo. Cada árvore erra de um jeito, e os erros tendem a se compensar.",
+   "entra": "Uma amostra para cada árvore.",
+   "sai": "Um conjunto de árvores diferentes entre si.",
+   "termos": [
+    [
+     "Floresta",
+     "Conjunto de árvores treinadas de forma independente."
+    ],
+    [
+     "Paralelo",
+     "Várias tarefas executadas ao mesmo tempo."
+    ]
+   ],
+   "tecnico": "Árvores profundas com alta variância e baixo viés, treinadas de forma independente. A diversidade entre elas reduz a variância do conjunto."
+  },
+  {
+   "node": "votacao",
+   "fase": "Random Forest",
+   "title": "Votação ou média",
+   "edges": [
+    "e-varias-votacao"
+   ],
+   "resumo": "Para prever um caso, todas as árvores dão seu palpite. Na classificação vale a resposta mais votada, e na regressão vale a média dos palpites. O resultado é mais estável que o de uma árvore sozinha.",
+   "entra": "Os palpites de todas as árvores.",
+   "sai": "A previsão final da floresta.",
+   "exemplo": "Das 100 árvores, 70 dizem \"vai pagar\" e 30 dizem \"não vai\". A floresta responde \"vai pagar\".",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Votação",
+     "Escolher a resposta mais frequente entre as árvores."
+    ],
+    [
+     "Média",
+     "Soma dos palpites dividida pelo número de árvores."
+    ]
+   ],
+   "tecnico": "Agregação por voto majoritário na classificação ou média na regressão, o que reduz a variância e o sobreajuste."
+  },
+  {
+   "node": "inicial",
+   "fase": "Gradient boosting",
+   "title": "Árvore inicial",
+   "edges": [
+    "e-dados-inicial"
+   ],
+   "resumo": "No boosting, as árvores são construídas em sequência. A primeira é pequena e simples, de propósito, e faz uma previsão básica. Sozinha ela erra bastante, e isso é esperado.",
+   "entra": "Os dados de treino.",
+   "sai": "Uma previsão inicial, ainda imprecisa.",
+   "exemplo": "Uma árvore com só 3 perguntas que acerta parte dos casos.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Aprendiz fraco",
+     "Modelo simples, que acerta só um pouco mais que o acaso."
+    ],
+    [
+     "Sequencial",
+     "Feito em ordem, um passo depois do outro."
+    ]
+   ],
+   "tecnico": "Aprendiz fraco, em geral uma árvore rasa, que dá a previsão inicial do modelo aditivo."
+  },
+  {
+   "node": "erros",
+   "fase": "Gradient boosting",
+   "title": "Cálculo dos erros",
+   "edges": [
+    "e-inicial-erros",
+    "e-soma-erros"
+   ],
+   "resumo": "Compara-se o que o modelo previu com a resposta real, caso a caso. A diferença mostra onde o modelo ainda erra e dá o alvo da próxima árvore. A cada rodada, o cálculo é refeito com as árvores já somadas.",
+   "entra": "A previsão atual e as respostas reais.",
+   "sai": "Os erros de cada caso.",
+   "exemplo": "Previsto 300, real 500: o erro é 200 e a próxima árvore tentará cobri-lo.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Erro residual",
+     "O que falta para a previsão atingir a resposta real."
+    ],
+    [
+     "Gradiente",
+     "Direção em que o erro mais diminui."
+    ]
+   ],
+   "tecnico": "Cálculo dos resíduos, que equivalem ao gradiente negativo da função de perda quando a perda é o erro quadrático."
+  },
+  {
+   "node": "proxima",
+   "fase": "Gradient boosting",
+   "title": "Próxima árvore",
+   "edges": [
+    "e-erros-proxima"
+   ],
+   "resumo": "Uma nova árvore pequena é treinada para prever esses erros, e não a resposta original. Ela aprende a corrigir o que as anteriores deixaram passar. Cada árvore depende da anterior, por isso não dá para treinar todas em paralelo.",
+   "entra": "Os erros calculados.",
+   "sai": "Uma árvore que estima a correção.",
+   "exemplo": "Ela aprende que clientes de renda baixa e dívida alta estão sendo superestimados.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Correção",
+     "Ajuste que reduz o erro da previsão atual."
+    ],
+    [
+     "Dependência",
+     "A árvore nova só existe por causa da anterior."
+    ]
+   ],
+   "tecnico": "Ajuste de uma nova árvore rasa ao gradiente da perda em relação à previsão atual, num procedimento de descida do gradiente no espaço das funções."
+  },
+  {
+   "node": "soma",
+   "fase": "Gradient boosting",
+   "title": "Soma ponderada",
+   "edges": [
+    "e-proxima-soma"
+   ],
+   "resumo": "A correção da nova árvore é somada à previsão, mas multiplicada por um número pequeno, a taxa de aprendizado. Passos pequenos deixam o modelo mais cuidadoso e evitam que ele se ajuste demais. Depois, volta-se ao cálculo dos erros.",
+   "entra": "A previsão atual e a correção.",
+   "sai": "Previsão atualizada, ligeiramente melhor.",
+   "exemplo": "Com taxa de aprendizado de 0,1, só uma pequena parte da correção entra em cada rodada.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Taxa de aprendizado",
+     "Tamanho do passo dado a cada nova árvore."
+    ],
+    [
+     "Rodada",
+     "Um ciclo completo de calcular erros e somar uma árvore."
+    ]
+   ],
+   "tecnico": "Atualização aditiva do modelo com a contribuição da nova árvore reduzida pela taxa de aprendizado (shrinkage). Ferramentas como XGBoost acrescentam regularização."
+  },
+  {
+   "node": "prev_boost",
+   "fase": "Gradient boosting",
+   "title": "Previsão final",
+   "edges": [
+    "e-soma-prev"
+   ],
+   "resumo": "Depois de muitas rodadas, a previsão é a soma de todas as árvores, cada uma com sua pequena contribuição. É um comitê em que cada membro corrige o anterior, diferente da floresta, em que cada um opina sozinho.",
+   "entra": "Todas as árvores somadas.",
+   "sai": "A previsão final do modelo.",
+   "exemplo": "Cem árvores pequenas somadas dão uma previsão bem mais precisa que a primeira.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Comitê (ensemble)",
+     "Conjunto de modelos que decidem juntos."
+    ],
+    [
+     "XGBoost",
+     "Biblioteca popular de gradient boosting com árvores."
+    ]
+   ],
+   "tecnico": "Modelo aditivo de árvores em sequência, com número de árvores e parada antecipada ajustados na validação para controlar o sobreajuste."
+  }
+ ]
+}

@@ -1,0 +1,116 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1: o item chega junto com a memória e passa pelos dois portões.",
+ "steps": [
+  {
+   "node": "item",
+   "fase": "Entrada e saída",
+   "title": "Item atual",
+   "edges": [],
+   "resumo": "A Gated Recurrent Unit (GRU, unidade recorrente com portões) lê a sequência um item por vez. Junto com cada item chega a memória do passo anterior.",
+   "entra": "O item atual e o estado oculto anterior.",
+   "sai": "Os dois, entregues aos portões.",
+   "termos": [
+    [
+     "Estado oculto",
+     "A única memória da GRU, que resume o passado."
+    ],
+    [
+     "Item",
+     "Uma palavra, letra ou medida da sequência."
+    ]
+   ],
+   "tecnico": "Entradas do passo: o item atual e o estado oculto anterior. Diferente da Long Short-Term Memory (LSTM, memória de longo e curto prazo), não há estado de célula separado."
+  },
+  {
+   "node": "reinicio",
+   "fase": "Portões",
+   "title": "Portão de reinício",
+   "edges": [
+    "e1",
+    "e4"
+   ],
+   "resumo": "Decide quanto do passado deve ser ignorado ao montar uma proposta de memória nova. Perto de 0, o passado é praticamente descartado.",
+   "entra": "O item atual e o estado anterior.",
+   "sai": "Um fator de 0 a 1 que reduz a influência do passado.",
+   "termos": [
+    [
+     "Portão",
+     "Filtro que deixa passar mais ou menos informação."
+    ],
+    [
+     "Sigmoide",
+     "Função que devolve valores entre 0 e 1."
+    ]
+   ],
+   "tecnico": "Reset gate (sigmoide): decide quanto do estado anterior entra no cálculo do estado candidato (que usa tangente hiperbólica (tanh))."
+  },
+  {
+   "node": "atualiza",
+   "fase": "Portões",
+   "title": "Portão de atualização",
+   "edges": [
+    "e2"
+   ],
+   "resumo": "Decide, para cada parte da memória, se ela é mantida como estava ou trocada pela proposta nova. Um só portão faz o papel dos portões de esquecer e de entrada da Long Short-Term Memory (LSTM, memória de longo e curto prazo).",
+   "entra": "O estado anterior e a proposta de memória nova.",
+   "sai": "O novo estado, misturando o antigo e o novo.",
+   "termos": [
+    [
+     "Proposta",
+     "Memória candidata calculada a partir do item e do passado filtrado."
+    ],
+    [
+     "Mistura",
+     "Média ponderada entre o estado antigo e a proposta."
+    ]
+   ],
+   "tecnico": "Update gate (sigmoide): faz uma interpolação entre o estado anterior e o estado candidato, decidindo quanto manter e quanto trocar."
+  },
+  {
+   "node": "estado",
+   "fase": "Memória",
+   "title": "Estado oculto",
+   "edges": [
+    "e5"
+   ],
+   "resumo": "A memória única da GRU. O novo estado é guardado e volta para o início do laço no passo seguinte.",
+   "entra": "O novo estado vindo do portão de atualização.",
+   "sai": "O mesmo estado, devolvido ao portão de reinício no próximo passo.",
+   "termos": [
+    [
+     "Memória única",
+     "A GRU junta memória curta e longa em um só vetor."
+    ],
+    [
+     "Menos parâmetros",
+     "Por ter dois portões em vez de três, costuma ser mais leve que a LSTM."
+    ]
+   ],
+   "tecnico": "Vetor de estado oculto, iniciado em zero. Com 2 portões (3 conjuntos de pesos) contra 3 portões da Long Short-Term Memory (LSTM, memória de longo e curto prazo) (4 conjuntos), a GRU tem menos parâmetros."
+  },
+  {
+   "node": "resultado",
+   "fase": "Entrada e saída",
+   "title": "Saída",
+   "edges": [
+    "e3"
+   ],
+   "resumo": "O resultado do passo: a saída (como a próxima palavra) e o novo estado, que segue para o passo seguinte.",
+   "entra": "O novo estado.",
+   "sai": "A saída do passo e o estado que continua.",
+   "termos": [
+    [
+     "Saída",
+     "O que a rede entrega neste passo."
+    ],
+    [
+     "Previsão",
+     "Palpite feito a partir do estado, como a próxima palavra."
+    ]
+   ],
+   "tecnico": "A saída é o próprio estado oculto; uma camada linear com softmax pode gerar a previsão do passo."
+  }
+ ]
+}
