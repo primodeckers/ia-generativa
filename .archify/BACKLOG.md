@@ -86,9 +86,9 @@ Temas para virar workflow (passo a passo). Marque `[x]` quando estiver pronto em
 - [ ] IA neuro-simbólica (redes neurais + regras)
 
 ## Dados, ética e segurança
-- [ ] Coleta, limpeza e rotulagem; dados sintéticos
-- [ ] Viés e fairness
-- [ ] Explicabilidade (SHAP, LIME, Grad-CAM)
-- [ ] Exemplos adversariais e deepfakes
-- [ ] Privacidade (federated learning, differential privacy)
-- [ ] Regulação (AI Act) e direitos autorais
+- [x] Coleta, limpeza e rotulagem; dados sintéticos
+- [x] Viés e fairness
+- [x] Explicabilidade (SHAP, LIME, Grad-CAM)
+- [x] Exemplos adversariais e deepfakes
+- [x] Privacidade (federated learning, differential privacy)
+- [x] Regulação (AI Act) e direitos autorais

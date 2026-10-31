@@ -1,0 +1,291 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver como um ataque engana um modelo, ou pelo 7 para entender as deepfakes.",
+ "steps": [
+  {
+   "node": "entrada",
+   "fase": "Exemplos adversariais",
+   "title": "Entrada legítima",
+   "edges": [],
+   "resumo": "Tudo começa com uma entrada comum e correta, como uma foto, um áudio ou um texto. Um modelo de IA a analisaria normalmente e responderia certo.",
+   "entra": "Uma imagem, um áudio ou um texto sem adulteração.",
+   "sai": "A entrada original, que o atacante quer manipular.",
+   "exemplo": "Uma foto de uma placa de trânsito de pare.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Entrada",
+     "O dado que o modelo recebe para analisar."
+    ],
+    [
+     "Exemplo adversarial",
+     "Entrada alterada de propósito para enganar um modelo."
+    ]
+   ],
+   "tecnico": "Amostra de entrada pertencente à distribuição esperada do modelo, usada como ponto de partida do ataque."
+  },
+  {
+   "node": "ataques",
+   "fase": "Exemplos adversariais",
+   "title": "Tipos de ataque",
+   "edges": [
+    "e-entrada-ataques"
+   ],
+   "resumo": "O atacante escolhe como agir. Na evasão, engana o modelo na hora de usá-lo. No envenenamento, adultera os dados de treino. Na extração, copia o modelo fazendo muitas consultas.",
+   "entra": "A entrada e o objetivo do atacante.",
+   "sai": "A estratégia de ataque escolhida.",
+   "termos": [
+    [
+     "Evasão",
+     "Enganar o modelo já treinado, durante o uso."
+    ],
+    [
+     "Envenenamento",
+     "Adulterar os dados de treino para prejudicar o modelo."
+    ],
+    [
+     "Extração",
+     "Copiar o comportamento do modelo por meio de consultas."
+    ]
+   ],
+   "tecnico": "Ataques de evasão (inferência), envenenamento de dados (treinamento) e extração de modelo (model extraction) por consultas à API."
+  },
+  {
+   "node": "alteracao",
+   "fase": "Exemplos adversariais",
+   "title": "Alteração calculada",
+   "edges": [
+    "e-ataques-alteracao"
+   ],
+   "resumo": "No ataque de evasão, o atacante faz uma pequena mudança, calculada para confundir o modelo. Para uma pessoa, a entrada parece igual à original.",
+   "entra": "A entrada original e o modelo-alvo.",
+   "sai": "Uma entrada quase idêntica, mas adversarial.",
+   "exemplo": "Ruído quase invisível numa imagem, ou adesivos numa placa de trânsito.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Perturbação",
+     "Pequena mudança, como um ruído na imagem, que engana o modelo."
+    ]
+   ],
+   "tecnico": "Perturbação otimizada usando o comportamento ou os gradientes do modelo. Em ataques físicos, aparece como adesivos ou marcas sobre objetos reais."
+  },
+  {
+   "node": "modelo",
+   "fase": "Exemplos adversariais",
+   "title": "Modelo de IA",
+   "edges": [
+    "e-alteracao-modelo"
+   ],
+   "resumo": "O modelo recebe a entrada alterada e a processa como qualquer outra. Ele não percebe que há algo errado, porque aprendeu padrões que a alteração explora.",
+   "entra": "A entrada adversarial.",
+   "sai": "A previsão do modelo.",
+   "termos": [
+    [
+     "Classificador",
+     "Modelo que atribui uma categoria à entrada."
+    ]
+   ],
+   "tecnico": "Modelos de redes neurais costumam ser sensíveis a perturbações pequenas, pois aprendem fronteiras de decisão que o ataque consegue atravessar."
+  },
+  {
+   "node": "erro",
+   "fase": "Exemplos adversariais",
+   "title": "Erro confiante",
+   "edges": [
+    "e-modelo-erro"
+   ],
+   "resumo": "O modelo erra, e muitas vezes com alta confiança. Isso é perigoso porque nada no resultado avisa que a resposta está errada.",
+   "entra": "A previsão feita sobre a entrada alterada.",
+   "sai": "Uma resposta incorreta, apresentada como segura.",
+   "exemplo": "Um carro autônomo lê a placa de pare como outra sinalização.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Confiança",
+     "O grau de certeza que o modelo atribui à resposta."
+    ]
+   ],
+   "tecnico": "Classificação incorreta com alta confiança reportada (misclassification), o que dificulta detectar o problema só pela saída do modelo."
+  },
+  {
+   "node": "defesas",
+   "fase": "Exemplos adversariais",
+   "title": "Defesas",
+   "edges": [
+    "e-erro-defesas"
+   ],
+   "resumo": "Não existe defesa perfeita, mas várias medidas reduzem o risco. Treinar o modelo com exemplos atacados, validar e filtrar entradas, monitorar o uso e testar a robustez com equipes que tentam atacar.",
+   "entra": "Os erros descobertos e o conhecimento sobre os ataques.",
+   "sai": "Um modelo mais robusto e vigiado.",
+   "termos": [
+    [
+     "Treino adversarial",
+     "Treinar o modelo também com exemplos atacados."
+    ],
+    [
+     "Red teaming",
+     "Equipe que tenta atacar o sistema para achar falhas antes de outros."
+    ]
+   ],
+   "tecnico": "Treino adversarial, validação e filtragem de entradas, monitoramento de consultas e testes de robustez (red teaming)."
+  },
+  {
+   "node": "dados",
+   "fase": "Deepfakes",
+   "title": "Rosto e voz reais",
+   "edges": [],
+   "resumo": "Aqui começa o outro tema, as deepfakes. Para imitar alguém, o gerador aprende com exemplos reais, como fotos, gravações de voz e vídeos da pessoa.",
+   "entra": "Fotos, áudios e vídeos reais.",
+   "sai": "Um conjunto de exemplos para o gerador aprender.",
+   "termos": [
+    [
+     "Deepfake",
+     "Mídia sintética que imita o rosto, a voz ou o vídeo de alguém."
+    ]
+   ],
+   "tecnico": "Conjunto de treino com amostras reais do alvo, de onde o modelo aprende aparência e voz."
+  },
+  {
+   "node": "gerador",
+   "fase": "Deepfakes",
+   "title": "GAN ou difusão",
+   "edges": [
+    "e-dados-gerador"
+   ],
+   "resumo": "Um modelo generativo aprende a criar mídia nova parecida com a real. Os dois tipos mais usados são as GANs e os modelos de difusão, tratados em outros workflows deste projeto.",
+   "entra": "Os exemplos reais.",
+   "sai": "Um modelo capaz de gerar rostos, vozes ou vídeos.",
+   "termos": [
+    [
+     "GAN",
+     "Rede em que um gerador e um crítico competem entre si."
+    ],
+    [
+     "Modelo de difusão",
+     "Modelo que gera mídia removendo ruído passo a passo."
+    ]
+   ],
+   "tecnico": "Geração por GANs (gerador contra discriminador) ou por modelos de difusão (remoção iterativa de ruído), com condicionamento em identidade ou voz."
+  },
+  {
+   "node": "sintetica",
+   "fase": "Deepfakes",
+   "title": "Mídia sintética",
+   "edges": [
+    "e-gerador-sintetica"
+   ],
+   "resumo": "O resultado é uma imagem, um áudio ou um vídeo que nunca aconteceu, mas parece real. A qualidade melhora a cada nova geração de modelos.",
+   "entra": "O modelo gerador.",
+   "sai": "Rosto, voz ou vídeo artificiais.",
+   "termos": [
+    [
+     "Mídia sintética",
+     "Conteúdo criado por IA, e não captado do mundo real."
+    ]
+   ],
+   "tecnico": "Saída gerada, como troca de rosto (face swap), reencenação facial ou clonagem de voz."
+  },
+  {
+   "node": "legitimo",
+   "fase": "Deepfakes",
+   "title": "Usos legítimos",
+   "edges": [
+    "e-sintetica-legitimo"
+   ],
+   "resumo": "A tecnologia também tem usos bons: efeitos e dublagem no cinema, vozes sintéticas para quem perdeu a fala e recursos de acessibilidade. O que muda é o consentimento e a transparência.",
+   "entra": "Mídia sintética criada com consentimento.",
+   "sai": "Conteúdo útil e identificado como sintético.",
+   "termos": [
+    [
+     "Consentimento",
+     "Autorização da pessoa cuja imagem ou voz é usada."
+    ]
+   ],
+   "tecnico": "Aplicações como efeitos visuais, dublagem, avatares e tecnologias assistivas com síntese de voz."
+  },
+  {
+   "node": "mau",
+   "fase": "Deepfakes",
+   "title": "Maus usos",
+   "edges": [
+    "e-legitimo-mau"
+   ],
+   "resumo": "A mesma tecnologia pode ser usada para fraude, desinformação e golpes, como uma voz clonada pedindo dinheiro a um parente. O problema é que o conteúdo falso parece verdadeiro.",
+   "entra": "Mídia sintética usada sem consentimento.",
+   "sai": "Engano, prejuízo ou desinformação.",
+   "exemplo": "Uma ligação com a voz de um parente pedindo dinheiro com urgência.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Voz clonada",
+     "Voz artificial que imita a de uma pessoa real."
+    ],
+    [
+     "Desinformação",
+     "Informação falsa espalhada para enganar."
+    ]
+   ],
+   "tecnico": "Fraude por clonagem de voz, vídeos manipulados para desinformação e falsificação de identidade, sem autorização do alvo."
+  },
+  {
+   "node": "deteccao",
+   "fase": "Como lidar",
+   "title": "Detecção automática",
+   "edges": [
+    "e-sintetica-deteccao"
+   ],
+   "resumo": "Programas procuram sinais de que a mídia é falsa, como pequenos defeitos na imagem ou no som. Mas é uma corrida: os geradores melhoram, e os detectores precisam melhorar junto.",
+   "entra": "Uma imagem, um áudio ou um vídeo suspeito.",
+   "sai": "Uma estimativa de que a mídia seja sintética.",
+   "termos": [
+    [
+     "Artefato",
+     "Defeito sutil que o processo de geração deixa na mídia."
+    ]
+   ],
+   "tecnico": "Classificadores treinados para achar artefatos de geração. Têm generalização limitada a geradores novos e podem errar nos dois sentidos."
+  },
+  {
+   "node": "proveniencia",
+   "fase": "Como lidar",
+   "title": "Proveniência",
+   "edges": [
+    "e-deteccao-proveniencia"
+   ],
+   "resumo": "Em vez de só procurar falsificações, é possível provar a origem do conteúdo verdadeiro. Marcas d'água e metadados assinados registram quem criou a mídia e como ela foi alterada, como no padrão C2PA.",
+   "entra": "Mídia com marca d'água ou credenciais de origem.",
+   "sai": "Informação verificável sobre a origem do conteúdo.",
+   "termos": [
+    [
+     "Marca d'água",
+     "Sinal escondido na mídia que indica sua origem."
+    ],
+    [
+     "C2PA",
+     "Padrão aberto de assinaturas e metadados de origem do conteúdo."
+    ]
+   ],
+   "tecnico": "Marcas d'água na geração e credenciais de conteúdo assinadas criptograficamente (C2PA), que acompanham o arquivo e registram edições."
+  },
+  {
+   "node": "verificacao",
+   "fase": "Como lidar",
+   "title": "Checagem humana",
+   "edges": [
+    "e-proveniencia-verificacao"
+   ],
+   "resumo": "Nenhuma ferramenta basta sozinha. O hábito mais seguro é checar a fonte e confirmar por outro canal, por exemplo ligando de volta para o número conhecido de quem pediu dinheiro.",
+   "entra": "O conteúdo, os sinais técnicos e o contexto.",
+   "sai": "Uma decisão informada sobre confiar ou não.",
+   "termos": [
+    [
+     "Verificação por outro canal",
+     "Confirmar o pedido por um meio diferente do que o recebeu."
+    ]
+   ],
+   "tecnico": "Camada de verificação humana e processual que complementa a detecção e a proveniência, reduzindo a dependência de uma única ferramenta."
+  }
+ ]
+}
