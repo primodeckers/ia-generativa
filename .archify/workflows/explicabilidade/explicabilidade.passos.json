@@ -69,7 +69,7 @@
      "Medida do quanto uma informação pesa nas decisões."
     ]
    ],
-   "tecnico": "A explicação global costuma ser obtida agregando explicações individuais, por exemplo a média dos valores absolutos de SHAP sobre um conjunto de dados."
+   "tecnico": "A explicação global costuma ser obtida agregando explicações individuais, por exemplo a média dos valores absolutos de SHAP (SHapley Additive exPlanations, explicações aditivas de Shapley) sobre um conjunto de dados."
   },
   {
    "node": "local",
@@ -102,12 +102,16 @@
    "edges": [
     "e-local-lime"
    ],
-   "resumo": "Perturba a entrada em torno do caso, alterando um pouco os valores, e observa como o modelo reage. Depois ajusta um modelo simples e legível, que vale só nessa vizinhança, e lê dele as razões.",
+   "resumo": "O LIME (Local Interpretable Model-agnostic Explanations, explicações locais interpretáveis e independentes de modelo) perturba a entrada em torno do caso, alterando um pouco os valores, e observa como o modelo reage. Depois ajusta um modelo simples e legível, que vale só nessa vizinhança, e lê dele as razões.",
    "entra": "O caso explicado e o modelo caixa-preta.",
    "sai": "Uma lista curta de fatores com seus pesos locais.",
    "exemplo": "Ao simular pedidos parecidos, a dívida atual alta mudou o resultado mais que qualquer outro fator.",
    "ilustrativo": true,
    "termos": [
+    [
+     "LIME",
+     "Local Interpretable Model-agnostic Explanations (explicações locais interpretáveis e independentes de modelo): método que explica um caso ajustando um modelo simples ao redor dele."
+    ],
     [
      "Perturbação",
      "Pequena alteração feita nos dados do caso para testar o modelo."
@@ -126,12 +130,16 @@
    "edges": [
     "e-local-shap"
    ],
-   "resumo": "Reparte a decisão entre as características usando os valores de Shapley, uma ideia da teoria dos jogos. Para cada informação diz quanto ela empurrou o resultado para cima ou para baixo em relação a um caso médio.",
+   "resumo": "O SHAP (SHapley Additive exPlanations, explicações aditivas de Shapley) reparte a decisão entre as características usando os valores de Shapley, uma ideia da teoria dos jogos. Para cada informação diz quanto ela empurrou o resultado para cima ou para baixo em relação a um caso médio.",
    "entra": "O caso e o modelo.",
    "sai": "Uma contribuição por característica, positiva ou negativa.",
    "exemplo": "Dívida alta: -30; tempo de emprego curto: -10; renda estável: +15. Valores inventados.",
    "ilustrativo": true,
    "termos": [
+    [
+     "SHAP",
+     "SHapley Additive exPlanations (explicações aditivas de Shapley): método que divide a decisão entre as características."
+    ],
     [
      "Valor de Shapley",
      "Forma de dividir o crédito de um resultado entre os participantes de um jogo."
@@ -150,19 +158,23 @@
    "edges": [
     "e-local-gradcam"
    ],
-   "resumo": "Para imagens e redes convolucionais. Gera um mapa de calor sobre a imagem mostrando as regiões que mais influenciaram a classe escolhida, usando os gradientes da última camada convolucional.",
+   "resumo": "O Grad-CAM (Gradient-weighted Class Activation Mapping, mapeamento de ativação de classe ponderado por gradiente) serve para imagens e redes convolucionais. Gera um mapa de calor sobre a imagem mostrando as regiões que mais influenciaram a classe escolhida, usando os gradientes da última camada convolucional.",
    "entra": "Uma imagem e uma rede convolucional já treinada.",
    "sai": "Um mapa de calor sobreposto à imagem.",
    "exemplo": "Numa radiografia classificada como suspeita, o mapa destaca a região do pulmão que mais pesou. Exemplo hipotético.",
    "ilustrativo": true,
    "termos": [
     [
+     "Grad-CAM",
+     "Gradient-weighted Class Activation Mapping (mapeamento de ativação de classe ponderado por gradiente): gera um mapa de calor das regiões da imagem que mais pesaram."
+    ],
+    [
      "Rede convolucional",
      "Rede neural especializada em imagens."
     ],
     [
      "Gradiente",
-     "Indica o quanto uma mudança pequena afeta o resultado."
+     "Indica como a saída muda quando a entrada muda um pouco."
     ]
    ],
    "tecnico": "Grad-CAM pondera os mapas de ativação da última camada convolucional pelos gradientes da classe e mostra o resultado como mapa de calor de baixa resolução."

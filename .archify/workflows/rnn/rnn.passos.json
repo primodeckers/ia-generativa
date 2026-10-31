@@ -8,7 +8,7 @@
    "fase": "Ler a sequência",
    "title": "Sequência",
    "edges": [],
-   "resumo": "A RNN recebe a sequência um item por vez (uma palavra, uma letra, uma medida), sempre na ordem em que aparecem.",
+   "resumo": "A Recurrent Neural Network (RNN, rede neural recorrente) recebe a sequência um item por vez (uma palavra, uma letra, uma medida), sempre na ordem em que aparecem.",
    "entra": "Uma sequência de itens (texto, áudio, série de números).",
    "sai": "Um item por vez, em cada passo de tempo.",
    "exemplo": "“O gato subiu”: primeiro “O”, depois “gato”, depois “subiu”.",
@@ -46,7 +46,7 @@
      "Os mesmos parâmetros são usados em todos os passos."
     ]
    ],
-   "tecnico": "Atualização com tanh combinando a entrada atual e o estado oculto anterior. Os mesmos pesos valem para todos os passos (compartilhamento de pesos)."
+   "tecnico": "Atualização com tangente hiperbólica (tanh) combinando a entrada atual e o estado oculto anterior. Os mesmos pesos valem para todos os passos (compartilhamento de pesos)."
   },
   {
    "node": "saida",
@@ -88,10 +88,10 @@
     ],
     [
      "Gradiente que some",
-     "Em sequências longas, o sinal de aprendizado encolhe e a rede esquece o começo; LSTM e GRU foram criadas para isso."
+     "Em sequências longas, o sinal de aprendizado encolhe e a rede esquece o começo; a Long Short-Term Memory (LSTM, memória de longo e curto prazo) e a Gated Recurrent Unit (GRU, unidade recorrente com portões) foram criadas para isso."
     ]
    ],
-   "tecnico": "Estado oculto (hidden state), iniciado em zero. O treino usa retropropagação no tempo (BPTT), sujeita a gradientes que somem ou explodem."
+   "tecnico": "Estado oculto (hidden state), iniciado em zero. O treino usa retropropagação no tempo (BPTT, Backpropagation Through Time), sujeita a gradientes que somem ou explodem."
   }
  ]
 }

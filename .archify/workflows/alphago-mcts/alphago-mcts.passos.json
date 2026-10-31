@@ -201,7 +201,7 @@
     "hum-self"
    ],
    "resumo": "Depois, o programa joga contra si mesmo, milhares de vezes, e aprende pelo resultado: jogadas que levam à vitória são reforçadas. Isso é aprendizado por reforço, o tema do fluxo “rl-basico”, e melhora tanto a política quanto o valor.",
-   "entra": "O programa atual e a busca MCTS.",
+   "entra": "O programa atual e a busca Monte Carlo Tree Search (MCTS, busca em árvore Monte Carlo).",
    "sai": "Novas partidas e resultados, que aprimoram as duas redes.",
    "termos": [
     [

@@ -8,7 +8,7 @@
    "fase": "Exemplos adversariais",
    "title": "Entrada legítima",
    "edges": [],
-   "resumo": "Tudo começa com uma entrada comum e correta, como uma foto, um áudio ou um texto. Um modelo de IA a analisaria normalmente e responderia certo.",
+   "resumo": "Tudo começa com uma entrada comum e correta, como uma foto, um áudio ou um texto. Um modelo de Inteligência Artificial (IA) a analisaria normalmente e responderia certo.",
    "entra": "Uma imagem, um áudio ou um texto sem adulteração.",
    "sai": "A entrada original, que o atacante quer manipular.",
    "exemplo": "Uma foto de uma placa de trânsito de pare.",
@@ -49,7 +49,7 @@
      "Copiar o comportamento do modelo por meio de consultas."
     ]
    ],
-   "tecnico": "Ataques de evasão (inferência), envenenamento de dados (treinamento) e extração de modelo (model extraction) por consultas à API."
+   "tecnico": "Ataques de evasão (inferência), envenenamento de dados (treinamento) e extração de modelo (model extraction) por consultas à API (Application Programming Interface, interface de programação de aplicações)."
   },
   {
    "node": "alteracao",
@@ -83,8 +83,12 @@
    "sai": "A previsão do modelo.",
    "termos": [
     [
+     "IA",
+     "Inteligência Artificial: sistemas de computador que aprendem padrões a partir de dados."
+    ],
+    [
      "Classificador",
-     "Modelo que atribui uma categoria à entrada."
+     "Modelo que atribui cada entrada a uma categoria."
     ]
    ],
    "tecnico": "Modelos de redes neurais costumam ser sensíveis a perturbações pequenas, pois aprendem fronteiras de decisão que o ataque consegue atravessar."
@@ -154,17 +158,17 @@
    "edges": [
     "e-dados-gerador"
    ],
-   "resumo": "Um modelo generativo aprende a criar mídia nova parecida com a real. Os dois tipos mais usados são as GANs e os modelos de difusão, tratados em outros workflows deste projeto.",
+   "resumo": "Um modelo generativo aprende a criar mídia nova parecida com a real. Os dois tipos mais usados são as GANs (Generative Adversarial Networks, redes generativas adversárias) e os modelos de difusão, tratados em outros workflows deste projeto.",
    "entra": "Os exemplos reais.",
    "sai": "Um modelo capaz de gerar rostos, vozes ou vídeos.",
    "termos": [
     [
      "GAN",
-     "Rede em que um gerador e um crítico competem entre si."
+     "Generative Adversarial Network (rede generativa adversária): par de redes em que uma cria mídia falsa e outra tenta distingui-la da real."
     ],
     [
      "Modelo de difusão",
-     "Modelo que gera mídia removendo ruído passo a passo."
+     "Modelo que gera mídia removendo ruído aos poucos."
     ]
    ],
    "tecnico": "Geração por GANs (gerador contra discriminador) ou por modelos de difusão (remoção iterativa de ruído), com condicionamento em identidade ou voz."
@@ -254,7 +258,7 @@
    "edges": [
     "e-deteccao-proveniencia"
    ],
-   "resumo": "Em vez de só procurar falsificações, é possível provar a origem do conteúdo verdadeiro. Marcas d'água e metadados assinados registram quem criou a mídia e como ela foi alterada, como no padrão C2PA.",
+   "resumo": "Em vez de só procurar falsificações, é possível provar a origem do conteúdo verdadeiro. Marcas d'água e metadados assinados registram quem criou a mídia e como ela foi alterada, como no padrão C2PA (Coalition for Content Provenance and Authenticity, coalizão para proveniência e autenticidade de conteúdo).",
    "entra": "Mídia com marca d'água ou credenciais de origem.",
    "sai": "Informação verificável sobre a origem do conteúdo.",
    "termos": [
@@ -264,7 +268,7 @@
     ],
     [
      "C2PA",
-     "Padrão aberto de assinaturas e metadados de origem do conteúdo."
+     "Coalition for Content Provenance and Authenticity (coalizão para proveniência e autenticidade de conteúdo): padrão aberto de credenciais de origem."
     ]
    ],
    "tecnico": "Marcas d'água na geração e credenciais de conteúdo assinadas criptograficamente (C2PA), que acompanham o arquivo e registram edições."

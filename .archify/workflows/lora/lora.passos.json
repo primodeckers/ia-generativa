@@ -1,14 +1,14 @@
 {
  "titulo": "Passo a passo",
  "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
- "inicio": "Comece pelo 1 para ver o modelo base; o passo 4 mostra a variante QLoRA.",
+ "inicio": "Comece pelo 1 para ver o modelo base; o passo 4 mostra a variante QLoRA (Quantized Low-Rank Adaptation, adaptação de baixo rank quantizada).",
  "steps": [
   {
    "node": "base",
    "fase": "Preparar",
    "title": "Modelo base",
    "edges": [],
-   "resumo": "Ponto de partida: um modelo de linguagem já pré-treinado, que sabe muita coisa em geral. Na LoRA, os pesos dele ficam congelados: não mudam durante todo o ajuste.",
+   "resumo": "Ponto de partida: um modelo de linguagem já pré-treinado, que sabe muita coisa em geral. Na LoRA (Low-Rank Adaptation, adaptação de baixo rank), os pesos dele ficam congelados: não mudam durante todo o ajuste.",
    "entra": "Um modelo pré-treinado.",
    "sai": "O mesmo modelo, intacto e congelado.",
    "termos": [
@@ -21,7 +21,7 @@
      "Números do modelo que ficam travados e não são atualizados no treino."
     ]
    ],
-   "tecnico": "Os pesos do modelo base ficam congelados (sem gradiente nem estado do otimizador para eles), o que reduz muito a memória de GPU."
+   "tecnico": "Os pesos do modelo base ficam congelados (sem gradiente nem estado do otimizador para eles), o que reduz muito a memória de GPU (Graphics Processing Unit, unidade de processamento gráfico)."
   },
   {
    "node": "adapt",
@@ -43,7 +43,7 @@
      "Peça pequena acoplada ao modelo que guarda o aprendizado da tarefa."
     ]
    ],
-   "tecnico": "Adapters de baixo rank (LoRA) inseridos nos target modules de atenção. O rank r controla o número de parâmetros treináveis, em geral bem menos de 1% do total."
+   "tecnico": "Adapters de baixo rank (LoRA, Low-Rank Adaptation) inseridos nos target modules de atenção. O rank r controla o número de parâmetros treináveis, em geral bem menos de 1% do total."
   },
   {
    "node": "dados",
@@ -74,7 +74,7 @@
    "edges": [
     "e-base-quant"
    ],
-   "resumo": "Variante QLoRA: o modelo base é guardado com números de menor precisão (4 bits), ocupando bem menos memória. Os adaptadores continuam sendo treinados por cima dele.",
+   "resumo": "Variante QLoRA (Quantized LoRA, LoRA com modelo base quantizado): o modelo base é guardado com números de menor precisão (4 bits), ocupando bem menos memória. Os adaptadores continuam sendo treinados por cima dele.",
    "entra": "O modelo base congelado.",
    "sai": "O modelo base compactado em 4 bits.",
    "termos": [
@@ -84,10 +84,10 @@
     ],
     [
      "QLoRA",
-     "LoRA aplicada sobre um modelo base quantizado."
+     "Quantized LoRA (LoRA com modelo base quantizado): LoRA aplicada sobre um modelo base quantizado."
     ]
    ],
-   "tecnico": "QLoRA: base quantizado em NF4 / 4-bit e congelado; os adapters LoRA são treinados em maior precisão sobre ele."
+   "tecnico": "QLoRA: base quantizado em NF4 (4-bit NormalFloat) e congelado; os adapters LoRA (Low-Rank Adaptation) são treinados em maior precisão sobre ele."
   },
   {
    "node": "treino",
@@ -98,7 +98,7 @@
     "e-dados-treino",
     "e-quant-treino"
    ],
-   "resumo": "O modelo vê os exemplos e só as matrizes A e B são atualizadas. Como são poucos parâmetros, o treino usa bem menos memória de GPU e roda mais rápido.",
+   "resumo": "O modelo vê os exemplos e só as matrizes A e B são atualizadas. Como são poucos parâmetros, o treino usa bem menos memória de GPU (unidade de processamento gráfico) e roda mais rápido.",
    "entra": "Exemplos, modelo base e adaptadores.",
    "sai": "Adaptadores com o aprendizado da tarefa.",
    "termos": [
@@ -108,7 +108,7 @@
     ],
     [
      "GPU",
-     "Chip que acelera os cálculos do treino."
+     "Graphics Processing Unit (unidade de processamento gráfico): chip que acelera os cálculos do treino."
     ]
    ],
    "tecnico": "Forward e backward passam pelo modelo congelado, mas só os parâmetros dos adapters recebem atualização do otimizador."
@@ -192,7 +192,7 @@
      "Deixar um modelo geral melhor em uma tarefa ou domínio."
     ]
    ],
-   "tecnico": "Modelo especializado via PEFT (parameter-efficient fine-tuning): LoRA, ou QLoRA com base em 4-bit."
+   "tecnico": "Modelo especializado via PEFT (Parameter-Efficient Fine-Tuning, ajuste fino eficiente em parâmetros): LoRA (Low-Rank Adaptation), ou QLoRA (Quantized LoRA) com base em 4 bits."
   }
  ]
 }

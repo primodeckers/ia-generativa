@@ -41,7 +41,7 @@
    "title": "Variáveis proxy",
    "edges": ["e-amostra-proxy"],
    "resumo": "Mesmo sem usar uma característica sensível, como raça ou gênero, outras variáveis podem funcionar como substitutas dela. O modelo aprende esse padrão e passa a reproduzir a desigualdade de forma indireta.",
-   "entra": "As variáveis de entrada do modelo, como CEP, escola ou histórico.",
+   "entra": "As variáveis de entrada do modelo, como CEP (Código de Endereçamento Postal), escola ou histórico.",
    "sai": "Um modelo que aprende o padrão dos dados, incluindo as desigualdades.",
    "exemplo": "O CEP pode funcionar como proxy da origem de uma pessoa, e o modelo passa a usá-lo para decidir.",
    "ilustrativo": true,

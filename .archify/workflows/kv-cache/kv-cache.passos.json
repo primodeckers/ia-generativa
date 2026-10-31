@@ -1,163 +1,253 @@
 {
- "titulo": "Passo a passo",
- "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
- "inicio": "Comece pelo 1 para ver o problema sem cache, pelo 4 para ver o KV cache, ou pelo 9 para entender o FlashAttention.",
- "steps": [
-  {
-   "node": "tok",
-   "fase": "Sem cache",
-   "title": "Novo token",
-   "edges": [],
-   "resumo": "Um LLM escreve um token por vez. Para gerar o próximo, ele precisa olhar para tudo o que já está no texto: o prompt e os tokens que ele mesmo acabou de gerar.",
-   "entra": "O texto até agora (prompt mais tokens gerados).",
-   "sai": "O pedido para gerar o próximo token.",
-   "exemplo": "Depois de “O gato subiu no”, o modelo precisa escolher a palavra seguinte.",
-   "ilustrativo": true,
-   "termos": [
-    ["Token", "Pedaço de texto (palavra ou parte dela) que o modelo lê e escreve."],
-    ["Geração autoregressiva", "Gerar um token de cada vez, usando os anteriores."]
-   ],
-   "tecnico": "Decodificação autoregressiva: cada passo produz um token que é anexado à sequência e vira entrada do passo seguinte."
-  },
-  {
-   "node": "recalc",
-   "fase": "Sem cache",
-   "title": "Recalcula K e V",
-   "edges": ["e-tok-recalc"],
-   "resumo": "Sem cache, o modelo refaz, em cada camada, as chaves e os valores da atenção de todos os tokens anteriores, mesmo que eles não tenham mudado desde o passo passado.",
-   "entra": "Todos os tokens anteriores mais o novo.",
-   "sai": "Chaves e valores de todos os tokens, em todas as camadas.",
-   "termos": [
-    ["Chaves e valores (K e V)", "Informações que cada token oferece para os outros consultarem na atenção."],
-    ["Camada", "Cada bloco do modelo, que repete o mesmo tipo de cálculo."]
-   ],
-   "tecnico": "As projeções de key e value são recalculadas para todo o prefixo a cada passo de geração, em todas as camadas."
-  },
-  {
-   "node": "atsem",
-   "fase": "Sem cache",
-   "title": "Atenção",
-   "edges": ["e-recalc-atsem"],
-   "resumo": "Com tudo recalculado, a atenção produz o resultado do passo. O problema é o desperdício: a parte repetida do trabalho cresce a cada token gerado, e a geração fica cada vez mais lenta.",
-   "entra": "Chaves e valores recalculados.",
-   "sai": "O resultado da atenção para o novo token.",
-   "termos": [
-    ["Atenção", "Mecanismo que deixa cada token considerar os outros para entender o contexto."],
-    ["Trabalho repetido", "Contas que dão o mesmo resultado do passo anterior e são feitas de novo."]
-   ],
-   "tecnico": "O custo por passo cresce com o tamanho do prefixo, mesmo com resultados idênticos aos do passo anterior para os tokens antigos."
-  },
-  {
-   "node": "novo",
-   "fase": "Com KV cache",
-   "title": "Calcula só o novo",
-   "edges": ["e-tok-novo"],
-   "resumo": "Com o KV cache, o modelo calcula as chaves e os valores apenas do token que acabou de chegar. Os tokens antigos não mudam, então não há motivo para refazer a conta deles.",
-   "entra": "Somente o último token gerado.",
-   "sai": "Chaves e valores do último token, em cada camada.",
-   "termos": [
-    ["KV cache", "Memória que guarda as chaves e os valores já calculados."],
-    ["Prefixo", "Os tokens que vieram antes do atual."]
-   ],
-   "tecnico": "No decode, a projeção de key e value é feita só para a posição nova, em cada camada."
-  },
-  {
-   "node": "cache",
-   "fase": "Com KV cache",
-   "title": "Cache KV",
-   "edges": ["e-novo-cache"],
-   "resumo": "As chaves e os valores de cada camada ficam guardados na memória da GPU. A cada passo, o par do token novo é acrescentado ao final do cache, que só cresce enquanto o texto cresce.",
-   "entra": "Chaves e valores do token novo.",
-   "sai": "Cache com o histórico completo, pronto para leitura.",
-   "termos": [
-    ["Memória da GPU", "Memória da placa de vídeo, onde o modelo e o cache ficam guardados."],
-    ["Acrescentar", "Adicionar no final, sem mexer no que já existe."]
-   ],
-   "tecnico": "Um tensor de keys e values por camada, estendido a cada passo e mantido na memória da GPU durante toda a geração."
-  },
-  {
-   "node": "atcache",
-   "fase": "Com KV cache",
-   "title": "Atenção",
-   "edges": ["e-cache-atcache"],
-   "resumo": "O token novo consulta o cache para ver o contexto inteiro, lendo o que já está pronto em vez de recalcular. O resultado é o mesmo, com muito menos trabalho por token.",
-   "entra": "A consulta do token novo e o cache de chaves e valores.",
-   "sai": "O resultado da atenção, sem recalcular o passado.",
-   "termos": [
-    ["Consulta (query)", "O que o token novo procura no contexto."],
-    ["Leitura do cache", "Buscar na memória o que já foi calculado."]
-   ],
-   "tecnico": "A query do token novo atua sobre as keys e values em cache. O custo de cálculo por passo cai, mas a leitura do cache passa a pesar na velocidade."
-  },
-  {
-   "node": "cresce",
-   "fase": "Com KV cache",
-   "title": "Memória cresce",
-   "edges": ["e-atcache-cresce"],
-   "resumo": "A troca tem um preço: o cache ocupa memória da GPU, e esse espaço cresce com o tamanho do contexto e com o número de pedidos atendidos juntos (o lote). Em contextos longos, a memória vira o limite.",
-   "entra": "Cada novo token e cada novo pedido no lote.",
-   "sai": "Mais memória da GPU ocupada pelo cache.",
-   "termos": [
-    ["Contexto", "Quantidade de texto que o modelo considera de uma vez."],
-    ["Lote (batch)", "Vários pedidos processados ao mesmo tempo na GPU."]
-   ],
-   "tecnico": "O tamanho do KV cache cresce com o comprimento da sequência e com o tamanho do lote, e disputa a memória da GPU com os pesos do modelo."
-  },
-  {
-   "node": "paged",
-   "fase": "Com KV cache",
-   "title": "PagedAttention",
-   "edges": ["e-cresce-paged"],
-   "resumo": "É uma técnica usada no vLLM para organizar a memória do cache em pequenos blocos, parecido com as páginas da memória de um computador. Isso evita reservar espaço demais e reduz o desperdício.",
-   "entra": "Pedidos com tamanhos de contexto diferentes.",
-   "sai": "Cache distribuído em blocos, com menos memória desperdiçada.",
-   "termos": [
-    ["vLLM", "Sistema de código aberto para servir LLMs com eficiência."],
-    ["Bloco (página)", "Fatia pequena de memória reservada conforme a necessidade."]
-   ],
-   "tecnico": "PagedAttention divide o KV cache em blocos não contíguos mapeados por uma tabela, reduzindo fragmentação e permitindo atender mais pedidos juntos."
-  },
-  {
-   "node": "normal",
-   "fase": "FlashAttention",
-   "title": "Matriz grande",
-   "edges": ["e-atcache-normal"],
-   "resumo": "Esta é outra otimização, que age na própria conta da atenção. A versão padrão cria uma matriz grande com a relação entre os tokens e a leva e traz da memória principal da GPU (HBM), que é lenta. Esse vai e vem consome tempo e memória.",
-   "entra": "Consultas, chaves e valores.",
-   "sai": "Uma matriz grande de pontuações guardada na HBM.",
-   "termos": [
-    ["HBM", "Memória principal da GPU: grande, mas mais lenta."],
-    ["Matriz de atenção", "Tabela com a relação de cada token com todos os outros."]
-   ],
-   "tecnico": "A implementação padrão materializa a matriz de atenção na HBM e a lê e escreve entre os passos, e o gargalo costuma ser o tráfego de memória."
-  },
-  {
-   "node": "blocos",
-   "fase": "FlashAttention",
-   "title": "Cálculo em blocos",
-   "edges": ["e-normal-blocos"],
-   "resumo": "O FlashAttention divide a conta em blocos pequenos que cabem na SRAM, uma memória muito rápida dentro da GPU. Cada bloco é processado e combinado aos anteriores, sem nunca montar a matriz inteira.",
-   "entra": "Blocos de consultas, chaves e valores.",
-   "sai": "O resultado da atenção, montado aos poucos.",
-   "termos": [
-    ["SRAM", "Memória pequena e muito rápida, dentro da GPU."],
-    ["Bloco (tile)", "Fatia da conta que cabe na memória rápida."]
-   ],
-   "tecnico": "Kernel fundido que processa tiles na SRAM e usa softmax online para combinar os blocos, evitando gravar a matriz de atenção na HBM."
-  },
-  {
-   "node": "exato",
-   "fase": "FlashAttention",
-   "title": "Resultado exato",
-   "edges": ["e-blocos-exato"],
-   "resumo": "O resultado é o mesmo da atenção normal, e não uma aproximação. A diferença está em usar menos memória e menos idas e vindas à HBM, o que deixa a conta mais rápida.",
-   "entra": "Os resultados parciais de cada bloco.",
-   "sai": "A mesma saída da atenção padrão, com menos memória e mais velocidade.",
-   "termos": [
-    ["Atenção exata", "Dá o mesmo resultado da atenção padrão, sem aproximar."],
-    ["Eficiência de memória", "Fazer a mesma conta movendo menos dados."]
-   ],
-   "tecnico": "Atenção exata com menor uso de memória e menos acessos à HBM. É diferente do KV cache, que evita recálculo na geração, e os dois podem ser usados juntos."
-  }
- ]
+  "titulo": "Passo a passo",
+  "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+  "inicio": "Comece pelo 1 para ver o problema sem cache, pelo 4 para ver o KV cache (Key-Value cache, cache de chaves e valores), ou pelo 9 para entender o FlashAttention.",
+  "steps": [
+    {
+      "node": "tok",
+      "fase": "Sem cache",
+      "title": "Novo token",
+      "edges": [],
+      "resumo": "Um LLM (Large Language Model, modelo de linguagem de grande escala) escreve um token por vez. Para gerar o próximo, ele precisa olhar para tudo o que já está no texto: o prompt e os tokens que ele mesmo acabou de gerar.",
+      "entra": "O texto até agora (prompt mais tokens gerados).",
+      "sai": "O pedido para gerar o próximo token.",
+      "exemplo": "Depois de “O gato subiu no”, o modelo precisa escolher a palavra seguinte.",
+      "ilustrativo": true,
+      "termos": [
+        [
+          "Token",
+          "Pedaço de texto (palavra ou parte dela) que o modelo lê e escreve."
+        ],
+        [
+          "Geração autoregressiva",
+          "Gerar um token de cada vez, usando os anteriores."
+        ]
+      ],
+      "tecnico": "Decodificação autoregressiva: cada passo produz um token que é anexado à sequência e vira entrada do passo seguinte."
+    },
+    {
+      "node": "recalc",
+      "fase": "Sem cache",
+      "title": "Recalcula K e V",
+      "edges": [
+        "e-tok-recalc"
+      ],
+      "resumo": "Sem cache, o modelo refaz, em cada camada, as chaves e os valores da atenção de todos os tokens anteriores, mesmo que eles não tenham mudado desde o passo passado.",
+      "entra": "Todos os tokens anteriores mais o novo.",
+      "sai": "Chaves e valores de todos os tokens, em todas as camadas.",
+      "termos": [
+        [
+          "Chaves e valores (K e V)",
+          "Keys e Values (K e V, chaves e valores): informações que cada token oferece para os outros consultarem na atenção."
+        ],
+        [
+          "Camada",
+          "Cada bloco do modelo, que repete o mesmo tipo de cálculo."
+        ]
+      ],
+      "tecnico": "As projeções de key e value são recalculadas para todo o prefixo a cada passo de geração, em todas as camadas."
+    },
+    {
+      "node": "atsem",
+      "fase": "Sem cache",
+      "title": "Atenção",
+      "edges": [
+        "e-recalc-atsem"
+      ],
+      "resumo": "Com tudo recalculado, a atenção produz o resultado do passo. O problema é o desperdício: a parte repetida do trabalho cresce a cada token gerado, e a geração fica cada vez mais lenta.",
+      "entra": "Chaves e valores recalculados.",
+      "sai": "O resultado da atenção para o novo token.",
+      "termos": [
+        [
+          "Atenção",
+          "Mecanismo que deixa cada token considerar os outros para entender o contexto."
+        ],
+        [
+          "Trabalho repetido",
+          "Contas que dão o mesmo resultado do passo anterior e são feitas de novo."
+        ]
+      ],
+      "tecnico": "O custo por passo cresce com o tamanho do prefixo, mesmo com resultados idênticos aos do passo anterior para os tokens antigos."
+    },
+    {
+      "node": "novo",
+      "fase": "Com KV cache",
+      "title": "Calcula só o novo",
+      "edges": [
+        "e-tok-novo"
+      ],
+      "resumo": "Com o KV cache (Key-Value cache, cache de chaves e valores), o modelo calcula as chaves e os valores apenas do token que acabou de chegar. Os tokens antigos não mudam, então não há motivo para refazer a conta deles.",
+      "entra": "Somente o último token gerado.",
+      "sai": "Chaves e valores do último token, em cada camada.",
+      "termos": [
+        [
+          "KV cache",
+          "Key-Value cache (cache de chaves e valores): memória que guarda as chaves e os valores já calculados."
+        ],
+        [
+          "Prefixo",
+          "Os tokens que vieram antes do atual."
+        ]
+      ],
+      "tecnico": "No decode, a projeção de key e value é feita só para a posição nova, em cada camada."
+    },
+    {
+      "node": "cache",
+      "fase": "Com KV cache",
+      "title": "Cache KV",
+      "edges": [
+        "e-novo-cache"
+      ],
+      "resumo": "As chaves e os valores de cada camada ficam guardados na memória da GPU (Graphics Processing Unit, unidade de processamento gráfico). A cada passo, o par do token novo é acrescentado ao final do cache, que só cresce enquanto o texto cresce.",
+      "entra": "Chaves e valores do token novo.",
+      "sai": "Cache com o histórico completo, pronto para leitura.",
+      "termos": [
+        [
+          "Memória da GPU",
+          "Memória da placa de vídeo, onde o modelo e o cache ficam guardados."
+        ],
+        [
+          "Acrescentar",
+          "Adicionar no final, sem mexer no que já existe."
+        ],
+        [
+          "KV",
+          "Key-Value (chave e valor): o par de informações de cada token que fica guardado no cache."
+        ]
+      ],
+      "tecnico": "Um tensor de keys e values por camada, estendido a cada passo e mantido na memória da GPU durante toda a geração."
+    },
+    {
+      "node": "atcache",
+      "fase": "Com KV cache",
+      "title": "Atenção",
+      "edges": [
+        "e-cache-atcache"
+      ],
+      "resumo": "O token novo consulta o cache para ver o contexto inteiro, lendo o que já está pronto em vez de recalcular. O resultado é o mesmo, com muito menos trabalho por token.",
+      "entra": "A consulta do token novo e o cache de chaves e valores.",
+      "sai": "O resultado da atenção, sem recalcular o passado.",
+      "termos": [
+        [
+          "Consulta (query)",
+          "O que o token novo procura no contexto."
+        ],
+        [
+          "Leitura do cache",
+          "Buscar na memória o que já foi calculado."
+        ]
+      ],
+      "tecnico": "A query do token novo atua sobre as keys e values em cache. O custo de cálculo por passo cai, mas a leitura do cache passa a pesar na velocidade."
+    },
+    {
+      "node": "cresce",
+      "fase": "Com KV cache",
+      "title": "Memória cresce",
+      "edges": [
+        "e-atcache-cresce"
+      ],
+      "resumo": "A troca tem um preço: o cache ocupa memória da GPU, e esse espaço cresce com o tamanho do contexto e com o número de pedidos atendidos juntos (o lote). Em contextos longos, a memória vira o limite.",
+      "entra": "Cada novo token e cada novo pedido no lote.",
+      "sai": "Mais memória da GPU ocupada pelo cache.",
+      "termos": [
+        [
+          "Contexto",
+          "Quantidade de texto que o modelo considera de uma vez."
+        ],
+        [
+          "Lote (batch)",
+          "Vários pedidos processados ao mesmo tempo na GPU."
+        ]
+      ],
+      "tecnico": "O tamanho do KV cache (Key-Value cache, cache de chaves e valores) cresce com o comprimento da sequência e com o tamanho do lote, e disputa a memória da GPU (unidade de processamento gráfico) com os pesos do modelo."
+    },
+    {
+      "node": "paged",
+      "fase": "Com KV cache",
+      "title": "PagedAttention",
+      "edges": [
+        "e-cresce-paged"
+      ],
+      "resumo": "É uma técnica usada no vLLM para organizar a memória do cache em pequenos blocos, parecido com as páginas da memória de um computador. Isso evita reservar espaço demais e reduz o desperdício.",
+      "entra": "Pedidos com tamanhos de contexto diferentes.",
+      "sai": "Cache distribuído em blocos, com menos memória desperdiçada.",
+      "termos": [
+        [
+          "vLLM",
+          "Sistema de código aberto para servir LLMs com eficiência."
+        ],
+        [
+          "Bloco (página)",
+          "Fatia pequena de memória reservada conforme a necessidade."
+        ]
+      ],
+      "tecnico": "PagedAttention divide o KV cache (cache de chaves e valores) em blocos não contíguos mapeados por uma tabela, reduzindo fragmentação e permitindo atender mais pedidos juntos."
+    },
+    {
+      "node": "normal",
+      "fase": "FlashAttention",
+      "title": "Matriz grande",
+      "edges": [
+        "e-atcache-normal"
+      ],
+      "resumo": "Esta é outra otimização, que age na própria conta da atenção. A versão padrão cria uma matriz grande com a relação entre os tokens e a leva e traz da memória principal da GPU (HBM, High Bandwidth Memory, memória de alta largura de banda), que é lenta. Esse vai e vem consome tempo e memória.",
+      "entra": "Consultas, chaves e valores.",
+      "sai": "Uma matriz grande de pontuações guardada na HBM.",
+      "termos": [
+        [
+          "HBM",
+          "High Bandwidth Memory (memória de alta largura de banda): memória principal da GPU, grande, mas mais lenta."
+        ],
+        [
+          "Matriz de atenção",
+          "Tabela com a relação de cada token com todos os outros."
+        ]
+      ],
+      "tecnico": "A implementação padrão materializa a matriz de atenção na HBM e a lê e escreve entre os passos, e o gargalo costuma ser o tráfego de memória."
+    },
+    {
+      "node": "blocos",
+      "fase": "FlashAttention",
+      "title": "Cálculo em blocos",
+      "edges": [
+        "e-normal-blocos"
+      ],
+      "resumo": "O FlashAttention divide a conta em blocos pequenos que cabem na SRAM (Static Random-Access Memory, memória estática de acesso aleatório), uma memória muito rápida dentro da GPU. Cada bloco é processado e combinado aos anteriores, sem nunca montar a matriz inteira.",
+      "entra": "Blocos de consultas, chaves e valores.",
+      "sai": "O resultado da atenção, montado aos poucos.",
+      "termos": [
+        [
+          "SRAM",
+          "Static Random-Access Memory (memória estática de acesso aleatório): memória pequena e muito rápida, dentro da GPU."
+        ],
+        [
+          "Bloco (tile)",
+          "Fatia da conta que cabe na memória rápida."
+        ]
+      ],
+      "tecnico": "Kernel fundido que processa tiles na SRAM e usa softmax online para combinar os blocos, evitando gravar a matriz de atenção na HBM (memória de alta largura de banda)."
+    },
+    {
+      "node": "exato",
+      "fase": "FlashAttention",
+      "title": "Resultado exato",
+      "edges": [
+        "e-blocos-exato"
+      ],
+      "resumo": "O resultado é o mesmo da atenção normal, e não uma aproximação. A diferença está em usar menos memória e menos idas e vindas à HBM, o que deixa a conta mais rápida.",
+      "entra": "Os resultados parciais de cada bloco.",
+      "sai": "A mesma saída da atenção padrão, com menos memória e mais velocidade.",
+      "termos": [
+        [
+          "Atenção exata",
+          "Dá o mesmo resultado da atenção padrão, sem aproximar."
+        ],
+        [
+          "Eficiência de memória",
+          "Fazer a mesma conta movendo menos dados."
+        ]
+      ],
+      "tecnico": "Atenção exata com menor uso de memória e menos acessos à HBM (High Bandwidth Memory, memória de alta largura de banda). É diferente do KV cache (Key-Value cache, cache de chaves e valores), que evita recálculo na geração, e os dois podem ser usados juntos."
+    }
+  ]
 }

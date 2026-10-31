@@ -8,7 +8,7 @@
    "fase": "Regulação por risco",
    "title": "Classificar risco",
    "edges": [],
-   "resumo": "Este é um panorama conceitual, não aconselhamento jurídico; as regras variam por país e mudam com o tempo. Uma ideia comum de regulação, presente por exemplo no AI Act da União Europeia, é classificar cada sistema de IA pelo risco que o seu uso representa. Quanto maior o risco, mais exigências. Há também regras específicas para modelos de uso geral.",
+   "resumo": "Este é um panorama conceitual, não aconselhamento jurídico; as regras variam por país e mudam com o tempo. Uma ideia comum de regulação, presente por exemplo no AI Act (Artificial Intelligence Act, Lei de Inteligência Artificial) da União Europeia, é classificar cada sistema de Inteligência Artificial (IA) pelo risco que o seu uso representa. Quanto maior o risco, mais exigências. Há também regras específicas para modelos de uso geral.",
    "entra": "A descrição do que o sistema faz e em que contexto é usado.",
    "sai": "Um nível de risco, que define quais obrigações se aplicam.",
    "termos": [
@@ -109,7 +109,7 @@
      "Recomendações voluntárias, que muitas organizações adotam."
     ]
    ],
-   "tecnico": "Sem obrigações específicas de IA nesse nível, mas leis gerais, como proteção de dados e consumo, seguem aplicáveis."
+   "tecnico": "Sem obrigações específicas de Inteligência Artificial (IA) nesse nível, mas leis gerais, como proteção de dados e consumo, seguem aplicáveis."
   },
   {
    "node": "lgpd",
@@ -118,13 +118,13 @@
    "edges": [
     "e-min-lgpd"
    ],
-   "resumo": "A LGPD é a lei brasileira de proteção de dados pessoais. Ela se aplica ao uso de dados pessoais por sistemas de IA em qualquer nível de risco, e não depende dessa classificação. O tema Privacidade e IA aprofunda o assunto.",
+   "resumo": "A LGPD (Lei Geral de Proteção de Dados) é a lei brasileira de proteção de dados pessoais. Ela se aplica ao uso de dados pessoais por sistemas de IA em qualquer nível de risco, e não depende dessa classificação. O tema Privacidade e IA aprofunda o assunto.",
    "entra": "Dados pessoais usados para treinar ou operar o sistema.",
    "sai": "Obrigações como base legal, finalidade e direitos do titular.",
    "termos": [
     [
      "LGPD",
-     "Lei Geral de Proteção de Dados, do Brasil."
+     "Lei Geral de Proteção de Dados: a lei brasileira que regula o tratamento de dados pessoais."
     ],
     [
      "Titular",
@@ -173,7 +173,7 @@
      "Participação criativa de uma pessoa na obra."
     ]
    ],
-   "tecnico": "A proteção costuma depender de contribuição criativa humana; o enquadramento de obras geradas por IA ainda está em discussão em várias jurisdições."
+   "tecnico": "A proteção costuma depender de contribuição criativa humana; o enquadramento de obras geradas por Inteligência Artificial (IA) ainda está em discussão em várias jurisdições."
   },
   {
    "node": "orgs",

@@ -8,7 +8,7 @@
    "fase": "Treino e Tracking",
    "title": "Código de treino",
    "edges": [],
-   "resumo": "Tudo começa com o script ou notebook que treina o modelo. O MLflow não muda o jeito de treinar: você só adiciona algumas linhas para registrar o que acontece.",
+   "resumo": "Tudo começa com o script ou notebook que treina o modelo. O MLflow (plataforma de código aberto para gerenciar o ciclo de vida de aprendizado de máquina) não muda o jeito de treinar: você só adiciona algumas linhas para registrar o que acontece.",
    "entra": "Dados e hiperparâmetros escolhidos por você.",
    "sai": "Um modelo treinado e informações sobre como ele foi treinado.",
    "exemplo": "Um notebook que treina um classificador com taxa de aprendizado 0,01.",
@@ -51,7 +51,7 @@
      "Arquivo produzido, como gráfico ou modelo."
     ]
    ],
-   "tecnico": "O autolog ativa o log automático de params, metrics e artifacts por framework; o log manual usa chamadas como log_param, log_metric e log_artifact."
+   "tecnico": "O autolog ativa o log automático de parâmetros, métricas e artefatos por framework; o log manual usa chamadas como log_param, log_metric e log_artifact."
   },
   {
    "node": "servidor",
@@ -73,7 +73,7 @@
      "Local onde ficam os arquivos, como modelos e gráficos."
     ]
    ],
-   "tecnico": "O tracking server grava metadados (params, metrics, tags) no backend store e os artifacts no artifact store, que podem ser sistemas distintos."
+   "tecnico": "O tracking server grava metadados (parâmetros, métricas, tags) no backend store e os artifacts no artifact store, que podem ser sistemas distintos."
   },
   {
    "node": "ui",
@@ -97,7 +97,7 @@
      "Rótulo livre colocado em um run."
     ]
    ],
-   "tecnico": "A UI do Tracking lista os runs de um experiment, permite filtrar, ordenar e comparar params e metrics, e abrir os artifacts de cada run."
+   "tecnico": "A interface do usuário (UI, User Interface) do Tracking lista os runs de um experiment, permite filtrar, ordenar e comparar parâmetros e métricas, e abrir os artifacts de cada run."
   },
   {
    "node": "pacote",
@@ -165,7 +165,7 @@
      "Publicar o modelo em uma plataforma de execução."
     ]
    ],
-   "tecnico": "O modelo é carregado a partir do model URI do registry, por versão ou alias, e servido via REST pelo MLflow ou implantado em uma plataforma por meio de deployment targets."
+   "tecnico": "O modelo é carregado a partir do URI (Uniform Resource Identifier, identificador uniforme de recurso) do modelo no registry, por versão ou alias, e servido via REST (Representational State Transfer) pelo MLflow ou implantado em uma plataforma por meio de deployment targets."
   },
   {
    "node": "monitor",
@@ -190,7 +190,7 @@
      "Treinar de novo com dados mais recentes."
     ]
    ],
-   "tecnico": "A queda de desempenho, por exemplo por drift nos dados, motiva um novo run de treino; a nova versão volta ao registry e o alias é movido. Para LLMs e agentes, o MLflow oferece tracing e avaliação como extensão."
+   "tecnico": "A queda de desempenho, por exemplo por drift nos dados, motiva um novo run de treino; a nova versão volta ao registry e o alias é movido. Para Large Language Models (LLMs, modelos de linguagem de grande escala) e agentes, o MLflow oferece tracing e avaliação como extensão."
   }
  ]
 }

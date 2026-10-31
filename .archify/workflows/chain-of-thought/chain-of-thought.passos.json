@@ -56,7 +56,7 @@
    "edges": [
     "q-cot"
    ],
-   "resumo": "No chain-of-thought (CoT), o modelo escreve os passos intermediários antes da resposta final: primeiro calcula uma parte, depois outra, e só então conclui. Isso pode ser pedido no prompt, com frases como \"pense passo a passo\", ou mostrado por exemplos.",
+   "resumo": "No chain-of-thought (CoT, cadeia de pensamento), o modelo escreve os passos intermediários antes da resposta final: primeiro calcula uma parte, depois outra, e só então conclui. Isso pode ser pedido no prompt, com frases como \"pense passo a passo\", ou mostrado por exemplos.",
    "entra": "A pergunta, mais o pedido de raciocinar por etapas.",
    "sai": "Uma sequência de passos escritos e, no fim, a resposta.",
    "exemplo": "\"3 caixas de 12 dão 36; 36 menos 5 dão 31. Resposta: 31.\"",
@@ -64,7 +64,7 @@
    "termos": [
     [
      "Chain-of-thought (CoT)",
-     "Cadeia de raciocínio escrita em texto, passo a passo."
+     "Chain-of-thought (cadeia de pensamento): cadeia de raciocínio escrita em texto, passo a passo."
     ],
     [
      "Few-shot",
@@ -168,13 +168,13 @@
    "edges": [
     "ver-rl"
    ],
-   "resumo": "Os modelos de raciocínio levam essa ideia para dentro do treinamento. Com aprendizado por reforço, o modelo é recompensado quando chega à resposta certa, e aprende por conta própria a raciocinar melhor, em vez de depender de um truque no prompt.",
+   "resumo": "Os modelos de raciocínio levam essa ideia para dentro do treinamento. Com aprendizado por reforço (RL, Reinforcement Learning), o modelo é recompensado quando chega à resposta certa, e aprende por conta própria a raciocinar melhor, em vez de depender de um truque no prompt.",
    "entra": "Problemas com resposta verificável e um sinal de recompensa.",
    "sai": "Um modelo treinado para raciocinar antes de responder.",
    "termos": [
     [
-     "Aprendizado por reforço (RL)",
-     "Treino por tentativa e erro guiado por recompensas."
+     "RL",
+     "Reinforcement Learning (aprendizado por reforço): treino por tentativa e erro guiado por recompensas."
     ],
     [
      "Recompensa",

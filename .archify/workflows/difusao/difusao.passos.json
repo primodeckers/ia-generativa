@@ -44,14 +44,14 @@
      "Vetor de números que representa um significado."
     ]
    ],
-   "tecnico": "Transformer de texto (ex.: CLIP ou T5) que mapeia os tokens para embeddings contextuais, depois usados como condição via atenção cruzada."
+   "tecnico": "Transformer de texto (por exemplo, CLIP (Contrastive Language–Image Pre-training, pré-treinamento contrastivo de linguagem e imagem), ou T5, Text-to-Text Transfer Transformer) que mapeia os tokens para embeddings contextuais, depois usados como condição via atenção cruzada."
   },
   {
    "node": "ruidosa",
    "fase": "Gerar a imagem",
    "title": "Imagem ruidosa",
    "edges": [],
-   "resumo": "A geração começa com uma imagem feita só de ruído, como a chuva de pontos de uma TV sem sinal. Dela vai surgir a imagem final.",
+   "resumo": "A geração começa com uma imagem feita só de ruído, como a chuva de pontos de uma televisão sem sinal. Dela vai surgir a imagem final.",
    "entra": "Nada no começo: é sorteada. Nas rodadas seguintes, recebe a imagem um pouco mais limpa.",
    "sai": "A imagem atual, ainda ruidosa, para a próxima limpeza.",
    "termos": [
@@ -95,7 +95,7 @@
      "Tipo de rede, muito usada aqui, que enxerga a imagem em várias escalas."
     ]
    ],
-   "tecnico": "Rede (em geral uma U-Net ou um transformer) que prediz o ruído a cada passo de tempo e o subtrai conforme o scheduler. Frequentemente usa classifier-free guidance."
+   "tecnico": "Rede (em geral uma U-Net ou um transformer) que prediz o ruído a cada passo de tempo e o subtrai conforme o scheduler. Frequentemente usa classifier-free guidance (orientação sem classificador)."
   },
   {
    "node": "decode",
@@ -117,7 +117,7 @@
      "Cada pontinho da imagem, descrito por números de cor."
     ]
    ],
-   "tecnico": "Decodificador de um autoencoder variacional (VAE) que leva o latente limpo de volta ao espaço de pixels, em geral ampliando cada dimensão 8 vezes."
+   "tecnico": "Decodificador de um autoencoder variacional (VAE, Variational Autoencoder) que leva o latente limpo de volta ao espaço de pixels, em geral ampliando cada dimensão 8 vezes."
   },
   {
    "node": "final",
@@ -203,7 +203,7 @@
      "Método que ajusta os pesos na direção que reduz o erro."
     ]
    ],
-   "tecnico": "Minimiza o erro quadrático entre o ruído adicionado e o ruído previsto pela rede, por gradiente descendente (ex.: Adam)."
+   "tecnico": "Minimiza o erro quadrático entre o ruído adicionado e o ruído previsto pela rede, por gradiente descendente (por exemplo, Adam, de Adaptive Moment Estimation)."
   },
   {
    "node": "pesos",

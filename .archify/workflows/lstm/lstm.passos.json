@@ -8,7 +8,7 @@
    "fase": "Entrada e saída",
    "title": "Item atual",
    "edges": [],
-   "resumo": "A cada passo a LSTM recebe o próximo item da sequência, junto com a memória curta (o resultado do passo anterior).",
+   "resumo": "A cada passo a Long Short-Term Memory (LSTM, memória de longo e curto prazo) recebe o próximo item da sequência, junto com a memória curta (o resultado do passo anterior).",
    "entra": "O item atual e a memória curta anterior.",
    "sai": "Os dois, entregues aos portões.",
    "termos": [
@@ -62,7 +62,7 @@
     ],
     [
      "tanh",
-     "Função que devolve valores entre -1 e 1."
+     "Tangente hiperbólica: função que devolve valores entre -1 e 1."
     ]
    ],
    "tecnico": "Input gate (sigmoide) e candidato a nova memória (tanh). A informação nova é o produto elemento a elemento dos dois."
@@ -111,7 +111,7 @@
      "O que a rede mostra e leva ao passo seguinte."
     ]
    ],
-   "tecnico": "Output gate (sigmoide) filtra a tanh do estado de célula para produzir o novo estado oculto."
+   "tecnico": "Output gate (sigmoide) filtra a tangente hiperbólica (tanh) do estado de célula para produzir o novo estado oculto."
   },
   {
    "node": "resultado",

@@ -8,7 +8,7 @@
    "fase": "Aplicação",
    "title": "Usuário",
    "edges": [],
-   "resumo": "Tudo começa com uma pessoa pedindo algo a uma aplicação com IA. O MCP existe para que esse pedido possa usar ferramentas e dados externos sem que cada aplicação precise de uma integração própria para cada um deles.",
+   "resumo": "Tudo começa com uma pessoa pedindo algo a uma aplicação com Inteligência Artificial (IA). O MCP (Model Context Protocol, protocolo de contexto de modelo) existe para que esse pedido possa usar ferramentas e dados externos sem que cada aplicação precise de uma integração própria para cada um deles.",
    "entra": "Um pedido em linguagem natural.",
    "sai": "O pedido, entregue à aplicação.",
    "exemplo": "Pergunte à sua assistente quais são os próximos eventos da agenda.",
@@ -16,11 +16,11 @@
    "termos": [
     [
      "MCP",
-     "Model Context Protocol: protocolo aberto, criado pela Anthropic, que padroniza a ligação entre aplicações com LLM e ferramentas ou dados."
+     "Model Context Protocol (protocolo de contexto de modelo): protocolo aberto, criado pela Anthropic, que padroniza a ligação entre aplicações com modelos de linguagem e ferramentas ou dados."
     ],
     [
      "LLM",
-     "Modelo de linguagem que entende o pedido e gera respostas."
+     "Large Language Model (modelo de linguagem de grande escala): modelo que entende o pedido e gera respostas."
     ]
    ],
    "tecnico": "Sem um padrão, cada aplicação precisaria de uma integração própria para cada ferramenta. O MCP troca isso por uma interface comum."
@@ -36,6 +36,10 @@
    "entra": "O pedido do usuário.",
    "sai": "A conversa com o modelo e as conexões com servidores MCP.",
    "termos": [
+    [
+     "LLM",
+     "Large Language Model (modelo de linguagem de grande escala): o modelo que a aplicação hospeda."
+    ],
     [
      "Host",
      "A aplicação com LLM que hospeda e controla as conexões MCP."
@@ -59,6 +63,10 @@
    "sai": "Uma conexão MCP dedicada a um servidor.",
    "termos": [
     [
+     "MCP",
+     "Model Context Protocol (protocolo de contexto de modelo): protocolo que padroniza a ligação entre aplicações e servidores."
+    ],
+    [
      "Cliente MCP",
      "Parte do host que conversa com um único servidor."
     ],
@@ -67,7 +75,7 @@
      "Canal de troca de mensagens entre cliente e servidor."
     ]
    ],
-   "tecnico": "As mensagens seguem JSON-RPC 2.0. O transporte pode ser local, por stdio, ou remoto, por HTTP."
+   "tecnico": "As mensagens seguem JSON-RPC 2.0 (JavaScript Object Notation – Remote Procedure Call, chamada de procedimento remoto em JSON). O transporte pode ser local, por stdio (standard input/output, entrada e saída padrão), ou remoto, por HTTP (Hypertext Transfer Protocol, protocolo de transferência de hipertexto)."
   },
   {
    "node": "init",
@@ -101,10 +109,14 @@
    "edges": [
     "e-init-srv"
    ],
-   "resumo": "É um programa que expõe capacidades por meio do protocolo. Ele fica entre a aplicação e as fontes reais, traduzindo pedidos padronizados em ações sobre APIs, arquivos ou bancos de dados.",
+   "resumo": "É um programa que expõe capacidades por meio do protocolo. Ele fica entre a aplicação e as fontes reais, traduzindo pedidos padronizados em ações sobre APIs (Application Programming Interface, interface de programação de aplicações), arquivos ou bancos de dados.",
    "entra": "Mensagens do cliente.",
    "sai": "Capacidades expostas e respostas padronizadas.",
    "termos": [
+    [
+     "MCP",
+     "Model Context Protocol (protocolo de contexto de modelo): protocolo que padroniza a ligação entre aplicações e servidores."
+    ],
     [
      "Servidor MCP",
      "Programa que expõe tools, resources e prompts por meio do MCP."
@@ -134,7 +146,7 @@
      "Valores que a tool recebe para executar."
     ]
    ],
-   "tecnico": "Cada tool é descrita com nome, descrição e um esquema de entrada em JSON Schema."
+   "tecnico": "Cada tool é descrita com nome, descrição e um esquema de entrada em JSON Schema (esquema em JSON, JavaScript Object Notation)."
   },
   {
    "node": "resources",
@@ -156,7 +168,7 @@
      "Informação extra que o modelo considera ao responder."
     ]
    ],
-   "tecnico": "Cada resource é identificado por um URI e pode ser lido pelo cliente."
+   "tecnico": "Cada resource é identificado por um URI (Uniform Resource Identifier, identificador uniforme de recurso) e pode ser lido pelo cliente."
   },
   {
    "node": "prompts",
@@ -193,6 +205,10 @@
    "exemplo": "Para o pedido da agenda, o modelo escolhe buscar_eventos com o intervalo da semana.",
    "ilustrativo": true,
    "termos": [
+    [
+     "LLM",
+     "Large Language Model (modelo de linguagem de grande escala): o modelo que decide o que fazer."
+    ],
     [
      "Argumentos",
      "Valores que o modelo informa para a tool, como datas ou nomes."
@@ -245,10 +261,10 @@
     ],
     [
      "JSON-RPC",
-     "Formato de mensagens em JSON para chamar operações remotas."
+     "JavaScript Object Notation – Remote Procedure Call (chamada de procedimento remoto): formato de mensagens em JSON para chamar operações remotas."
     ]
    ],
-   "tecnico": "A chamada é uma mensagem JSON-RPC 2.0, como tools/call, enviada pelo transporte (stdio ou HTTP)."
+   "tecnico": "A chamada é uma mensagem JSON-RPC 2.0, como tools/call, enviada pelo transporte (stdio, entrada e saída padrão, ou HTTP, protocolo de transferência de hipertexto)."
   },
   {
    "node": "exec",
@@ -257,7 +273,7 @@
    "edges": [
     "e-call-exec"
    ],
-   "resumo": "O servidor recebe a requisição e executa a tool de verdade. É aqui que ele acessa a API, o arquivo ou o banco de dados necessário e monta o resultado.",
+   "resumo": "O servidor recebe a requisição e executa a tool de verdade. É aqui que ele acessa a API (interface de programação de aplicações), o arquivo ou o banco de dados necessário e monta o resultado.",
    "entra": "Requisição com nome da tool e argumentos.",
    "sai": "O resultado da tool, em formato padronizado.",
    "termos": [
@@ -270,7 +286,7 @@
      "Resposta devolvida ao cliente."
     ]
    ],
-   "tecnico": "O servidor valida os argumentos, executa a lógica da tool e responde com uma mensagem JSON-RPC contendo o conteúdo do resultado ou um erro."
+   "tecnico": "O servidor valida os argumentos, executa a lógica da tool e responde com uma mensagem JSON-RPC (JavaScript Object Notation – Remote Procedure Call) contendo o conteúdo do resultado ou um erro."
   },
   {
    "node": "sources",
@@ -285,14 +301,14 @@
    "termos": [
     [
      "API",
-     "Interface de um serviço que permite pedir dados ou ações."
+     "Application Programming Interface (interface de programação de aplicações): interface de um serviço que permite pedir dados ou ações."
     ],
     [
      "Banco de dados",
      "Sistema que guarda dados de forma organizada."
     ]
    ],
-   "tecnico": "O acesso às fontes usa as credenciais e os protocolos próprios de cada sistema, ocultos atrás do servidor MCP."
+   "tecnico": "O acesso às fontes usa as credenciais e os protocolos próprios de cada sistema, ocultos atrás do servidor MCP (Model Context Protocol, protocolo de contexto de modelo)."
   },
   {
    "node": "result",

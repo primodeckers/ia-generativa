@@ -1,14 +1,14 @@
 {
  "titulo": "Passo a passo",
  "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
- "inicio": "Comece pelo 1 para ver como o VAE aprende a comprimir e recriar imagens, e vá até o 8 para ver como ele cria uma imagem inédita.",
+ "inicio": "Comece pelo 1 para ver como o VAE (Variational Autoencoder, autoencoder variacional) aprende a comprimir e recriar imagens, e vá até o 8 para ver como ele cria uma imagem inédita.",
  "steps": [
   {
    "node": "imagem",
    "fase": "Comprimir",
    "title": "Imagem de entrada",
    "edges": [],
-   "resumo": "O ponto de partida do treino: uma imagem de verdade, tirada do conjunto de exemplos. O VAE vai aprender a resumi-la e a refazê-la.",
+   "resumo": "O ponto de partida do treino: uma imagem de verdade, tirada do conjunto de exemplos. O VAE (Variational Autoencoder, autoencoder variacional) vai aprender a resumi-la e a refazê-la.",
    "entra": "Uma imagem do conjunto de treino.",
    "sai": "A mesma imagem, como uma grade de números (pixels).",
    "exemplo": "Uma foto de um rosto, com cada pixel guardado como números de cor.",
@@ -113,7 +113,7 @@
      "Produzir algo novo, e não apenas copiar um exemplo."
     ]
    ],
-   "tecnico": "Rede que mapeia o ponto latente para os parâmetros da distribuição dos pixels (ex.: a média de uma gaussiana ou probabilidades de Bernoulli)."
+   "tecnico": "Rede que mapeia o ponto latente para os parâmetros da distribuição dos pixels (por exemplo, a média de uma gaussiana ou probabilidades de Bernoulli)."
   },
   {
    "node": "saida",
@@ -158,7 +158,7 @@
      "Método que distribui o erro de volta pelas camadas para ajustar cada peso."
     ]
    ],
-   "tecnico": "Maximiza o ELBO: termo de reconstrução menos a divergência KL (opcionalmente ponderada por β) entre o posterior e o prior. Otimizado por gradiente descendente."
+   "tecnico": "Maximiza o ELBO (Evidence Lower Bound, limite inferior da evidência): termo de reconstrução menos a divergência KL (Kullback-Leibler) entre o posterior e o prior, opcionalmente com um peso (beta) sobre ela. Otimizado por gradiente descendente."
   },
   {
    "node": "novo",

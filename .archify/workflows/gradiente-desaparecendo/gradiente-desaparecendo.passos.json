@@ -1,7 +1,7 @@
 {
  "titulo": "Passo a passo",
  "intro": "Percorra o caminho do erro caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
- "inicio": "Comece pelo 1 para ver o erro voltando pela rede, e vá até o 6 para ver como LSTM e GRU resolvem.",
+ "inicio": "Comece pelo 1 para ver o erro voltando pela rede, e vá até o 6 para ver como a Long Short-Term Memory (LSTM, memória de longo e curto prazo) e a Gated Recurrent Unit (GRU, unidade recorrente com portões) resolvem.",
  "steps": [
   {
    "node": "erro",
@@ -25,7 +25,7 @@
      "Repetir previsão, erro e ajuste muitas vezes."
     ]
    ],
-   "tecnico": "Perda calculada na saída (ex.: entropia cruzada). O gradiente do último passo é o ponto de partida da retropropagação no tempo (BPTT)."
+   "tecnico": "Perda calculada na saída (por exemplo, entropia cruzada). O gradiente do último passo é o ponto de partida da retropropagação no tempo (BPTT, Backpropagation Through Time)."
   },
   {
    "node": "ultimo",
@@ -79,7 +79,7 @@
      "Sequência de multiplicações que a retropropagação precisa percorrer."
     ]
    ],
-   "tecnico": "Retropropagação no tempo (BPTT): a regra da cadeia multiplica várias derivadas, uma por passo. Com fatores menores que 1, o produto decai de forma exponencial."
+   "tecnico": "Retropropagação no tempo (BPTT, Backpropagation Through Time): a regra da cadeia multiplica várias derivadas, uma por passo. Com fatores menores que 1, o produto decai de forma exponencial."
   },
   {
    "node": "inicio",
@@ -105,7 +105,7 @@
      "Mudança dos pesos guiada pelo gradiente."
     ]
    ],
-   "tecnico": "Em sequências longas, o produto de muitos fatores menores que 1 tende a zero (a derivada da tanh é no máximo 1 e os pesos recorrentes têm norma pequena), então o gradiente some (Hochreiter, 1991; Bengio et al., 1994)."
+   "tecnico": "Em sequências longas, o produto de muitos fatores menores que 1 tende a zero (a derivada da tangente hiperbólica (tanh) é no máximo 1 e os pesos recorrentes têm norma pequena), então o gradiente some (Hochreiter, 1991; Bengio et al., 1994)."
   },
   {
    "node": "efeito",
@@ -145,6 +145,10 @@
    "sai": "Um caminho em que o sinal chega inteiro ao começo.",
    "termos": [
     [
+     "LSTM",
+     "Long Short-Term Memory (memória de longo e curto prazo): rede recorrente com portões e memória longa, que preserva o sinal de erro."
+    ],
+    [
      "Portão",
      "Peça que decide quanto de cada informação passa, de 0 (nada) a 1 (tudo)."
     ],
@@ -154,7 +158,7 @@
     ],
     [
      "GRU",
-     "Versão mais simples da LSTM, com menos portões."
+     "Gated Recurrent Unit (unidade recorrente com portões): versão mais simples da LSTM, com menos portões."
     ]
    ],
    "tecnico": "LSTM: a memória (estado de célula) é atualizada de forma aditiva e controlada por portões sigmoides, o que mantém o gradiente próximo de 1 ao longo do tempo (Hochreiter e Schmidhuber, 1997)."

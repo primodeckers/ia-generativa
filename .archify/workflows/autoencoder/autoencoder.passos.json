@@ -23,7 +23,7 @@
      "Aprende sem rótulos: o próprio dado é a resposta."
     ]
    ],
-   "tecnico": "Entrada em formato de vetor (ex.: imagem achatada). Treino não supervisionado: o alvo é a própria entrada."
+   "tecnico": "Entrada em formato de vetor (por exemplo, imagem achatada). Treino não supervisionado: o alvo é a própria entrada."
   },
   {
    "node": "enc",
@@ -136,7 +136,7 @@
      "Fórmula que mede o erro."
     ]
    ],
-   "tecnico": "Perda de reconstrução (MSE ou cross-entropy binária), minimizada por retropropagação nos pesos do codificador e do decodificador."
+   "tecnico": "Perda de reconstrução (MSE, Mean Squared Error, erro quadrático médio, ou cross-entropy binária), minimizada por retropropagação nos pesos do codificador e do decodificador."
   }
  ]
 }

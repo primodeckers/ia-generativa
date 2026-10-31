@@ -78,10 +78,14 @@
    "edges": [
     "e-metricas-juiz"
    ],
-   "resumo": "Para texto livre, não há uma resposta única. Uma solução é pedir a outro modelo que avalie as respostas, seguindo uma rubrica. É rápido e escala bem, mas o juiz tem vieses conhecidos: tende a preferir a primeira resposta, as mais longas e o próprio estilo.",
+   "resumo": "Para texto livre, não há uma resposta única. Uma solução é o LLM-as-judge (Large Language Model como juiz, ou seja, modelo de linguagem de grande escala como juiz): pedir a outro modelo que avalie as respostas, seguindo uma rubrica. É rápido e escala bem, mas o juiz tem vieses conhecidos: tende a preferir a primeira resposta, as mais longas e o próprio estilo.",
    "entra": "Respostas do modelo, a pergunta e a rubrica.",
    "sai": "Notas ou preferências, com justificativa.",
    "termos": [
+    [
+     "LLM-as-judge",
+     "Large Language Model como juiz (modelo de linguagem de grande escala usado para avaliar respostas)."
+    ],
     [
      "Rubrica",
      "Guia que descreve o que vale cada nota."
@@ -91,7 +95,7 @@
      "Tendência de favorecer certas respostas por motivos alheios à qualidade."
     ]
    ],
-   "tecnico": "Avaliação com LLM como juiz, por nota direta ou comparação em pares. Mitiga-se o viés de posição trocando a ordem das respostas, controlando o comprimento e calibrando o juiz com amostras avaliadas por humanos."
+   "tecnico": "Avaliação com LLM (Large Language Model) como juiz, por nota direta ou comparação em pares. Mitiga-se o viés de posição trocando a ordem das respostas, controlando o comprimento e calibrando o juiz com amostras avaliadas por humanos."
   },
   {
    "node": "humana",
@@ -113,7 +117,7 @@
      "Quanto as pessoas coincidem entre si."
     ]
    ],
-   "tecnico": "Anotação humana com instruções claras e checagem de concordância entre avaliadores. As preferências agregadas formam um ranking de modelos e calibram o LLM-as-judge."
+   "tecnico": "Anotação humana com instruções claras e checagem de concordância entre avaliadores. As preferências agregadas formam um ranking de modelos e calibram o LLM-as-judge (Large Language Model como juiz)."
   },
   {
    "node": "contam",
@@ -166,7 +170,7 @@
    "edges": [
     "e-real-acompanhar"
    ],
-   "resumo": "Avaliar não é uma tarefa única. Modelos, prompts e dados mudam com o tempo, então os testes devem rodar de novo a cada mudança e em produção. Isso pega regressões cedo, como se discute no tema MLOps.",
+   "resumo": "Avaliar não é uma tarefa única. Modelos, prompts e dados mudam com o tempo, então os testes devem rodar de novo a cada mudança e em produção. Isso pega regressões cedo, como se discute no tema MLOps (Machine Learning Operations, operações de aprendizado de máquina).",
    "entra": "Os testes e as respostas novas ao longo do tempo.",
    "sai": "Um histórico de qualidade e alertas de queda.",
    "termos": [

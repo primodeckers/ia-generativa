@@ -1,164 +1,168 @@
 {
- "titulo": "Passo a passo",
- "intro": "Percorra a evolução caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
- "inicio": "Comece pelo 1 (N-gram) e acompanhe como cada ideia resolveu o limite da anterior.",
- "steps": [
-  {
-   "node": "ngram",
-   "fase": "Estatística",
-   "title": "N-gram",
-   "edges": [],
-   "resumo": "O jeito mais simples de prever a próxima palavra: contar, em muitos textos, quais palavras costumam vir depois das últimas poucas palavras.",
-   "entra": "Uma grande coleção de textos e as últimas n−1 palavras da frase.",
-   "sai": "Uma probabilidade para cada palavra possível vir a seguir.",
-   "exemplo": "Depois de “o gato subiu”, a palavra “no” pode ter probabilidade alta e “cantou”, quase zero.",
-   "ilustrativo": true,
-   "termos": [
-    [
-     "N-gram",
-     "Sequência de n palavras seguidas. Com n = 3, olha as 2 últimas palavras para prever a próxima."
-    ],
-    [
-     "Contexto curto",
-     "Só enxerga uma janela pequena; o que veio antes dela é ignorado."
-    ],
-    [
-     "Esparsidade",
-     "A maioria das combinações de palavras nunca aparece nos textos, então a contagem dá zero."
-    ]
-   ],
-   "tecnico": "Estima a probabilidade da próxima palavra por contagem de sequências de n palavras no corpus. Usa suavização (ex.: Kneser-Ney) para combinações não vistas."
-  },
-  {
-   "node": "nplm",
-   "fase": "Redes neurais",
-   "title": "Modelo neural",
-   "edges": [
-    "e1"
-   ],
-   "resumo": "Em vez de contar, uma rede neural aprende a prever a próxima palavra. Cada palavra vira uma lista de números, e palavras parecidas ganham listas parecidas.",
-   "entra": "As poucas palavras anteriores (o mesmo contexto curto do N-gram).",
-   "sai": "Probabilidades da próxima palavra, já generalizando para frases nunca vistas.",
-   "termos": [
-    [
-     "Rede neural",
-     "Modelo formado por camadas de contas simples, cujos pesos são ajustados com exemplos."
-    ],
-    [
-     "Embedding",
-     "Lista de números que representa uma palavra; palavras de uso parecido ficam próximas."
-    ],
-    [
-     "Generalizar",
-     "Acertar também em combinações que não apareceram nos textos de treino."
-    ]
-   ],
-   "tecnico": "Bengio et al. (2003): concatena os embeddings das n−1 palavras anteriores, aplica uma camada oculta (tanh) e softmax sobre o vocabulário. Embeddings e pesos são aprendidos em conjunto por retropropagação."
-  },
-  {
-   "node": "w2v",
-   "fase": "Redes neurais",
-   "title": "Word2Vec",
-   "edges": [
-    "e2"
-   ],
-   "resumo": "Uma forma rápida e barata de aprender bons vetores de palavras, usando uma tarefa simples: adivinhar uma palavra a partir das vizinhas, ou o contrário.",
-   "entra": "Grandes volumes de texto sem rótulos.",
-   "sai": "Um vetor por palavra, em que a geometria carrega significado.",
-   "exemplo": "“banco” (de sentar) e “banco” (financeiro) recebem o mesmo vetor.",
-   "termos": [
-    [
-     "Vetor de palavra",
-     "Representação numérica de uma palavra, aprendida a partir do uso dela."
-    ],
-    [
-     "Analogia",
-     "Relações viram direções: rei − homem + mulher fica perto de rainha."
-    ],
-    [
-     "Estático",
-     "Cada palavra tem um único vetor, qualquer que seja o contexto."
-    ]
-   ],
-   "tecnico": "Mikolov et al. (2013): modelos CBOW e skip-gram, treinados com softmax hierárquico ou amostragem negativa. Produz um embedding fixo por palavra."
-  },
-  {
-   "node": "rnn",
-   "fase": "Redes neurais",
-   "title": "RNN, LSTM e GRU",
-   "edges": [
-    "e3"
-   ],
-   "resumo": "Estas redes leem o texto palavra por palavra e guardam uma memória do que já viram. Assim, a ordem das palavras passa a contar, sem limite fixo de contexto.",
-   "entra": "Uma palavra por vez e a memória do passo anterior.",
-   "sai": "Uma nova memória e a previsão da próxima palavra.",
-   "termos": [
-    [
-     "Estado oculto",
-     "A memória da rede: um vetor atualizado a cada palavra lida."
-    ],
-    [
-     "LSTM / GRU",
-     "Variantes com portões que decidem o que guardar e o que esquecer."
-    ],
-    [
-     "Sequencial",
-     "Precisa processar uma palavra após a outra, o que limita a velocidade de treino."
-    ]
-   ],
-   "tecnico": "Recorrência: o estado oculto de cada passo depende do estado anterior e da entrada atual. LSTM (1997) e GRU (2014) acrescentam portões e uma célula de memória para mitigar o desaparecimento do gradiente."
-  },
-  {
-   "node": "atencao",
-   "fase": "Atenção",
-   "title": "Seq2seq e atenção",
-   "edges": [
-    "e4"
-   ],
-   "resumo": "Em textos longos a memória única da RNN esquece o começo. A atenção deixa o modelo voltar a qualquer parte do texto e dar mais peso ao que for relevante.",
-   "entra": "Todos os estados guardados da frase lida.",
-   "sai": "Um resumo sob medida para cada palavra que será produzida.",
-   "termos": [
-    [
-     "Seq2seq",
-     "Arquitetura com um codificador que lê a frase e um decodificador que escreve a resposta."
-    ],
-    [
-     "Atenção",
-     "Mecanismo que pondera quais partes da entrada importam agora."
-    ],
-    [
-     "Gargalo",
-     "Comprimir a frase toda em um só vetor perde informação."
-    ]
-   ],
-   "tecnico": "Bahdanau et al. (2014): o decodificador faz uma média ponderada dos estados do codificador, com pesos calculados por um score de alinhamento e softmax. Elimina o gargalo do vetor fixo."
-  },
-  {
-   "node": "transformer",
-   "fase": "Atenção",
-   "title": "Transformer e LLMs",
-   "edges": [
-    "e5"
-   ],
-   "resumo": "Abandona a recorrência e usa só atenção. Todas as palavras são processadas ao mesmo tempo, o que permite treinar modelos enormes: os grandes modelos de linguagem atuais.",
-   "entra": "O texto inteiro de uma vez, como tokens.",
-   "sai": "Um modelo que escala com dados e computação e gera texto.",
-   "termos": [
-    [
-     "Transformer",
-     "Arquitetura de 2017 baseada em autoatenção, sem recorrência."
-    ],
-    [
-     "LLM",
-     "Grande modelo de linguagem, treinado para prever o próximo token."
-    ],
-    [
-     "Paralelismo",
-     "Todas as posições são calculadas ao mesmo tempo, aproveitando bem as GPUs."
-    ]
-   ],
-   "tecnico": "Vaswani et al. (2017): autoatenção (self-attention) com queries, keys e values em múltiplas cabeças, com redes feed-forward, conexões residuais e normalização. Treino paralelo sobre a sequência."
-  }
- ]
+  "titulo": "Passo a passo",
+  "intro": "Percorra a evolução caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+  "inicio": "Comece pelo 1 (N-gram) e acompanhe como cada ideia resolveu o limite da anterior.",
+  "steps": [
+    {
+      "node": "ngram",
+      "fase": "Estatística",
+      "title": "N-gram",
+      "edges": [],
+      "resumo": "O jeito mais simples de prever a próxima palavra: contar, em muitos textos, quais palavras costumam vir depois das últimas poucas palavras.",
+      "entra": "Uma grande coleção de textos e as últimas n−1 palavras da frase.",
+      "sai": "Uma probabilidade para cada palavra possível vir a seguir.",
+      "exemplo": "Depois de “o gato subiu”, a palavra “no” pode ter probabilidade alta e “cantou”, quase zero.",
+      "ilustrativo": true,
+      "termos": [
+        [
+          "N-gram",
+          "Sequência de n palavras seguidas. Com n = 3, olha as 2 últimas palavras para prever a próxima."
+        ],
+        [
+          "Contexto curto",
+          "Só enxerga uma janela pequena; o que veio antes dela é ignorado."
+        ],
+        [
+          "Esparsidade",
+          "A maioria das combinações de palavras nunca aparece nos textos, então a contagem dá zero."
+        ]
+      ],
+      "tecnico": "Estima a probabilidade da próxima palavra por contagem de sequências de n palavras no corpus. Usa suavização (ex.: Kneser-Ney) para combinações não vistas."
+    },
+    {
+      "node": "nplm",
+      "fase": "Redes neurais",
+      "title": "Modelo neural",
+      "edges": [
+        "e1"
+      ],
+      "resumo": "Em vez de contar, uma rede neural aprende a prever a próxima palavra. Cada palavra vira uma lista de números, e palavras parecidas ganham listas parecidas.",
+      "entra": "As poucas palavras anteriores (o mesmo contexto curto do N-gram).",
+      "sai": "Probabilidades da próxima palavra, já generalizando para frases nunca vistas.",
+      "termos": [
+        [
+          "Rede neural",
+          "Modelo formado por camadas de contas simples, cujos pesos são ajustados com exemplos."
+        ],
+        [
+          "Embedding",
+          "Lista de números que representa uma palavra; palavras de uso parecido ficam próximas."
+        ],
+        [
+          "Generalizar",
+          "Acertar também em combinações que não apareceram nos textos de treino."
+        ]
+      ],
+      "tecnico": "Bengio et al. (2003): concatena os embeddings das n−1 palavras anteriores, aplica uma camada oculta (tangente hiperbólica, tanh) e softmax sobre o vocabulário. Embeddings e pesos são aprendidos em conjunto por retropropagação."
+    },
+    {
+      "node": "w2v",
+      "fase": "Redes neurais",
+      "title": "Word2Vec",
+      "edges": [
+        "e2"
+      ],
+      "resumo": "Uma forma rápida e barata de aprender bons vetores de palavras, usando uma tarefa simples: adivinhar uma palavra a partir das vizinhas, ou o contrário.",
+      "entra": "Grandes volumes de texto sem rótulos.",
+      "sai": "Um vetor por palavra, em que a geometria carrega significado.",
+      "exemplo": "“banco” (de sentar) e “banco” (financeiro) recebem o mesmo vetor.",
+      "termos": [
+        [
+          "Vetor de palavra",
+          "Representação numérica de uma palavra, aprendida a partir do uso dela."
+        ],
+        [
+          "Analogia",
+          "Relações viram direções: rei − homem + mulher fica perto de rainha."
+        ],
+        [
+          "Estático",
+          "Cada palavra tem um único vetor, qualquer que seja o contexto."
+        ]
+      ],
+      "tecnico": "Mikolov et al. (2013): modelos CBOW (Continuous Bag of Words, saco de palavras contínuo) e skip-gram, treinados com softmax hierárquico ou amostragem negativa. Produz um embedding fixo por palavra."
+    },
+    {
+      "node": "rnn",
+      "fase": "Redes neurais",
+      "title": "RNN, LSTM e GRU",
+      "edges": [
+        "e3"
+      ],
+      "resumo": "Estas redes (RNN, Recurrent Neural Network, rede neural recorrente; e suas variantes LSTM, Long Short-Term Memory, memória de longo e curto prazo, e GRU, Gated Recurrent Unit, unidade recorrente com portões) leem o texto palavra por palavra e guardam uma memória do que já viram. Assim, a ordem das palavras passa a contar, sem limite fixo de contexto.",
+      "entra": "Uma palavra por vez e a memória do passo anterior.",
+      "sai": "Uma nova memória e a previsão da próxima palavra.",
+      "termos": [
+        [
+          "RNN",
+          "Recurrent Neural Network (rede neural recorrente): lê uma palavra após a outra, reaproveitando a memória do passo anterior, o que limita a velocidade de treino."
+        ],
+        [
+          "LSTM",
+          "Long Short-Term Memory (memória de longo e curto prazo): variante da RNN com portões que decidem o que guardar e o que esquecer."
+        ],
+        [
+          "GRU",
+          "Gated Recurrent Unit (unidade recorrente com portões): variante mais simples da LSTM, também com portões."
+        ],
+        [
+          "Estado oculto",
+          "A memória da rede: um vetor atualizado a cada palavra lida."
+        ]
+      ],
+      "tecnico": "Recorrência: o estado oculto de cada passo depende do estado anterior e da entrada atual. LSTM (memória de longo e curto prazo, 1997) e GRU (unidade recorrente com portões, 2014) acrescentam portões e uma célula de memória para mitigar o desaparecimento do gradiente."
+    },
+    {
+      "node": "atencao",
+      "fase": "Atenção",
+      "title": "Seq2seq e atenção",
+      "edges": [
+        "e4"
+      ],
+      "resumo": "Em textos longos a memória única da RNN (rede neural recorrente) esquece o começo. A atenção deixa o modelo voltar a qualquer parte do texto e dar mais peso ao que for relevante.",
+      "entra": "Todos os estados guardados da frase lida.",
+      "sai": "Um resumo sob medida para cada palavra que será produzida.",
+      "termos": [
+        [
+          "Seq2seq",
+          "Sequence-to-sequence (sequência para sequência): arquitetura com um codificador que lê a frase e um decodificador que escreve a resposta."
+        ],
+        [
+          "Atenção",
+          "Mecanismo que pondera quais partes da entrada importam agora."
+        ],
+        [
+          "Gargalo",
+          "Comprimir a frase toda em um só vetor perde informação."
+        ]
+      ],
+      "tecnico": "Bahdanau et al. (2014): o decodificador faz uma média ponderada dos estados do codificador, com pesos calculados por um score de alinhamento e softmax. Elimina o gargalo do vetor fixo."
+    },
+    {
+      "node": "transformer",
+      "fase": "Atenção",
+      "title": "Transformer e LLMs",
+      "edges": [
+        "e5"
+      ],
+      "resumo": "Abandona a recorrência e usa só atenção. Todas as palavras são processadas ao mesmo tempo, o que permite treinar modelos enormes: os grandes modelos de linguagem atuais (LLMs, Large Language Models).",
+      "entra": "O texto inteiro de uma vez, como tokens.",
+      "sai": "Um modelo que escala com dados e computação e gera texto.",
+      "termos": [
+        [
+          "Transformer",
+          "Arquitetura de 2017 baseada em autoatenção, sem recorrência."
+        ],
+        [
+          "LLM",
+          "Large Language Model (modelo de linguagem de grande escala): treinado para prever o próximo token."
+        ],
+        [
+          "Paralelismo",
+          "Todas as posições são calculadas ao mesmo tempo, aproveitando bem as GPUs (Graphics Processing Units, unidades de processamento gráfico)."
+        ]
+      ],
+      "tecnico": "Vaswani et al. (2017): autoatenção (self-attention) com queries, keys e values em múltiplas cabeças, com redes feed-forward, conexões residuais e normalização. Treino paralelo sobre a sequência."
+    }
+  ]
 }

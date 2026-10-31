@@ -132,7 +132,7 @@
    "resumo": "Para overfitting, há quatro caminhos: regularização (penalizar a complexidade), parar o treino a tempo, usar mais dados e simplificar o modelo. Depois de ajustar, treina-se de novo e compara-se outra vez. Para underfitting, faz-se o oposto.",
    "entra": "O diagnóstico de overfitting (ou de underfitting).",
    "sai": "Uma nova configuração do modelo para treinar de novo.",
-   "exemplo": "Aumentar a penalização L2 e desligar 30% dos neurônios a cada passo (dropout).",
+   "exemplo": "Aumentar a penalização L2 (que pune a soma dos quadrados dos pesos) e desligar 30% dos neurônios a cada passo (dropout).",
    "ilustrativo": true,
    "termos": [
     [
@@ -148,7 +148,7 @@
      "Desligar aleatoriamente parte dos neurônios durante o treino."
     ]
    ],
-   "tecnico": "Regularização L1 e L2 penalizam pesos grandes (L1 tende a zerá-los). Também ajudam o dropout, o early stopping, o aumento de dados e a redução da capacidade do modelo."
+   "tecnico": "Regularização L1 (pune a soma dos valores absolutos dos pesos) e L2 (pune a soma dos quadrados) penalizam pesos grandes; L1 tende a zerá-los. Também ajudam o dropout, o early stopping, o aumento de dados e a redução da capacidade do modelo."
   },
   {
    "node": "cv",

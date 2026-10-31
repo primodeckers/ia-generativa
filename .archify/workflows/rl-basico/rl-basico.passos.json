@@ -72,7 +72,7 @@
      "A mudança de um estado para outro após uma ação."
     ]
    ],
-   "tecnico": "Dinâmica de transição do ambiente, modelada em geral como um processo de decisão de Markov (MDP), em que o próximo estado depende do estado atual e da ação."
+   "tecnico": "Dinâmica de transição do ambiente, modelada em geral como um Markov Decision Process (MDP, processo de decisão de Markov), em que o próximo estado depende do estado atual e da ação."
   },
   {
    "node": "rec",
@@ -241,7 +241,7 @@
      "Recompensa que chega muitos passos depois."
     ]
    ],
-   "tecnico": "Problema de atribuição de crédito temporal, tratado com métodos que propagam o valor para trás, como diferenças temporais (TD) e retornos acumulados."
+   "tecnico": "Problema de atribuição de crédito temporal, tratado com métodos que propagam o valor para trás, como Temporal Difference (TD, diferença temporal) e retornos acumulados."
   },
   {
    "node": "fv",
@@ -250,7 +250,7 @@
    "edges": [
     "e-fv-val"
    ],
-   "resumo": "Uma família de métodos que aprende o valor de cada ação e escolhe a de maior valor. Exemplos: Q-learning, que usa uma tabela, e DQN, que usa uma rede neural quando há estados demais para uma tabela.",
+   "resumo": "Uma família de métodos que aprende o valor de cada ação e escolhe a de maior valor. Exemplos: Q-learning, que usa uma tabela, e Deep Q-Network (DQN, rede Q profunda), que usa uma rede neural quando há estados demais para uma tabela.",
    "entra": "Experiência do agente.",
    "sai": "Estimativas de valor por ação.",
    "termos": [
@@ -260,10 +260,10 @@
     ],
     [
      "DQN",
-     "Q-learning com rede neural profunda."
+     "Deep Q-Network (rede Q profunda): Q-learning com rede neural profunda."
     ]
    ],
-   "tecnico": "Métodos baseados em valor aprendem a função de valor de ação e derivam a política escolhendo a ação de maior valor. O DQN usa uma rede neural, replay buffer e uma rede-alvo."
+   "tecnico": "Métodos baseados em valor aprendem a função de valor de ação e derivam a política escolhendo a ação de maior valor. O Deep Q-Network (DQN) usa uma rede neural, replay buffer e uma rede-alvo."
   },
   {
    "node": "fp",
@@ -272,7 +272,7 @@
    "edges": [
     "e-fp-pol"
    ],
-   "resumo": "Outra família: em vez de estimar valores, ajusta diretamente a política, aumentando a chance das ações que deram bons resultados. Exemplos: policy gradient e PPO, que faz atualizações pequenas e estáveis.",
+   "resumo": "Outra família: em vez de estimar valores, ajusta diretamente a política, aumentando a chance das ações que deram bons resultados. Exemplos: gradiente de política (policy gradient) e Proximal Policy Optimization (PPO, otimização proximal de política), que faz atualizações pequenas e estáveis.",
    "entra": "Experiência do agente.",
    "sai": "Uma política ajustada.",
    "termos": [
@@ -282,7 +282,7 @@
     ],
     [
      "PPO",
-     "Variante que limita o tamanho de cada atualização para dar estabilidade."
+     "Proximal Policy Optimization (otimização proximal de política): variante que limita o tamanho de cada atualização para dar estabilidade."
     ]
    ],
    "tecnico": "Métodos de gradiente de política otimizam os parâmetros da política diretamente. O PPO limita a mudança entre a política nova e a antiga, usando um objetivo com recorte (clipping)."
@@ -294,20 +294,20 @@
    "edges": [
     "e-fp-rlhf"
    ],
-   "resumo": "O RLHF usa essas ideias para alinhar modelos de linguagem: a resposta do modelo é a ação, a nota vem de um modelo treinado com preferências humanas, e o PPO ajusta o modelo para respostas mais bem avaliadas.",
+   "resumo": "O Reinforcement Learning from Human Feedback (RLHF, aprendizado por reforço com feedback humano) usa essas ideias para alinhar Large Language Models (LLM, modelos de linguagem de grande escala): a resposta do modelo é a ação, a nota vem de um modelo treinado com preferências humanas, e o PPO ajusta o modelo para respostas mais bem avaliadas.",
    "entra": "Respostas do LLM e notas de preferência.",
    "sai": "Um LLM mais alinhado ao que as pessoas preferem.",
    "termos": [
     [
      "RLHF",
-     "Aprendizado por reforço a partir de feedback humano."
+     "Reinforcement Learning from Human Feedback (aprendizado por reforço com feedback humano): usa preferências humanas como sinal de recompensa."
     ],
     [
      "Modelo de recompensa",
      "Modelo que prevê qual resposta as pessoas preferem."
     ]
    ],
-   "tecnico": "No RLHF o modelo de recompensa é treinado com comparações humanas, e o PPO otimiza a política do LLM, em geral com uma penalidade para não se afastar muito do modelo original."
+   "tecnico": "No RLHF o modelo de recompensa é treinado com comparações humanas, e o Proximal Policy Optimization (PPO) otimiza a política do Large Language Model (LLM), em geral com uma penalidade para não se afastar muito do modelo original."
   }
  ]
 }

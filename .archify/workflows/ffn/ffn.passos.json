@@ -69,10 +69,10 @@
     ],
     [
      "Função de ativação",
-     "Regra não linear aplicada à soma, como a ReLU."
+     "Regra não linear aplicada à soma, como a ReLU (Rectified Linear Unit, unidade linear retificada)."
     ]
    ],
-   "tecnico": "Camada totalmente conectada: combinação linear das entradas (pesos e viés) seguida de ativação não linear (ex.: ReLU)."
+   "tecnico": "Camada totalmente conectada: combinação linear das entradas (pesos e viés) seguida de ativação não linear (por exemplo, ReLU)."
   },
   {
    "node": "h2",
@@ -162,7 +162,7 @@
      "Perda usual para classificação."
     ]
    ],
-   "tecnico": "Função de perda: cross-entropy em classificação, ou erro quadrático médio (MSE) em regressão."
+   "tecnico": "Função de perda: cross-entropy em classificação, ou erro quadrático médio (MSE, Mean Squared Error) em regressão."
   },
   {
    "node": "retro",

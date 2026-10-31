@@ -8,7 +8,7 @@
    "fase": "Preparar (indexar)",
    "title": "Documentos",
    "edges": [],
-   "resumo": "O ponto de partida: os materiais que o sistema vai consultar depois, como manuais, PDFs, páginas da empresa ou artigos. É um conhecimento que o modelo de linguagem não tem guardado por conta própria.",
+   "resumo": "O ponto de partida: os materiais que o sistema vai consultar depois, como manuais, arquivos PDF (Portable Document Format), páginas da empresa ou artigos. É um conhecimento que o modelo de linguagem não tem guardado por conta própria.",
    "entra": "Arquivos e textos da sua base de conhecimento.",
    "sai": "Texto limpo, pronto para ser dividido.",
    "exemplo": "Um manual de 80 páginas com a política de reembolso da empresa.",
@@ -16,14 +16,14 @@
    "termos": [
     [
      "Base de conhecimento",
-     "Conjunto de documentos que o RAG pode consultar."
+     "Conjunto de documentos que o RAG (Retrieval-Augmented Generation, geração aumentada por recuperação) pode consultar."
     ],
     [
      "Ingestão",
      "Etapa de carregar e extrair o texto dos arquivos."
     ]
    ],
-   "tecnico": "Ingestão com parsing de PDF/HTML e extração de metadados (fonte, data, título), que serão úteis para citações e filtros."
+   "tecnico": "Ingestão com parsing de PDF e de HTML (HyperText Markup Language) e extração de metadados (fonte, data, título), que serão úteis para citações e filtros."
   },
   {
    "node": "chunk",
@@ -91,7 +91,7 @@
      "Estrutura que acelera a busca, sem comparar com todos os vetores."
     ]
    ],
-   "tecnico": "Armazena vetores com metadados e constrói um índice de vizinhos mais próximos aproximado (ANN), como HNSW ou IVF."
+   "tecnico": "Armazena vetores com metadados e constrói um índice de vizinhos mais próximos aproximados (ANN, Approximate Nearest Neighbors), como HNSW (Hierarchical Navigable Small World) ou IVF (Inverted File Index)."
   },
   {
    "node": "pergunta",
@@ -150,7 +150,7 @@
      "Os k melhores resultados, em que k é um número escolhido, como 5."
     ]
    ],
-   "tecnico": "Busca de vizinhos mais próximos (ANN) por cosine similarity ou produto interno, retornando o top-k. Pode ser combinada com busca por palavras-chave (busca híbrida, BM25)."
+   "tecnico": "Busca de vizinhos mais próximos aproximados (ANN, Approximate Nearest Neighbors) por cosine similarity ou produto interno, retornando o top-k. Pode ser combinada com busca por palavras-chave (busca híbrida, BM25, Best Matching 25)."
   },
   {
    "node": "rerank",
@@ -199,13 +199,13 @@
    "edges": [
     "e-prompt-llm"
    ],
-   "resumo": "O modelo de linguagem lê o prompt e escreve a resposta com base nos trechos fornecidos, e não apenas no que aprendeu no treinamento. Isso reduz respostas inventadas e permite usar informação atual ou privada.",
+   "resumo": "O Large Language Model (LLM, modelo de linguagem de grande escala) lê o prompt e escreve a resposta com base nos trechos fornecidos, e não apenas no que aprendeu no treinamento. Isso reduz respostas inventadas e permite usar informação atual ou privada.",
    "entra": "O prompt com o contexto.",
    "sai": "O texto da resposta.",
    "termos": [
     [
      "LLM",
-     "Modelo de linguagem grande, que gera texto."
+     "Large Language Model (modelo de linguagem de grande escala): modelo que gera texto."
     ],
     [
      "Alucinação",

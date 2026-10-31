@@ -8,7 +8,7 @@
    "fase": "Entrada e saída",
    "title": "Item atual",
    "edges": [],
-   "resumo": "A GRU lê a sequência um item por vez. Junto com cada item chega a memória do passo anterior.",
+   "resumo": "A Gated Recurrent Unit (GRU, unidade recorrente com portões) lê a sequência um item por vez. Junto com cada item chega a memória do passo anterior.",
    "entra": "O item atual e o estado oculto anterior.",
    "sai": "Os dois, entregues aos portões.",
    "termos": [
@@ -21,7 +21,7 @@
      "Uma palavra, letra ou medida da sequência."
     ]
    ],
-   "tecnico": "Entradas do passo: o item atual e o estado oculto anterior. Diferente da LSTM, não há estado de célula separado."
+   "tecnico": "Entradas do passo: o item atual e o estado oculto anterior. Diferente da Long Short-Term Memory (LSTM, memória de longo e curto prazo), não há estado de célula separado."
   },
   {
    "node": "reinicio",
@@ -44,7 +44,7 @@
      "Função que devolve valores entre 0 e 1."
     ]
    ],
-   "tecnico": "Reset gate (sigmoide): decide quanto do estado anterior entra no cálculo do estado candidato (que usa tanh)."
+   "tecnico": "Reset gate (sigmoide): decide quanto do estado anterior entra no cálculo do estado candidato (que usa tangente hiperbólica (tanh))."
   },
   {
    "node": "atualiza",
@@ -53,7 +53,7 @@
    "edges": [
     "e2"
    ],
-   "resumo": "Decide, para cada parte da memória, se ela é mantida como estava ou trocada pela proposta nova. Um só portão faz o papel dos portões de esquecer e de entrada da LSTM.",
+   "resumo": "Decide, para cada parte da memória, se ela é mantida como estava ou trocada pela proposta nova. Um só portão faz o papel dos portões de esquecer e de entrada da Long Short-Term Memory (LSTM, memória de longo e curto prazo).",
    "entra": "O estado anterior e a proposta de memória nova.",
    "sai": "O novo estado, misturando o antigo e o novo.",
    "termos": [
@@ -88,7 +88,7 @@
      "Por ter dois portões em vez de três, costuma ser mais leve que a LSTM."
     ]
    ],
-   "tecnico": "Vetor de estado oculto, iniciado em zero. Com 2 portões (3 conjuntos de pesos) contra 3 portões da LSTM (4 conjuntos), a GRU tem menos parâmetros."
+   "tecnico": "Vetor de estado oculto, iniciado em zero. Com 2 portões (3 conjuntos de pesos) contra 3 portões da Long Short-Term Memory (LSTM, memória de longo e curto prazo) (4 conjuntos), a GRU tem menos parâmetros."
   },
   {
    "node": "resultado",

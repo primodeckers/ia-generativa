@@ -1,21 +1,29 @@
 {
  "titulo": "Passo a passo",
  "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
- "inicio": "Comece pelo 1 para ver como a política aprende, ou pelo 5 para entender por que o PPO é mais estável.",
+ "inicio": "Comece pelo 1 para ver como a política aprende, ou pelo 5 para entender por que o PPO (Proximal Policy Optimization, otimização proximal de política) é mais estável.",
  "steps": [
   {
    "node": "pol",
    "fase": "Policy gradient",
    "title": "Política",
-   "edges": ["e-upd-pol"],
+   "edges": [
+    "e-upd-pol"
+   ],
    "resumo": "A política é a regra de decisão do agente: dado o que ele observa, diz qual ação escolher. No policy gradient ela é uma rede neural que devolve uma probabilidade para cada ação possível, em vez de calcular o valor de cada uma.",
    "entra": "A situação atual observada pelo agente.",
    "sai": "Uma probabilidade para cada ação.",
    "exemplo": "Em um jogo, 70% para pular, 20% para andar e 10% para ficar parado.",
    "ilustrativo": true,
    "termos": [
-    ["Política", "Regra que liga cada situação a uma escolha de ação."],
-    ["Ação estocástica", "A ação é sorteada segundo as probabilidades, o que ajuda a explorar."]
+    [
+     "Política",
+     "Regra que liga cada situação a uma escolha de ação."
+    ],
+    [
+     "Ação estocástica",
+     "A ação é sorteada segundo as probabilidades, o que ajuda a explorar."
+    ]
    ],
    "tecnico": "Rede neural paramétrica que produz uma distribuição sobre as ações, por exemplo com softmax para ações discretas. A ação é amostrada dessa distribuição."
   },
@@ -23,15 +31,23 @@
    "node": "ep",
    "fase": "Policy gradient",
    "title": "Episódios",
-   "edges": ["e-pol-ep"],
+   "edges": [
+    "e-pol-ep"
+   ],
    "resumo": "O agente joga com a política atual, do começo ao fim, e guarda o que aconteceu: as situações, as ações escolhidas e as recompensas recebidas. Depois, soma o que cada ação rendeu até o fim da partida.",
    "entra": "A política e o ambiente.",
    "sai": "Trajetórias com ações e recompensas.",
    "exemplo": "Uma partida em que o agente fez 40 jogadas e marcou 12 pontos no total.",
    "ilustrativo": true,
    "termos": [
-    ["Episódio", "Uma partida completa, do início ao fim."],
-    ["Retorno", "Soma das recompensas obtidas depois de uma ação."]
+    [
+     "Episódio",
+     "Uma partida completa, do início ao fim."
+    ],
+    [
+     "Retorno",
+     "Soma das recompensas obtidas depois de uma ação."
+    ]
    ],
    "tecnico": "Coleta de trajetórias on-policy: os dados vêm da política atual. Para cada passo calcula-se o retorno acumulado, geralmente com desconto."
   },
@@ -39,28 +55,48 @@
    "node": "adv",
    "fase": "Policy gradient",
    "title": "Vantagem",
-   "edges": ["e-ep-adv"],
+   "edges": [
+    "e-ep-adv"
+   ],
    "resumo": "Em vez de olhar só quanto uma ação rendeu, mede-se quanto ela foi melhor ou pior do que o esperado naquela situação. Essa expectativa vem de uma segunda rede, o crítico. Isso reduz o ruído e deixa o aprendizado mais firme.",
    "entra": "Retornos observados e a estimativa do crítico.",
    "sai": "Uma nota por ação: positiva se foi melhor que o esperado.",
    "termos": [
-    ["Vantagem", "Quanto uma ação foi melhor do que o esperado."],
-    ["Crítico", "Rede que estima o retorno esperado de cada situação."],
-    ["Ator-crítico", "Método com uma rede que age (ator) e outra que avalia (crítico)."]
+    [
+     "Vantagem",
+     "Quanto uma ação foi melhor do que o esperado."
+    ],
+    [
+     "Crítico",
+     "Rede que estima o retorno esperado de cada situação."
+    ],
+    [
+     "Ator-crítico",
+     "Método com uma rede que age (ator) e outra que avalia (crítico)."
+    ]
    ],
-   "tecnico": "Estimativa da vantagem usando o crítico como linha de base, frequentemente com GAE (estimativa generalizada de vantagem). Reduz a variância do gradiente."
+   "tecnico": "Estimativa da vantagem usando o crítico como linha de base, frequentemente com Generalized Advantage Estimation (GAE, estimativa generalizada de vantagem). Reduz a variância do gradiente."
   },
   {
    "node": "upd",
    "fase": "Policy gradient",
    "title": "Sobe o gradiente",
-   "edges": ["e-adv-upd", "e-upd-pol"],
+   "edges": [
+    "e-adv-upd",
+    "e-upd-pol"
+   ],
    "resumo": "A rede da política é ajustada para aumentar a probabilidade das ações com nota boa e diminuir a das ruins. É subir o gradiente do retorno esperado. Depois o ciclo recomeça com a política atualizada.",
    "entra": "Ações e suas notas de vantagem.",
    "sai": "Uma política com pesos atualizados.",
    "termos": [
-    ["Gradiente", "Direção em que os pesos devem mudar para melhorar o resultado."],
-    ["Ascensão do gradiente", "Subir o gradiente, para aumentar o retorno esperado."]
+    [
+     "Gradiente",
+     "Direção em que os pesos devem mudar para melhorar o resultado."
+    ],
+    [
+     "Ascensão do gradiente",
+     "Subir o gradiente, para aumentar o retorno esperado."
+    ]
    ],
    "tecnico": "Atualização dos pesos por ascensão do gradiente do retorno esperado, ponderando o log da probabilidade de cada ação pela vantagem (teorema do gradiente de política)."
   },
@@ -68,13 +104,21 @@
    "node": "big",
    "fase": "PPO",
    "title": "Passo grande",
-   "edges": ["e-upd-big"],
+   "edges": [
+    "e-upd-big"
+   ],
    "resumo": "Aqui está o risco: se uma atualização muda a política demais, o agente pode piorar de repente e não se recuperar, porque os próximos dados virão dessa política ruim. Passos pequenos demais, por outro lado, deixam o treino lento.",
    "entra": "Uma atualização do policy gradient.",
    "sai": "O problema a resolver: mudar rápido, sem quebrar a política.",
    "termos": [
-    ["Colapso de desempenho", "Queda brusca de qualidade depois de uma atualização ruim."],
-    ["Tamanho do passo", "O quanto os pesos mudam em cada atualização."]
+    [
+     "Colapso de desempenho",
+     "Queda brusca de qualidade depois de uma atualização ruim."
+    ],
+    [
+     "Tamanho do passo",
+     "O quanto os pesos mudam em cada atualização."
+    ]
    ],
    "tecnico": "Métodos de policy gradient são sensíveis à taxa de aprendizado. Uma atualização grande invalida os dados coletados e pode degradar a política."
   },
@@ -82,41 +126,69 @@
    "node": "clip",
    "fase": "PPO",
    "title": "Recorte",
-   "edges": ["e-big-clip"],
+   "edges": [
+    "e-big-clip"
+   ],
    "resumo": "O PPO compara a política nova com a antiga e corta o ganho quando a mudança passa de um limite. Assim, não compensa empurrar a política para longe da anterior, e cada atualização fica dentro de uma faixa segura.",
    "entra": "Política antiga, política nova e as vantagens.",
    "sai": "Uma atualização que não se afasta demais da anterior.",
    "termos": [
-    ["Clipping (recorte)", "Limitar um valor a uma faixa, descartando o excesso."],
-    ["Razão entre políticas", "Compara a probabilidade da ação na política nova com a da antiga."]
+    [
+     "Clipping (recorte)",
+     "Limitar um valor a uma faixa, descartando o excesso."
+    ],
+    [
+     "Razão entre políticas",
+     "Compara a probabilidade da ação na política nova com a da antiga."
+    ],
+    [
+     "PPO",
+     "Proximal Policy Optimization (otimização proximal de política): método que limita o tamanho de cada atualização da política."
+    ]
    ],
-   "tecnico": "Função objetivo substituta com recorte da razão de probabilidades entre política nova e antiga. É uma alternativa simples às restrições de região de confiança do TRPO."
+   "tecnico": "Função objetivo substituta com recorte da razão de probabilidades entre política nova e antiga. É uma alternativa simples às restrições de região de confiança do Trust Region Policy Optimization (TRPO, otimização de política por região de confiança)."
   },
   {
    "node": "reuse",
    "fase": "PPO",
    "title": "Reuso de dados",
-   "edges": ["e-clip-reuse"],
+   "edges": [
+    "e-clip-reuse"
+   ],
    "resumo": "Como a mudança é limitada, os mesmos dados coletados podem ser usados em várias rodadas de atualização com segurança. Isso aproveita melhor cada partida jogada, e o método segue estável e fácil de implementar, por isso é tão usado.",
    "entra": "Um lote de episódios e o objetivo com recorte.",
    "sai": "Uma política melhorada, com treino estável.",
    "termos": [
-    ["Época", "Uma passada completa pelos mesmos dados."],
-    ["Eficiência de amostras", "Quanto se aprende com cada dado coletado."]
+    [
+     "Época",
+     "Uma passada completa pelos mesmos dados."
+    ],
+    [
+     "Eficiência de amostras",
+     "Quanto se aprende com cada dado coletado."
+    ]
    ],
-   "tecnico": "Várias épocas de gradiente em minilotes sobre a mesma trajetória coletada, com otimizador como Adam. Costuma ser combinado com ator-crítico e GAE."
+   "tecnico": "Várias épocas de gradiente em minilotes sobre a mesma trajetória coletada, com otimizador como o Adam (Adaptive Moment Estimation, estimativa adaptativa de momentos). Costuma ser combinado com ator-crítico e Generalized Advantage Estimation (GAE)."
   },
   {
    "node": "games",
    "fase": "Onde aparece",
    "title": "Jogos e robótica",
-   "edges": ["e-clip-games"],
+   "edges": [
+    "e-clip-games"
+   ],
    "resumo": "O PPO é muito usado para treinar agentes em jogos e simuladores e para controlar robôs, onde as ações podem ser contínuas, como a força de um motor. A estabilidade e a simplicidade fazem dele uma escolha comum.",
    "entra": "Um ambiente com recompensa, real ou simulado.",
    "sai": "Um agente que sabe agir naquele ambiente.",
    "termos": [
-    ["Ação contínua", "Ação com valor em uma faixa, como girar uma junta em graus."],
-    ["Simulador", "Ambiente virtual onde o agente treina sem riscos."]
+    [
+     "Ação contínua",
+     "Ação com valor em uma faixa, como girar uma junta em graus."
+    ],
+    [
+     "Simulador",
+     "Ambiente virtual onde o agente treina sem riscos."
+    ]
    ],
    "tecnico": "Aplicado em jogos, controle contínuo e treino de robôs em simuladores, muitas vezes com transferência posterior para o mundo real (sim-to-real)."
   },
@@ -124,13 +196,25 @@
    "node": "rlhf",
    "fase": "Onde aparece",
    "title": "RLHF em LLMs",
-   "edges": ["e-reuse-rlhf"],
-   "resumo": "No RLHF, o PPO ajusta um modelo de linguagem para ganhar notas altas de um modelo de recompensa que aprendeu as preferências humanas. O recorte evita que o modelo mude demais. Veja mais no workflow rlhf-dpo.",
+   "edges": [
+    "e-reuse-rlhf"
+   ],
+   "resumo": "No Reinforcement Learning from Human Feedback (RLHF, aprendizado por reforço com feedback humano), o PPO ajusta um Large Language Model (LLM, modelo de linguagem de grande escala) para ganhar notas altas de um modelo de recompensa que aprendeu as preferências humanas. O recorte evita que o modelo mude demais. Veja mais no workflow rlhf-dpo.",
    "entra": "Um LLM e as notas de um modelo de recompensa.",
    "sai": "Um LLM mais alinhado às preferências humanas.",
    "termos": [
-    ["RLHF", "Aprendizado por reforço com feedback humano."],
-    ["Modelo de recompensa", "Modelo que dá nota às respostas conforme a preferência humana."]
+    [
+     "RLHF",
+     "Reinforcement Learning from Human Feedback (aprendizado por reforço com feedback humano): usa preferências humanas como sinal de recompensa."
+    ],
+    [
+     "Modelo de recompensa",
+     "Modelo que dá nota às respostas conforme a preferência humana."
+    ],
+    [
+     "LLM",
+     "Large Language Model (modelo de linguagem de grande escala): modelo treinado em muito texto para gerar linguagem."
+    ]
    ],
    "tecnico": "A política é o LLM, a ação é o próximo token e a recompensa vem do modelo de recompensa. Em geral há uma penalidade de divergência em relação ao modelo de referência."
   }

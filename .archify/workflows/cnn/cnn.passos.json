@@ -20,10 +20,10 @@
     ],
     [
      "Canal",
-     "Cada cor básica da imagem (vermelho, verde e azul)"
+     "Cada cor básica da imagem (vermelho, verde e azul)."
     ]
    ],
-   "tecnico": "Tensor de entrada com altura, largura e canais; em imagem RGB são 3 canais, com valores normalizados (ex.: 0 a 1)."
+   "tecnico": "Tensor de entrada com altura, largura e canais; em imagem RGB (Red, Green, Blue: vermelho, verde e azul) são 3 canais, com valores normalizados (por exemplo, 0 a 1)."
   },
   {
    "node": "conv1",
@@ -47,10 +47,10 @@
     ],
     [
      "ReLU",
-     "Função que zera os valores negativos, deixando a rede não linear."
+     "Rectified Linear Unit (unidade linear retificada): função que zera os valores negativos, deixando a rede não linear."
     ]
    ],
-   "tecnico": "Convolução 2D com filtros (kernels) deslizantes, mais viés e ativação ReLU. Os pesos do filtro são compartilhados em toda a imagem."
+   "tecnico": "Convolução 2D com filtros (kernels) deslizantes, mais viés e ativação ReLU (Rectified Linear Unit). Os pesos do filtro são compartilhados em toda a imagem."
   },
   {
    "node": "pool",
@@ -94,7 +94,7 @@
      "Área da imagem original que influencia um valor."
     ]
    ],
-   "tecnico": "Convoluções empilhadas (com ReLU e pooling) aumentam o campo receptivo e compõem características de nível crescente; saída com mais canais e menor resolução espacial."
+   "tecnico": "Convoluções empilhadas (com ReLU, a unidade linear retificada, e pooling) aumentam o campo receptivo e compõem características de nível crescente; saída com mais canais e menor resolução espacial."
   },
   {
    "node": "flat",
@@ -162,7 +162,7 @@
      "Uma passada completa por todas as imagens de treino."
     ]
    ],
-   "tecnico": "Minimiza a cross-entropy entre predição e rótulo por retropropagação e descida do gradiente (ex.: SGD, Adam) em mini-lotes."
+   "tecnico": "Minimiza a cross-entropy entre predição e rótulo por retropropagação e descida do gradiente (por exemplo, SGD, Stochastic Gradient Descent, gradiente descendente estocástico, ou Adam, Adaptive Moment Estimation) em mini-lotes."
   },
   {
    "node": "filtros",

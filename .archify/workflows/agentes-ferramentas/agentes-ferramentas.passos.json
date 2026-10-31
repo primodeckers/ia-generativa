@@ -34,17 +34,17 @@
     "e-denied-llm",
     "e-decide-llm"
    ],
-   "resumo": "O modelo lê o objetivo e tudo o que já aconteceu, pensa no que falta fazer e decide o próximo passo. Pode precisar de uma ferramenta ou já ter o suficiente para responder.",
+   "resumo": "O Large Language Model (LLM, modelo de linguagem de grande escala) lê o objetivo e tudo o que já aconteceu, pensa no que falta fazer e decide o próximo passo. Pode precisar de uma ferramenta ou já ter o suficiente para responder.",
    "entra": "O objetivo e o contexto acumulado.",
    "sai": "Um plano do próximo passo.",
    "termos": [
     [
      "LLM",
-     "Modelo de linguagem grande, que gera texto a partir do contexto."
+     "Large Language Model (modelo de linguagem de grande escala): modelo que gera texto a partir do contexto."
     ],
     [
      "ReAct",
-     "Padrão em que o agente alterna raciocínio e ação, e usa o resultado de cada ação no raciocínio seguinte."
+     "Reasoning and Acting (raciocínio e ação): padrão em que o agente alterna raciocínio e ação, e usa o resultado de cada ação no raciocínio seguinte."
     ]
    ],
    "tecnico": "Cada volta do loop ReAct é uma nova chamada ao modelo, com a context window atualizada com as observações anteriores."
@@ -71,7 +71,7 @@
      "Os valores que a ferramenta precisa para trabalhar."
     ]
    ],
-   "tecnico": "O modelo emite um tool call com nome e argumentos em JSON, validado contra o JSON schema declarado para a ferramenta."
+   "tecnico": "O modelo emite um tool call com nome e argumentos em JSON (JavaScript Object Notation), validado contra o JSON schema declarado para a ferramenta."
   },
   {
    "node": "guard",
@@ -102,7 +102,7 @@
    "edges": [
     "e-guard-tool"
    ],
-   "resumo": "Com a permissão dada, o programa em volta do modelo executa a ferramenta de verdade: consulta uma API, faz uma busca ou roda um código.",
+   "resumo": "Com a permissão dada, o programa em volta do modelo executa a ferramenta de verdade: consulta uma API (Application Programming Interface, interface de programação de aplicações), faz uma busca ou roda um código.",
    "entra": "A chamada aprovada, com seus argumentos.",
    "sai": "O resultado bruto da execução.",
    "termos": [
@@ -112,7 +112,7 @@
     ],
     [
      "API",
-     "Interface pela qual um programa pede algo a outro serviço."
+     "Application Programming Interface (interface de programação de aplicações): interface pela qual um programa pede algo a outro serviço."
     ]
    ],
    "tecnico": "O runtime do agente executa a função e captura a saída, ou o erro, como tool result."
@@ -177,7 +177,7 @@
      "Critério que encerra o ciclo, como tarefa concluída ou limite de passos."
     ]
    ],
-   "tecnico": "O loop ReAct termina quando o modelo responde sem emitir um novo tool call, ou quando um limite de iterações é atingido."
+   "tecnico": "O loop ReAct (Reasoning and Acting, raciocínio e ação) termina quando o modelo responde sem emitir um novo tool call, ou quando um limite de iterações é atingido."
   },
   {
    "node": "final",

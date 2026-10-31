@@ -1,14 +1,14 @@
 {
  "titulo": "Passo a passo",
  "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
- "inicio": "Comece pelo 1 para ver o k-NN, pelo 5 para o SVM, pelo 9 para o k-means ou pelo 12 para o PCA.",
+ "inicio": "Comece pelo 1 para ver o k-NN (k-Nearest Neighbors, k vizinhos mais próximos), pelo 5 para o SVM (Support Vector Machine, máquina de vetores de suporte), pelo 9 para o k-means ou pelo 12 para o PCA (Principal Component Analysis, análise de componentes principais).",
  "steps": [
   {
    "node": "knn_novo",
    "fase": "k-NN",
    "title": "Novo ponto",
    "edges": [],
-   "resumo": "O k-NN não treina nada de antemão: ele guarda os exemplos já rotulados e espera um caso novo. Este é o ponto que queremos classificar ou estimar.",
+   "resumo": "O k-NN (k vizinhos mais próximos) não treina nada de antemão: ele guarda os exemplos já rotulados e espera um caso novo. Este é o ponto que queremos classificar ou estimar.",
    "entra": "Um caso novo, descrito por suas características.",
    "sai": "O ponto pronto para ser comparado com os conhecidos.",
    "exemplo": "Uma fruta nova, com peso e cor medidos, que ainda não sabemos se é laranja ou limão.",
@@ -98,7 +98,7 @@
    "fase": "SVM",
    "title": "Duas classes",
    "edges": [],
-   "resumo": "O SVM parte de exemplos de duas classes, cada um já rotulado. O objetivo é traçar uma linha de separação entre elas.",
+   "resumo": "O SVM (máquina de vetores de suporte) parte de exemplos de duas classes, cada um já rotulado. O objetivo é traçar uma linha de separação entre elas.",
    "entra": "Pontos rotulados em duas classes.",
    "sai": "Os dados prontos para a busca da fronteira.",
    "termos": [
@@ -177,7 +177,7 @@
      "Que não pode ser separado por uma reta."
     ]
    ],
-   "tecnico": "O truque do kernel calcula similaridades como se os dados estivessem num espaço de maior dimensão. Kernels comuns: linear, polinomial e RBF."
+   "tecnico": "O truque do kernel calcula similaridades como se os dados estivessem num espaço de maior dimensão. Kernels comuns: linear, polinomial e RBF (Radial Basis Function, função de base radial)."
   },
   {
    "node": "km_ini",
@@ -249,7 +249,7 @@
    "fase": "PCA",
    "title": "Muitas colunas",
    "edges": [],
-   "resumo": "O PCA começa com dados que têm muitas colunas, ou seja, muitas dimensões. Muitas delas costumam repetir informação entre si. É uma técnica não supervisionada.",
+   "resumo": "O PCA (análise de componentes principais) começa com dados que têm muitas colunas, ou seja, muitas dimensões. Muitas delas costumam repetir informação entre si. É uma técnica não supervisionada.",
    "entra": "Uma tabela com muitas características.",
    "sai": "Os dados preparados para a análise.",
    "termos": [

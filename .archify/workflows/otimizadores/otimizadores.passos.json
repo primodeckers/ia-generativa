@@ -123,20 +123,20 @@
    "edges": [
     "e-grad-sgd"
    ],
-   "resumo": "A forma mais simples de usar o gradiente: dar um passo na direção oposta a ele, com o tamanho dado pela taxa de aprendizado. Funciona, mas pode oscilar em vales estreitos e ficar lento onde o terreno é quase plano.",
+   "resumo": "O SGD (Stochastic Gradient Descent, gradiente descendente estocástico) é a forma mais simples de usar o gradiente: dar um passo na direção oposta a ele, com o tamanho dado pela taxa de aprendizado. Funciona, mas pode oscilar em vales estreitos e ficar lento onde o terreno é quase plano.",
    "entra": "Gradiente do minilote e taxa de aprendizado.",
    "sai": "Uma atualização para cada peso.",
    "termos": [
     [
      "SGD",
-     "Gradiente descendente estocástico: usa um minilote por passo."
+     "Stochastic Gradient Descent (gradiente descendente estocástico): usa um minilote por passo."
     ],
     [
      "Oscilação",
      "Zigue-zague do treino ao longo de um vale estreito."
     ]
    ],
-   "tecnico": "Stochastic gradient descent: o gradiente de um minilote é uma estimativa ruidosa do gradiente total, e todos os pesos usam a mesma taxa de aprendizado."
+   "tecnico": "Gradiente descendente estocástico (SGD): o gradiente de um minilote é uma estimativa ruidosa do gradiente total, e todos os pesos usam a mesma taxa de aprendizado."
   },
   {
    "node": "mom",
@@ -167,20 +167,20 @@
    "edges": [
     "e-mom-adam"
    ],
-   "resumo": "Além da memória da direção, o Adam ajusta o tamanho do passo de cada peso. Pesos com gradientes grandes e instáveis dão passos menores, e pesos com gradientes pequenos dão passos maiores. Por isso costuma funcionar bem sem muito ajuste.",
+   "resumo": "Além da memória da direção, o Adam (Adaptive Moment Estimation, estimativa adaptativa de momentos) ajusta o tamanho do passo de cada peso. Pesos com gradientes grandes e instáveis dão passos menores, e pesos com gradientes pequenos dão passos maiores. Por isso costuma funcionar bem sem muito ajuste.",
    "entra": "Gradiente atual e médias do gradiente e do seu tamanho.",
    "sai": "Um passo adaptado a cada peso.",
    "termos": [
     [
      "Adam",
-     "Otimizador que combina momentum com passo adaptativo por peso."
+     "Adaptive Moment Estimation (estimativa adaptativa de momentos): otimizador que combina momentum com passo adaptativo por peso."
     ],
     [
      "Passo adaptativo",
      "Tamanho do passo que muda de peso para peso."
     ]
    ],
-   "tecnico": "Adam mantém duas médias móveis por parâmetro: a do gradiente e a do seu quadrado, com correção de viés no início. A taxa de aprendizado ainda vale e costuma usar agendamento. A variante AdamW separa o decaimento de pesos."
+   "tecnico": "Adam mantém duas médias móveis por parâmetro: a do gradiente e a do seu quadrado, com correção de viés no início. A taxa de aprendizado ainda vale e costuma usar agendamento. A variante AdamW (Adam com decaimento de pesos, Adaptive Moment Estimation with Weight decay) separa o decaimento de pesos."
   },
   {
    "node": "fixa",
@@ -218,7 +218,7 @@
      "Regra que muda a taxa durante o treino."
     ]
    ],
-   "tecnico": "Learning rate warmup, em geral linear, durante algumas centenas ou milhares de passos. É comum em transformers e com Adam."
+   "tecnico": "Learning rate warmup, em geral linear, durante algumas centenas ou milhares de passos. É comum em transformers e com o Adam (Adaptive Moment Estimation)."
   },
   {
    "node": "decay",

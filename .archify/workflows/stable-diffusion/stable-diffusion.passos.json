@@ -22,7 +22,7 @@
      "Informação extra que guia o resultado."
     ]
    ],
-   "tecnico": "Texto usado como condição (conditioning) do modelo, processado pelo CLIP text encoder."
+   "tecnico": "Texto usado como condição (conditioning) do modelo, processado pelo codificador de texto do CLIP (Contrastive Language–Image Pre-training, pré-treinamento contrastivo de linguagem e imagem)."
   },
   {
    "node": "clip",
@@ -31,13 +31,13 @@
    "edges": [
     "e-prompt-clip"
    ],
-   "resumo": "Transforma as palavras em números que carregam o significado do pedido. Assim a rede de imagem consegue usar o texto como guia.",
+   "resumo": "O CLIP (Contrastive Language–Image Pre-training, pré-treinamento contrastivo de linguagem e imagem) transforma as palavras em números que carregam o significado do pedido. Assim a rede de imagem consegue usar o texto como guia.",
    "entra": "O texto do prompt.",
    "sai": "Uma sequência de vetores que representa o sentido do texto.",
    "termos": [
     [
      "CLIP",
-     "Modelo treinado para ligar textos e imagens."
+     "Contrastive Language–Image Pre-training (pré-treinamento contrastivo de linguagem e imagem): modelo treinado para ligar textos e imagens."
     ],
     [
      "Vetor",
@@ -51,7 +51,7 @@
    "fase": "Gerar a imagem",
    "title": "Ruído latente",
    "edges": [],
-   "resumo": "A geração começa com um sorteio de ruído, como a chuva de pontos de uma TV sem sinal. Mas não é uma imagem em pixels: é uma versão bem pequena e comprimida, o espaço latente.",
+   "resumo": "A geração começa com um sorteio de ruído, como a chuva de pontos de uma televisão sem sinal. Mas não é uma imagem em pixels: é uma versão bem pequena e comprimida, o espaço latente.",
    "entra": "Nada: é sorteado no início.",
    "sai": "Um bloco de números aleatórios, pequeno, que será limpo aos poucos.",
    "termos": [
@@ -64,7 +64,7 @@
      "Números aleatórios que seguem uma curva em forma de sino."
     ]
    ],
-   "tecnico": "Ruído gaussiano amostrado no latent space do VAE, muito menor que a imagem em pixels, o que torna a difusão mais barata."
+   "tecnico": "Ruído gaussiano amostrado no latent space do autoencoder variacional (VAE, Variational Autoencoder), muito menor que a imagem em pixels, o que torna a difusão mais barata."
   },
   {
    "node": "unet",
@@ -84,15 +84,15 @@
      "Mecanismo em que a imagem em construção consulta o texto para saber o que desenhar."
     ],
     [
-     "Classifier-free guidance",
-     "Mistura a previsão com texto e sem texto para reforçar o prompt."
+     "CFG",
+     "Classifier-free guidance (orientação sem classificador): mistura a previsão com texto e sem texto para reforçar o prompt."
     ],
     [
      "U-Net",
-     "Rede em forma de U que analisa a imagem em várias escalas."
+     "Rede em forma de U (daí o nome) que analisa a imagem em várias escalas."
     ]
    ],
-   "tecnico": "U-Net com cross-attention sobre os embeddings do CLIP em todas as iterações e classifier-free guidance para controlar a aderência ao prompt."
+   "tecnico": "U-Net com cross-attention sobre os embeddings do CLIP (Contrastive Language–Image Pre-training, pré-treinamento contrastivo de linguagem e imagem) em todas as iterações e classifier-free guidance (CFG, orientação sem classificador) para controlar a aderência ao prompt."
   },
   {
    "node": "sched",
@@ -117,7 +117,7 @@
      "Regra que define o tamanho de cada passo e como atualizar o latente."
     ]
    ],
-   "tecnico": "Scheduler (DDIM, Euler, etc.) que aplica a atualização do processo reverso a cada passo de denoising."
+   "tecnico": "Scheduler (DDIM, Denoising Diffusion Implicit Models; Euler, etc.) que aplica a atualização do processo reverso a cada passo de denoising."
   },
   {
    "node": "dec",
@@ -126,13 +126,13 @@
    "edges": [
     "e-sched-dec"
    ],
-   "resumo": "Pega o latente limpo, que ainda é pequeno, e o expande para uma imagem com todos os pixels.",
+   "resumo": "O VAE (Variational Autoencoder, autoencoder variacional) pega o latente limpo, que ainda é pequeno, e o expande para uma imagem com todos os pixels.",
    "entra": "O latente limpo.",
    "sai": "Uma imagem em pixels, em tamanho completo.",
    "termos": [
     [
      "VAE",
-     "Autocodificador variacional: comprime imagens em latentes e as reconstrói."
+     "Variational Autoencoder (autoencoder variacional): comprime imagens em latentes e as reconstrói."
     ],
     [
      "Decodificador",
@@ -157,7 +157,7 @@
      "Pontos coloridos que formam a imagem."
     ]
    ],
-   "tecnico": "Saída do decoder do VAE após o loop de denoising no latent space."
+   "tecnico": "Saída do decoder do autoencoder variacional (VAE) após o loop de denoising no latent space."
   },
   {
    "node": "real",
@@ -173,7 +173,7 @@
      "Coleção de exemplos usada para treinar."
     ]
    ],
-   "tecnico": "Pares imagem e legenda do dataset de treino; a legenda passa pelo CLIP text encoder."
+   "tecnico": "Pares imagem e legenda do dataset de treino; a legenda passa pelo codificador de texto do CLIP (Contrastive Language–Image Pre-training, pré-treinamento contrastivo de linguagem e imagem)."
   },
   {
    "node": "enc",
@@ -187,6 +187,10 @@
    "sai": "O latente da imagem, pequeno.",
    "termos": [
     [
+     "VAE",
+     "Variational Autoencoder (autoencoder variacional): comprime imagens em latentes e as reconstrói."
+    ],
+    [
      "Codificador",
      "Metade do VAE que comprime a imagem em um latente."
     ],
@@ -195,7 +199,7 @@
      "Versão comprimida da imagem."
     ]
    ],
-   "tecnico": "Encoder do VAE que projeta a imagem no latent space."
+   "tecnico": "Encoder do autoencoder variacional (VAE) que projeta a imagem no latent space."
   },
   {
    "node": "addn",

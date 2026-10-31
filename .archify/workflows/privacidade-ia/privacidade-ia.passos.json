@@ -8,7 +8,7 @@
    "fase": "O problema",
    "title": "Dados sensíveis",
    "edges": [],
-   "resumo": "Muitos modelos de IA aprendem com informações muito pessoais: histórico de saúde, mensagens e localização. Quanto mais sensível o dado, maior o estrago se ele vazar.",
+   "resumo": "Muitos modelos de Inteligência Artificial (IA) aprendem com informações muito pessoais: histórico de saúde, mensagens e localização. Quanto mais sensível o dado, maior o estrago se ele vazar.",
    "entra": "Informações pessoais geradas por pessoas no dia a dia.",
    "sai": "Dados valiosos para treinar modelos, mas que exigem cuidado.",
    "exemplo": "Mensagens digitadas no celular, usadas para melhorar a sugestão de palavras.",
@@ -91,7 +91,7 @@
      "Descobrir quem é a pessoa cruzando informações."
     ]
    ],
-   "tecnico": "Quase-identificadores, como data de nascimento, CEP e sexo, permitem ataques de linkage com bases externas. A anonimização simples é frágil."
+   "tecnico": "Quase-identificadores, como data de nascimento, CEP (Código de Endereçamento Postal) e sexo, permitem ataques de linkage com bases externas. A anonimização simples é frágil."
   },
   {
    "node": "lgpd",
@@ -100,17 +100,17 @@
    "edges": [
     "e-reid-lgpd"
    ],
-   "resumo": "Esses riscos são parte do motivo de existirem leis de proteção de dados, como a LGPD, a lei brasileira. Aqui ela serve só como contexto geral: tratar dados pessoais exige cuidado.",
+   "resumo": "Esses riscos são parte do motivo de existirem leis de proteção de dados, como a LGPD (Lei Geral de Proteção de Dados), a lei brasileira. Aqui ela serve só como contexto geral: tratar dados pessoais exige cuidado.",
    "entra": "A preocupação crescente com o uso de dados pessoais.",
    "sai": "A motivação para técnicas que protegem a privacidade já no treino.",
    "termos": [
     [
      "LGPD",
-     "Lei Geral de Proteção de Dados, a lei brasileira sobre dados pessoais."
+     "Lei Geral de Proteção de Dados: a lei brasileira que regula o tratamento de dados pessoais."
     ],
     [
      "Privacidade por projeto",
-     "Pensar na proteção desde o início do sistema."
+     "Pensar a proteção de dados desde o início do desenho do sistema."
     ]
    ],
    "tecnico": "O contexto regulatório incentiva privacidade desde a concepção, o que favorece técnicas como aprendizado federado e privacidade diferencial."
@@ -250,7 +250,7 @@
      "Variação aleatória adicionada de propósito."
     ]
    ],
-   "tecnico": "No treino, costuma-se limitar a contribuição de cada exemplo por recorte de gradientes e somar ruído aleatório calibrado, como no DP-SGD. Também pode ser aplicada a estatísticas e consultas."
+   "tecnico": "No treino, costuma-se limitar a contribuição de cada exemplo por recorte de gradientes e somar ruído aleatório calibrado, como no DP-SGD (Differentially Private Stochastic Gradient Descent, gradiente descendente estocástico com privacidade diferencial). Também pode ser aplicada a estatísticas e consultas."
   },
   {
    "node": "orcam",

@@ -1,147 +1,226 @@
 {
- "titulo": "Passo a passo",
- "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
- "inicio": "Comece pelo 1 para seguir um token pelo caminho MoE, ou pelo 8 para ver treino e custo.",
- "steps": [
-  {
-   "node": "token",
-   "fase": "Bloco denso (comparação)",
-   "title": "Token",
-   "edges": [],
-   "resumo": "O ponto de partida: o vetor que representa um token do texto ao chegar em uma camada do modelo. Cada token percorre a camada separadamente na etapa de refino.",
-   "entra": "O vetor do token vindo da camada anterior.",
-   "sai": "O mesmo vetor, pronto para a atenção.",
-   "termos": [
-    ["Token", "Pedaço de texto (palavra, parte dela ou símbolo) que o modelo processa."],
-    ["Camada", "Um bloco do Transformer, repetido muitas vezes em sequência."]
-   ],
-   "tecnico": "Cada camada do Transformer recebe a representação oculta de cada posição, vinda da camada anterior."
-  },
-  {
-   "node": "atencao",
-   "fase": "Bloco denso (comparação)",
-   "title": "Atenção",
-   "edges": ["e-token-atencao"],
-   "resumo": "A atenção liga cada token aos anteriores e mistura informação de contexto. O MoE não mexe nela: ela é igual no modelo denso e no modelo com especialistas.",
-   "entra": "Vetores dos tokens.",
-   "sai": "Vetores enriquecidos com contexto.",
-   "termos": [
-    ["Atenção", "Mecanismo que pesa o quanto cada token anterior importa para o atual."],
-    ["Modelo denso", "Modelo em que todos os parâmetros de uma camada são usados para todo token."]
-   ],
-   "tecnico": "Self-attention permanece inalterada; o MoE substitui apenas o sub-bloco feed-forward da camada."
-  },
-  {
-   "node": "ffn_densa",
-   "fase": "Bloco denso (comparação)",
-   "title": "Feed-forward única",
-   "edges": ["e-atencao-ffn"],
-   "resumo": "No Transformer comum, cada token passa por toda a rede feed-forward da camada, e todos os seus parâmetros entram no cálculo. Esse é o ponto de comparação: aqui nada é pulado.",
-   "entra": "Vetores com contexto, vindos da atenção.",
-   "sai": "Vetores refinados, calculados com a rede inteira.",
-   "termos": [
-    ["Feed-forward", "Rede de camadas densas aplicada a cada posição, separadamente."],
-    ["Denso", "Sem partes desligadas: todos os pesos trabalham em todo token."]
-   ],
-   "tecnico": "FFN única por camada, aplicada a todos os tokens. O custo de cálculo por token cresce junto com o número de parâmetros."
-  },
-  {
-   "node": "roteador",
-   "fase": "Camada MoE",
-   "title": "Roteador",
-   "edges": ["e-atencao-roteador", "e-balance-roteador"],
-   "resumo": "No MoE, a feed-forward única dá lugar a vários especialistas e a um roteador (também chamado de gating). Para cada token, o roteador dá uma nota a cada especialista, indicando quem é mais indicado para ele.",
-   "entra": "O vetor do token, vindo da atenção.",
-   "sai": "Uma nota por especialista.",
-   "termos": [
-    ["Roteador (gating)", "Pequena rede que decide para quais especialistas cada token vai."],
-    ["Especialista (expert)", "Uma rede feed-forward independente dentro da camada."]
-   ],
-   "tecnico": "Projeção linear do vetor do token seguida de softmax, gerando uma pontuação por especialista. Cada camada MoE tem o seu próprio roteador."
-  },
-  {
-   "node": "topk",
-   "fase": "Camada MoE",
-   "title": "Escolha top-k",
-   "edges": ["e-roteador-topk"],
-   "resumo": "Das notas, ficam só as k maiores, com k pequeno (por exemplo 1 ou 2). Os demais especialistas não recebem esse token. Cada token pode seguir por um caminho diferente.",
-   "entra": "As notas de todos os especialistas.",
-   "sai": "Os k especialistas escolhidos e seus pesos.",
-   "termos": [
-    ["Top-k", "Escolher apenas os k itens de maior nota."],
-    ["Esparsidade", "Só uma pequena parte dos parâmetros é usada a cada token."]
-   ],
-   "tecnico": "Seleção top-k das pontuações do roteador, com renormalização dos pesos dos escolhidos. A ativação é esparsa e condicional ao token."
-  },
-  {
-   "node": "experts",
-   "fase": "Camada MoE",
-   "title": "Especialistas",
-   "edges": ["e-topk-experts"],
-   "resumo": "Só os especialistas escolhidos processam o token; os outros ficam parados naquela passada. Por isso o modelo pode ter muitos parâmetros no total, mas usar só uma fração deles por token.",
-   "entra": "O vetor do token, enviado aos k especialistas.",
-   "sai": "Uma saída por especialista escolhido.",
-   "termos": [
-    ["Parâmetros ativos", "Os pesos realmente usados no cálculo de um token."],
-    ["Parâmetros totais", "Todos os pesos guardados, usados ou não naquele token."]
-   ],
-   "tecnico": "Cada especialista é uma FFN completa. A computação por token envolve só os k escolhidos, enquanto todos precisam estar na memória."
-  },
-  {
-   "node": "combina",
-   "fase": "Camada MoE",
-   "title": "Combinação",
-   "edges": ["e-experts-combina"],
-   "resumo": "As saídas dos especialistas escolhidos são somadas, cada uma multiplicada pelo peso que o roteador deu a ela. O resultado segue para a próxima camada, como a saída da feed-forward faria no modelo denso.",
-   "entra": "As saídas dos k especialistas e os pesos do roteador.",
-   "sai": "Um único vetor, que segue para a próxima camada.",
-   "termos": [
-    ["Soma ponderada", "Mistura em que cada parte conta conforme seu peso."],
-    ["Conexão residual", "Soma a entrada de volta à saída, preservando informação."]
-   ],
-   "tecnico": "Combinação linear das saídas dos especialistas ativos usando os pesos do roteador, dentro da conexão residual da camada."
-  },
-  {
-   "node": "balance",
-   "fase": "Treino e custo",
-   "title": "Balanceamento",
-   "edges": ["e-balance-roteador"],
-   "resumo": "Sem cuidado, o roteador pode mandar quase tudo para poucos especialistas favoritos, deixando os outros sem treino. Uma perda auxiliar, somada ao erro principal, incentiva a divisão mais equilibrada dos tokens.",
-   "entra": "A distribuição de tokens entre os especialistas.",
-   "sai": "Um sinal de treino que equilibra a carga.",
-   "termos": [
-    ["Perda auxiliar", "Termo extra de erro, somado ao principal, que guia um comportamento específico."],
-    ["Balanceamento de carga", "Distribuir os tokens de forma parecida entre os especialistas."]
-   ],
-   "tecnico": "Perda auxiliar de balanceamento de carga adicionada à loss de treino, penalizando roteamento concentrado e evitando o colapso para poucos especialistas."
-  },
-  {
-   "node": "vantagem",
-   "fase": "Treino e custo",
-   "title": "Esparsidade",
-   "edges": ["e-experts-vantagem"],
-   "resumo": "A grande vantagem: o modelo guarda muito mais conhecimento (parâmetros) sem que o cálculo por token cresça na mesma proporção. O custo por token fica parecido com o de um modelo bem menor.",
-   "entra": "O fato de só k especialistas rodarem por token.",
-   "sai": "Mais capacidade com custo de cálculo contido.",
-   "termos": [
-    ["Capacidade", "Quanto conhecimento o modelo consegue guardar nos parâmetros."],
-    ["Custo de inferência", "Quanto cálculo é gasto para gerar cada token."]
-   ],
-   "tecnico": "Desacopla o total de parâmetros do custo computacional por token (FLOPs), pois só os especialistas ativos são executados."
-  },
-  {
-   "node": "desafios",
-   "fase": "Treino e custo",
-   "title": "Desafios",
-   "edges": ["e-vantagem-desafios"],
-   "resumo": "Nada é de graça. Todos os especialistas precisam caber na memória, mesmo os que ficam parados. Com o modelo espalhado por várias GPUs, os tokens precisam viajar até seus especialistas. E o treino é mais delicado.",
-   "entra": "O modelo MoE em treino e em uso.",
-   "sai": "Exigências extras de memória, comunicação e cuidado no treino.",
-   "termos": [
-    ["Paralelismo de especialistas", "Distribuir especialistas por GPUs diferentes."],
-    ["Estabilidade de treino", "Treino sem oscilações ou colapsos, mais difícil com roteamento."]
-   ],
-   "tecnico": "Memória para todos os pesos; comunicação all-to-all entre GPUs no paralelismo de especialistas; roteamento discreto que exige cuidado para estabilizar o treino."
-  }
- ]
+  "titulo": "Passo a passo",
+  "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+  "inicio": "Comece pelo 1 para seguir um token pelo caminho MoE (Mixture of Experts, mistura de especialistas), ou pelo 8 para ver treino e custo.",
+  "steps": [
+    {
+      "node": "token",
+      "fase": "Bloco denso (comparação)",
+      "title": "Token",
+      "edges": [],
+      "resumo": "O ponto de partida: o vetor que representa um token do texto ao chegar em uma camada do modelo. Cada token percorre a camada separadamente na etapa de refino.",
+      "entra": "O vetor do token vindo da camada anterior.",
+      "sai": "O mesmo vetor, pronto para a atenção.",
+      "termos": [
+        [
+          "Token",
+          "Pedaço de texto (palavra, parte dela ou símbolo) que o modelo processa."
+        ],
+        [
+          "Camada",
+          "Um bloco do Transformer, repetido muitas vezes em sequência."
+        ]
+      ],
+      "tecnico": "Cada camada do Transformer recebe a representação oculta de cada posição, vinda da camada anterior."
+    },
+    {
+      "node": "atencao",
+      "fase": "Bloco denso (comparação)",
+      "title": "Atenção",
+      "edges": [
+        "e-token-atencao"
+      ],
+      "resumo": "A atenção liga cada token aos anteriores e mistura informação de contexto. O MoE não mexe nela: ela é igual no modelo denso e no modelo com especialistas.",
+      "entra": "Vetores dos tokens.",
+      "sai": "Vetores enriquecidos com contexto.",
+      "termos": [
+        [
+          "Atenção",
+          "Mecanismo que pesa o quanto cada token anterior importa para o atual."
+        ],
+        [
+          "Modelo denso",
+          "Modelo em que todos os parâmetros de uma camada são usados para todo token."
+        ]
+      ],
+      "tecnico": "Self-attention permanece inalterada; o MoE (mistura de especialistas) substitui apenas o sub-bloco feed-forward da camada."
+    },
+    {
+      "node": "ffn_densa",
+      "fase": "Bloco denso (comparação)",
+      "title": "Feed-forward única",
+      "edges": [
+        "e-atencao-ffn"
+      ],
+      "resumo": "No Transformer comum, cada token passa por toda a rede feed-forward da camada, e todos os seus parâmetros entram no cálculo. Esse é o ponto de comparação: aqui nada é pulado.",
+      "entra": "Vetores com contexto, vindos da atenção.",
+      "sai": "Vetores refinados, calculados com a rede inteira.",
+      "termos": [
+        [
+          "Feed-forward",
+          "Rede de camadas densas aplicada a cada posição, separadamente."
+        ],
+        [
+          "Denso",
+          "Sem partes desligadas: todos os pesos trabalham em todo token."
+        ]
+      ],
+      "tecnico": "FFN (Feed-Forward Network, rede feed-forward) única por camada, aplicada a todos os tokens. O custo de cálculo por token cresce junto com o número de parâmetros."
+    },
+    {
+      "node": "roteador",
+      "fase": "Camada MoE",
+      "title": "Roteador",
+      "edges": [
+        "e-atencao-roteador",
+        "e-balance-roteador"
+      ],
+      "resumo": "No MoE, a feed-forward única dá lugar a vários especialistas e a um roteador (também chamado de gating). Para cada token, o roteador dá uma nota a cada especialista, indicando quem é mais indicado para ele.",
+      "entra": "O vetor do token, vindo da atenção.",
+      "sai": "Uma nota por especialista.",
+      "termos": [
+        [
+          "Roteador (gating)",
+          "Pequena rede que decide para quais especialistas cada token vai."
+        ],
+        [
+          "Especialista (expert)",
+          "Uma rede feed-forward independente dentro da camada."
+        ]
+      ],
+      "tecnico": "Projeção linear do vetor do token seguida de softmax, gerando uma pontuação por especialista. Cada camada MoE (Mixture of Experts, mistura de especialistas) tem o seu próprio roteador."
+    },
+    {
+      "node": "topk",
+      "fase": "Camada MoE",
+      "title": "Escolha top-k",
+      "edges": [
+        "e-roteador-topk"
+      ],
+      "resumo": "Das notas, ficam só as k maiores, com k pequeno (por exemplo 1 ou 2). Os demais especialistas não recebem esse token. Cada token pode seguir por um caminho diferente.",
+      "entra": "As notas de todos os especialistas.",
+      "sai": "Os k especialistas escolhidos e seus pesos.",
+      "termos": [
+        [
+          "Top-k",
+          "Escolher apenas os k itens de maior nota."
+        ],
+        [
+          "Esparsidade",
+          "Só uma pequena parte dos parâmetros é usada a cada token."
+        ]
+      ],
+      "tecnico": "Seleção top-k das pontuações do roteador, com renormalização dos pesos dos escolhidos. A ativação é esparsa e condicional ao token."
+    },
+    {
+      "node": "experts",
+      "fase": "Camada MoE",
+      "title": "Especialistas",
+      "edges": [
+        "e-topk-experts"
+      ],
+      "resumo": "Só os especialistas escolhidos processam o token; os outros ficam parados naquela passada. Por isso o modelo pode ter muitos parâmetros no total, mas usar só uma fração deles por token.",
+      "entra": "O vetor do token, enviado aos k especialistas.",
+      "sai": "Uma saída por especialista escolhido.",
+      "termos": [
+        [
+          "Parâmetros ativos",
+          "Os pesos realmente usados no cálculo de um token."
+        ],
+        [
+          "Parâmetros totais",
+          "Todos os pesos guardados, usados ou não naquele token."
+        ]
+      ],
+      "tecnico": "Cada especialista é uma FFN (Feed-Forward Network, rede feed-forward) completa. A computação por token envolve só os k escolhidos, enquanto todos precisam estar na memória."
+    },
+    {
+      "node": "combina",
+      "fase": "Camada MoE",
+      "title": "Combinação",
+      "edges": [
+        "e-experts-combina"
+      ],
+      "resumo": "As saídas dos especialistas escolhidos são somadas, cada uma multiplicada pelo peso que o roteador deu a ela. O resultado segue para a próxima camada, como a saída da feed-forward faria no modelo denso.",
+      "entra": "As saídas dos k especialistas e os pesos do roteador.",
+      "sai": "Um único vetor, que segue para a próxima camada.",
+      "termos": [
+        [
+          "Soma ponderada",
+          "Mistura em que cada parte conta conforme seu peso."
+        ],
+        [
+          "Conexão residual",
+          "Soma a entrada de volta à saída, preservando informação."
+        ]
+      ],
+      "tecnico": "Combinação linear das saídas dos especialistas ativos usando os pesos do roteador, dentro da conexão residual da camada."
+    },
+    {
+      "node": "balance",
+      "fase": "Treino e custo",
+      "title": "Balanceamento",
+      "edges": [
+        "e-balance-roteador"
+      ],
+      "resumo": "Sem cuidado, o roteador pode mandar quase tudo para poucos especialistas favoritos, deixando os outros sem treino. Uma perda auxiliar, somada ao erro principal, incentiva a divisão mais equilibrada dos tokens.",
+      "entra": "A distribuição de tokens entre os especialistas.",
+      "sai": "Um sinal de treino que equilibra a carga.",
+      "termos": [
+        [
+          "Perda auxiliar",
+          "Termo extra de erro, somado ao principal, que guia um comportamento específico."
+        ],
+        [
+          "Balanceamento de carga",
+          "Distribuir os tokens de forma parecida entre os especialistas."
+        ]
+      ],
+      "tecnico": "Perda auxiliar de balanceamento de carga adicionada à loss de treino, penalizando roteamento concentrado e evitando o colapso para poucos especialistas."
+    },
+    {
+      "node": "vantagem",
+      "fase": "Treino e custo",
+      "title": "Esparsidade",
+      "edges": [
+        "e-experts-vantagem"
+      ],
+      "resumo": "A grande vantagem: o modelo guarda muito mais conhecimento (parâmetros) sem que o cálculo por token cresça na mesma proporção. O custo por token fica parecido com o de um modelo bem menor.",
+      "entra": "O fato de só k especialistas rodarem por token.",
+      "sai": "Mais capacidade com custo de cálculo contido.",
+      "termos": [
+        [
+          "Capacidade",
+          "Quanto conhecimento o modelo consegue guardar nos parâmetros."
+        ],
+        [
+          "Custo de inferência",
+          "Quanto cálculo é gasto para gerar cada token."
+        ]
+      ],
+      "tecnico": "Desacopla o total de parâmetros do custo computacional por token (FLOPs, Floating-Point Operations, operações de ponto flutuante), pois só os especialistas ativos são executados."
+    },
+    {
+      "node": "desafios",
+      "fase": "Treino e custo",
+      "title": "Desafios",
+      "edges": [
+        "e-vantagem-desafios"
+      ],
+      "resumo": "Nada é de graça. Todos os especialistas precisam caber na memória, mesmo os que ficam parados. Com o modelo espalhado por várias GPUs (Graphics Processing Units, unidades de processamento gráfico), os tokens precisam viajar até seus especialistas. E o treino é mais delicado.",
+      "entra": "O modelo MoE (mistura de especialistas) em treino e em uso.",
+      "sai": "Exigências extras de memória, comunicação e cuidado no treino.",
+      "termos": [
+        [
+          "Paralelismo de especialistas",
+          "Distribuir especialistas por GPUs diferentes."
+        ],
+        [
+          "Estabilidade de treino",
+          "Treino sem oscilações ou colapsos, mais difícil com roteamento."
+        ]
+      ],
+      "tecnico": "Memória para todos os pesos; comunicação all-to-all entre GPUs no paralelismo de especialistas; roteamento discreto que exige cuidado para estabilizar o treino."
+    }
+  ]
 }
