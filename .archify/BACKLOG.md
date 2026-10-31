@@ -53,14 +53,14 @@ Temas para virar workflow (passo a passo). Marque `[x]` quando estiver pronto em
 - [ ] Guardrails e segurança (prompt injection, jailbreak)
 
 ## Aprendizado por reforço
-- [ ] ⭐ Agente, ambiente, recompensa
+- [x] ⭐ Agente, ambiente, recompensa
 - [ ] Q-learning e DQN
 - [ ] Policy gradient e PPO
 - [ ] AlphaGo / MCTS
 
 ## Visão, imagem e vídeo
 - [ ] ControlNet e LoRA de imagem
-- [ ] ⭐ CLIP e modelos multimodais
+- [x] ⭐ CLIP e modelos multimodais
 - [ ] Detecção de objetos (YOLO) e segmentação
 - [ ] OCR e NeRF / Gaussian splatting
 - [ ] Geração de vídeo
@@ -72,8 +72,8 @@ Temas para virar workflow (passo a passo). Marque `[x]` quando estiver pronto em
 - [ ] Narração dos workflows com ElevenLabs (áudio por passo, gerado antes; Live espera o áudio terminar)
 
 ## Engenharia e ferramentas
-- [ ] ⭐ MLOps: treino → deploy → monitoramento (drift)
-- [ ] ⭐ Servir modelos (vLLM, batching, GPU / CUDA / TPU)
+- [x] ⭐ MLOps: treino → deploy → monitoramento (drift)
+- [x] ⭐ Servir modelos (vLLM, batching, GPU / CUDA / TPU)
 - [ ] PyTorch, TensorFlow e JAX
 - [ ] Hugging Face, Ollama e llama.cpp, LangChain e LlamaIndex
 - [ ] ONNX, Docker e Kubernetes para IA

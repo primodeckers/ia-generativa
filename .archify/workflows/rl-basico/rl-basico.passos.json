@@ -1,0 +1,313 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para acompanhar uma volta do ciclo, ou pelo 6 para ver o que o agente aprende.",
+ "steps": [
+  {
+   "node": "obs",
+   "fase": "O ciclo",
+   "title": "Observa o estado",
+   "edges": [],
+   "resumo": "O agente olha para o ambiente e registra a situação atual, chamada de estado. É o ponto de partida de cada volta do ciclo.",
+   "entra": "A situação atual do ambiente.",
+   "sai": "O estado, pronto para decidir.",
+   "exemplo": "Um robô num labirinto vê em qual célula está e onde ficam as paredes.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Agente",
+     "Quem aprende e toma as decisões."
+    ],
+    [
+     "Estado",
+     "Descrição da situação atual do ambiente."
+    ]
+   ],
+   "tecnico": "Observação do estado (ou de uma observação parcial dele), que serve de entrada para a política."
+  },
+  {
+   "node": "acao",
+   "fase": "O ciclo",
+   "title": "Escolhe a ação",
+   "edges": [
+    "e-obs-acao",
+    "e-pol-acao"
+   ],
+   "resumo": "Com base no estado, o agente escolhe o que fazer, seguindo a sua política. No começo as escolhas são quase aleatórias; com o tempo ficam melhores.",
+   "entra": "O estado observado.",
+   "sai": "Uma ação escolhida.",
+   "exemplo": "O robô decide andar para a direita.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Ação",
+     "Algo que o agente pode fazer no ambiente."
+    ],
+    [
+     "Política",
+     "Regra que diz qual ação escolher em cada estado."
+    ]
+   ],
+   "tecnico": "Seleção de ação a partir da política, que pode ser determinística ou estocástica (uma distribuição de probabilidade sobre as ações)."
+  },
+  {
+   "node": "amb",
+   "fase": "O ciclo",
+   "title": "Ambiente reage",
+   "edges": [
+    "e-acao-amb"
+   ],
+   "resumo": "O ambiente recebe a ação e responde: o estado muda. O agente não conhece de antemão as regras do ambiente; ele só vê o que acontece depois de agir.",
+   "entra": "A ação do agente.",
+   "sai": "O novo estado.",
+   "exemplo": "O robô se move uma célula; agora está em outro ponto do labirinto.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Ambiente",
+     "Tudo o que o agente não controla diretamente e com o que ele interage."
+    ],
+    [
+     "Transição",
+     "A mudança de um estado para outro após uma ação."
+    ]
+   ],
+   "tecnico": "Dinâmica de transição do ambiente, modelada em geral como um processo de decisão de Markov (MDP), em que o próximo estado depende do estado atual e da ação."
+  },
+  {
+   "node": "rec",
+   "fase": "O ciclo",
+   "title": "Devolve recompensa",
+   "edges": [
+    "e-amb-rec"
+   ],
+   "resumo": "Junto com o novo estado, o ambiente devolve uma recompensa: um número que diz se o resultado foi bom ou ruim. É o único tipo de \"nota\" que o agente recebe, sem dizer qual era a ação certa.",
+   "entra": "O resultado da ação.",
+   "sai": "Uma recompensa e o novo estado.",
+   "exemplo": "Menos um ponto por passo, mais dez ao chegar à saída, menos dez ao cair numa armadilha.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Recompensa",
+     "Sinal numérico que avalia o resultado de uma ação."
+    ],
+    [
+     "Sinal esparso",
+     "Recompensa que aparece raramente, só em alguns momentos."
+    ]
+   ],
+   "tecnico": "Sinal escalar de recompensa que define o objetivo. Um desenho ruim da recompensa pode levar o agente a explorar brechas (reward hacking)."
+  },
+  {
+   "node": "exp",
+   "fase": "O ciclo",
+   "title": "Guarda e aprende",
+   "edges": [
+    "e-rec-exp",
+    "e-exp-obs"
+   ],
+   "resumo": "O agente guarda o que aconteceu (estado, ação, recompensa e novo estado) e usa essa experiência para melhorar. Depois o ciclo recomeça, com uma nova observação.",
+   "entra": "Estado, ação, recompensa e novo estado.",
+   "sai": "Política e estimativas de valor atualizadas.",
+   "exemplo": "Depois de bater na parede, o robô passa a evitar essa ação naquela célula.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Experiência",
+     "O registro de uma interação com o ambiente."
+    ],
+    [
+     "Episódio",
+     "Uma rodada completa, do início até o fim, como uma partida."
+    ]
+   ],
+   "tecnico": "Atualização dos parâmetros a partir de transições, online ou a partir de um buffer de experiência (replay buffer), repetida ao longo de muitos episódios."
+  },
+  {
+   "node": "pol",
+   "fase": "O que o agente aprende",
+   "title": "Política",
+   "edges": [
+    "e-val-pol"
+   ],
+   "resumo": "A política é a resposta à pergunta: o que fazer em cada situação? É o que o agente usa para escolher a ação, e é o que aprende para melhorar. Pode ser uma tabela simples ou uma rede neural.",
+   "entra": "Um estado.",
+   "sai": "Uma ação (ou probabilidades de ações).",
+   "exemplo": "No labirinto: na célula A vá para a direita; na célula B vá para cima.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Política",
+     "Mapa de cada estado para a ação a escolher."
+    ],
+    [
+     "Rede neural",
+     "Modelo usado para representar políticas em problemas grandes."
+    ]
+   ],
+   "tecnico": "Função que mapeia estados em ações, representada por uma tabela ou por uma rede neural com parâmetros ajustáveis."
+  },
+  {
+   "node": "val",
+   "fase": "O que o agente aprende",
+   "title": "Função de valor",
+   "edges": [
+    "e-exp-val"
+   ],
+   "resumo": "O valor mede quanta recompensa o agente espera receber a partir de um estado (ou de uma ação), contando o futuro. Um estado pode parecer sem graça agora e ainda assim ser muito valioso por levar a um bom caminho.",
+   "entra": "Um estado, ou um par estado e ação.",
+   "sai": "Uma estimativa da recompensa futura esperada.",
+   "exemplo": "A célula ao lado da saída tem valor alto, mesmo sem dar recompensa imediata.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Valor",
+     "Recompensa futura esperada a partir de um ponto."
+    ],
+    [
+     "Fator de desconto",
+     "Peso menor dado a recompensas mais distantes no tempo."
+    ]
+   ],
+   "tecnico": "Função de valor de estado ou de ação (valor Q), estimada a partir da experiência. Ajuda a avaliar escolhas sem esperar o fim do episódio."
+  },
+  {
+   "node": "ret",
+   "fase": "O que o agente aprende",
+   "title": "Maximizar o retorno",
+   "edges": [
+    "e-val-ret"
+   ],
+   "resumo": "O objetivo não é ganhar a maior recompensa agora, e sim a maior soma de recompensas ao longo do episódio inteiro. Isso se chama retorno. Às vezes vale abrir mão de um ganho imediato para ganhar mais depois.",
+   "entra": "As recompensas ao longo do episódio.",
+   "sai": "Uma meta clara para o aprendizado.",
+   "exemplo": "Dar uma volta maior no labirinto para chegar à saída pode render mais que pegar um prêmio pequeno e ficar preso.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Retorno",
+     "Recompensa acumulada ao longo de um episódio."
+    ],
+    [
+     "Ganho imediato",
+     "Recompensa de um único passo, sem olhar o que vem depois."
+    ]
+   ],
+   "tecnico": "O objetivo é maximizar o retorno esperado, em geral descontado, e não a recompensa de cada passo isolado."
+  },
+  {
+   "node": "expl",
+   "fase": "Dilemas e famílias",
+   "title": "Explorar ou aproveitar",
+   "edges": [
+    "e-expl-pol"
+   ],
+   "resumo": "Um dilema central: o agente deve testar ações novas, que podem revelar algo melhor, ou repetir a que já sabe que funciona? Só explorar desperdiça tempo; só aproveitar pode deixar o agente preso numa solução medíocre.",
+   "entra": "O que o agente já sabe até agora.",
+   "sai": "Uma decisão entre testar ou repetir.",
+   "exemplo": "O robô sempre pega o corredor que conhece, sem saber que há um atalho ao lado.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Exploração",
+     "Tentar ações novas para descobrir mais."
+    ],
+    [
+     "Aproveitamento",
+     "Repetir a melhor ação conhecida."
+    ]
+   ],
+   "tecnico": "Equilíbrio entre exploração e aproveitamento, feito por estratégias como epsilon-greedy (ação aleatória de vez em quando) ou por bônus de curiosidade."
+  },
+  {
+   "node": "atraso",
+   "fase": "Dilemas e famílias",
+   "title": "Recompensa atrasada",
+   "edges": [
+    "e-atraso-val"
+   ],
+   "resumo": "Muitas vezes a recompensa só chega muito depois das ações que a causaram. O difícil é descobrir qual delas foi a responsável, o que se chama atribuição de crédito. A função de valor ajuda a espalhar esse mérito para trás no tempo.",
+   "entra": "Uma recompensa que aparece no fim.",
+   "sai": "Crédito distribuído entre as ações anteriores.",
+   "exemplo": "Numa partida de xadrez, só se sabe o resultado no fim, mas um lance lá no começo pode ter decidido o jogo.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Atribuição de crédito",
+     "Descobrir quais ações levaram ao resultado."
+    ],
+    [
+     "Recompensa atrasada",
+     "Recompensa que chega muitos passos depois."
+    ]
+   ],
+   "tecnico": "Problema de atribuição de crédito temporal, tratado com métodos que propagam o valor para trás, como diferenças temporais (TD) e retornos acumulados."
+  },
+  {
+   "node": "fv",
+   "fase": "Dilemas e famílias",
+   "title": "Baseados em valor",
+   "edges": [
+    "e-fv-val"
+   ],
+   "resumo": "Uma família de métodos que aprende o valor de cada ação e escolhe a de maior valor. Exemplos: Q-learning, que usa uma tabela, e DQN, que usa uma rede neural quando há estados demais para uma tabela.",
+   "entra": "Experiência do agente.",
+   "sai": "Estimativas de valor por ação.",
+   "termos": [
+    [
+     "Q-learning",
+     "Método clássico que aprende o valor de cada par estado e ação."
+    ],
+    [
+     "DQN",
+     "Q-learning com rede neural profunda."
+    ]
+   ],
+   "tecnico": "Métodos baseados em valor aprendem a função de valor de ação e derivam a política escolhendo a ação de maior valor. O DQN usa uma rede neural, replay buffer e uma rede-alvo."
+  },
+  {
+   "node": "fp",
+   "fase": "Dilemas e famílias",
+   "title": "Baseados em política",
+   "edges": [
+    "e-fp-pol"
+   ],
+   "resumo": "Outra família: em vez de estimar valores, ajusta diretamente a política, aumentando a chance das ações que deram bons resultados. Exemplos: policy gradient e PPO, que faz atualizações pequenas e estáveis.",
+   "entra": "Experiência do agente.",
+   "sai": "Uma política ajustada.",
+   "termos": [
+    [
+     "Policy gradient",
+     "Ajuste direto da política na direção de maior retorno."
+    ],
+    [
+     "PPO",
+     "Variante que limita o tamanho de cada atualização para dar estabilidade."
+    ]
+   ],
+   "tecnico": "Métodos de gradiente de política otimizam os parâmetros da política diretamente. O PPO limita a mudança entre a política nova e a antiga, usando um objetivo com recorte (clipping)."
+  },
+  {
+   "node": "rlhf",
+   "fase": "Dilemas e famílias",
+   "title": "RLHF",
+   "edges": [
+    "e-fp-rlhf"
+   ],
+   "resumo": "O RLHF usa essas ideias para alinhar modelos de linguagem: a resposta do modelo é a ação, a nota vem de um modelo treinado com preferências humanas, e o PPO ajusta o modelo para respostas mais bem avaliadas.",
+   "entra": "Respostas do LLM e notas de preferência.",
+   "sai": "Um LLM mais alinhado ao que as pessoas preferem.",
+   "termos": [
+    [
+     "RLHF",
+     "Aprendizado por reforço a partir de feedback humano."
+    ],
+    [
+     "Modelo de recompensa",
+     "Modelo que prevê qual resposta as pessoas preferem."
+    ]
+   ],
+   "tecnico": "No RLHF o modelo de recompensa é treinado com comparações humanas, e o PPO otimiza a política do LLM, em geral com uma penalidade para não se afastar muito do modelo original."
+  }
+ ]
+}
