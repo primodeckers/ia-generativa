@@ -1,0 +1,165 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver como as notas viram chances, ou pelo 3 para conhecer os controles de criatividade.",
+ "steps": [
+  {
+   "node": "logits",
+   "fase": "Das notas às probabilidades",
+   "title": "Logits",
+   "edges": ["e-penal-logits"],
+   "resumo": "Depois de processar o texto, o modelo dá uma nota a cada token do vocabulário, medindo o quanto ele combina como próxima palavra. Essas notas ainda não são chances: podem ser negativas ou muito altas.",
+   "entra": "O resultado do Transformer para o último token do texto.",
+   "sai": "Uma nota (logit) para cada token do vocabulário.",
+   "exemplo": "Para “O gato subiu no ...”, “telhado” recebe uma nota alta, “sofá” uma média e “muro” uma um pouco menor.",
+   "ilustrativo": true,
+   "termos": [
+    ["Logit", "Nota bruta de um token, antes de virar probabilidade."],
+    ["Vocabulário", "Lista fixa de todos os tokens que o modelo conhece."]
+   ],
+   "tecnico": "Saída da última camada linear do Transformer: um vetor com um logit por token do vocabulário, para a posição do último token."
+  },
+  {
+   "node": "softmax",
+   "fase": "Das notas às probabilidades",
+   "title": "Softmax",
+   "edges": ["e-logits-softmax", "e-temp-softmax"],
+   "resumo": "Transforma as notas em probabilidades: todas ficam entre 0% e 100% e somam 100%. Quanto maior a nota, maior a chance do token.",
+   "entra": "As notas de todos os tokens, já reescaladas pela temperatura.",
+   "sai": "Uma distribuição de probabilidades sobre o vocabulário.",
+   "exemplo": "telhado 50%, sofá 30%, muro 20% (considerando só essas três candidatas).",
+   "ilustrativo": true,
+   "termos": [
+    ["Softmax", "Função que converte notas em probabilidades que somam 100%."],
+    ["Distribuição", "O conjunto das chances de todos os tokens possíveis."]
+   ],
+   "tecnico": "Aplica a função softmax sobre os logits, produzindo uma distribuição de probabilidade sobre o vocabulário inteiro."
+  },
+  {
+   "node": "temp",
+   "fase": "Os controles",
+   "title": "Temperatura",
+   "edges": ["e-temp-softmax"],
+   "resumo": "Regula o quanto o modelo se arrisca. Temperatura baixa deixa a distribuição mais afiada: o favorito leva quase tudo e as respostas ficam previsíveis. Temperatura alta a achata: tokens menos prováveis ganham chance e o texto fica mais variado, e também mais arriscado.",
+   "entra": "As notas dos tokens e o valor de temperatura escolhido.",
+   "sai": "Notas reescaladas, que geram uma distribuição mais afiada ou mais achatada.",
+   "exemplo": "Com temperatura baixa, “telhado” poderia subir de 50% para 80%. Com temperatura alta, os três ficariam mais próximos de 33%.",
+   "ilustrativo": true,
+   "termos": [
+    ["Temperatura", "Parâmetro que torna as respostas mais previsíveis (baixa) ou mais variadas (alta)."],
+    ["Distribuição afiada", "Quando poucos tokens concentram quase toda a probabilidade."]
+   ],
+   "tecnico": "Os logits são divididos pela temperatura antes do softmax. Valores abaixo de 1 concentram a distribuição; valores acima de 1 a achatam; perto de zero equivale à escolha greedy."
+  },
+  {
+   "node": "topk",
+   "fase": "Os controles",
+   "title": "Top-k",
+   "edges": ["e-softmax-topk"],
+   "resumo": "Mantém só os k tokens mais prováveis e descarta o resto. Isso corta de vez as opções absurdas que ficam no fim da lista.",
+   "entra": "A distribuição de probabilidades completa.",
+   "sai": "Apenas os k melhores candidatos, com as chances reajustadas para somar 100%.",
+   "exemplo": "Com k = 2, ficam só “telhado” e “sofá”; “muro” sai da disputa.",
+   "ilustrativo": true,
+   "termos": [
+    ["Top-k", "Filtro que considera apenas os k tokens mais prováveis."],
+    ["Renormalizar", "Reajustar as chances que sobraram para voltarem a somar 100%."]
+   ],
+   "tecnico": "Truncamento da distribuição aos k tokens de maior probabilidade, seguido de renormalização. O número de candidatos é fixo, independentemente da confiança do modelo."
+  },
+  {
+   "node": "topp",
+   "fase": "Os controles",
+   "title": "Top-p",
+   "edges": ["e-topk-topp"],
+   "resumo": "Também chamado de nucleus sampling: fica com o menor grupo de tokens cuja probabilidade somada alcança p. Se o modelo está confiante, sobram poucos candidatos; se está em dúvida, sobram muitos.",
+   "entra": "Os candidatos que passaram pelo filtro anterior.",
+   "sai": "Um grupo enxuto de candidatos, com as chances reajustadas.",
+   "exemplo": "Com p = 80%, “telhado” (50%) e “sofá” (30%) já somam 80%, então o grupo para por aí.",
+   "ilustrativo": true,
+   "termos": [
+    ["Top-p", "Filtro que mantém os tokens mais prováveis até a soma chegar a p."],
+    ["Nucleus sampling", "Outro nome do top-p: sorteia só dentro do “núcleo” provável."]
+   ],
+   "tecnico": "Ordena os tokens por probabilidade e mantém o menor prefixo cuja soma acumulada atinge p; o tamanho do grupo se adapta à forma da distribuição. Costuma ser combinado com top-k e temperatura."
+  },
+  {
+   "node": "greedy",
+   "fase": "Os controles",
+   "title": "Greedy",
+   "edges": ["e-topp-greedy"],
+   "resumo": "A alternativa mais simples: em vez de sortear, pega sempre o token mais provável. O resultado é estável e repetível, mas pode ficar monótono e repetitivo.",
+   "entra": "A lista de candidatos com suas chances.",
+   "sai": "O token mais provável, sem sorteio.",
+   "exemplo": "Em “O gato subiu no ...”, a resposta seria sempre “telhado”.",
+   "ilustrativo": true,
+   "termos": [
+    ["Greedy", "Estratégia “gulosa”: escolher sempre a melhor opção do momento."],
+    ["Determinístico", "Que dá sempre o mesmo resultado para a mesma entrada."]
+   ],
+   "tecnico": "Decodificação greedy: seleciona o argmax da distribuição a cada passo. Equivale a top-k com k igual a 1, ou a temperatura tendendo a zero."
+  },
+  {
+   "node": "sorteio",
+   "fase": "Sorteio e repetição",
+   "title": "Sorteio",
+   "edges": ["e-topp-sorteio"],
+   "resumo": "Entre os candidatos que sobraram, o modelo sorteia um token na proporção das chances. O mais provável é o favorito, mas não ganha sempre; por isso o mesmo pedido pode gerar respostas diferentes.",
+   "entra": "Os candidatos que sobraram e suas chances.",
+   "sai": "Um único token sorteado.",
+   "exemplo": "Com telhado 62%, sofá 38% (após o filtro), o sofá ainda é sorteado em cerca de 4 de cada 10 vezes.",
+   "ilustrativo": true,
+   "termos": [
+    ["Amostragem", "Escolher ao acaso, respeitando as probabilidades."],
+    ["Semente (seed)", "Valor que fixa o acaso para repetir um sorteio."]
+   ],
+   "tecnico": "Amostragem multinomial a partir da distribuição filtrada e renormalizada. Fixar a semente do gerador torna o sorteio reproduzível."
+  },
+  {
+   "node": "token",
+   "fase": "Sorteio e repetição",
+   "title": "Token escolhido",
+   "edges": ["e-sorteio-token", "e-greedy-token"],
+   "resumo": "O token vencedor é acrescentado ao texto. Aí o ciclo recomeça: o modelo lê o texto já com a nova palavra e escolhe a seguinte, até gerar um token de fim ou atingir o limite de tamanho.",
+   "entra": "O token sorteado, ou o escolhido pelo greedy.",
+   "sai": "O texto aumentado em um token.",
+   "exemplo": "“O gato subiu no” vira “O gato subiu no telhado”, e o próximo sorteio começa.",
+   "ilustrativo": true,
+   "termos": [
+    ["Autorregressivo", "Que usa o que já foi gerado para gerar o que vem a seguir."],
+    ["Token de fim", "Token especial que indica ao modelo que a resposta acabou."]
+   ],
+   "tecnico": "Geração autorregressiva: o token é anexado à sequência e um novo passo do Transformer é executado, normalmente reaproveitando o KV cache, até o token de fim ou o limite de tokens."
+  },
+  {
+   "node": "penal",
+   "fase": "Sorteio e repetição",
+   "title": "Penalidade",
+   "edges": ["e-token-penal", "e-penal-logits"],
+   "resumo": "Um ajuste comum para evitar que o texto fique em loop: tokens que já apareceram perdem pontos antes do próximo sorteio. Assim o modelo tende a variar o vocabulário.",
+   "entra": "O texto gerado até agora.",
+   "sai": "Notas ajustadas para o próximo passo.",
+   "exemplo": "Depois de “telhado”, essa palavra fica um pouco menos provável de aparecer de novo logo em seguida.",
+   "ilustrativo": true,
+   "termos": [
+    ["Penalidade de repetição", "Redução da nota de tokens que já foram usados."],
+    ["Loop", "Quando o modelo repete a mesma frase várias vezes."]
+   ],
+   "tecnico": "Penalidade de repetição (também de frequência e de presença, conforme a API) aplicada aos logits dos tokens já gerados, antes do softmax do passo seguinte."
+  }
+ ],
+ "fontes": [
+  {
+   "titulo": "Holtzman et al., The Curious Case of Neural Text Degeneration (2019): nucleus sampling",
+   "url": "https://arxiv.org/abs/1904.09751"
+  },
+  {
+   "titulo": "Fan et al., Hierarchical Neural Story Generation (2018): top-k",
+   "url": "https://arxiv.org/abs/1805.04833"
+  },
+  {
+   "titulo": "Keskar et al., CTRL (2019): penalidade de repetição",
+   "url": "https://arxiv.org/abs/1909.05858"
+  }
+ ]
+}

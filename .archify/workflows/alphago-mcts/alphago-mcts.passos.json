@@ -1,0 +1,237 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver as quatro etapas da busca, ou pelo 7 para conhecer as redes e como foram treinadas. O AlphaGo venceu um campeão mundial humano de Go em 2016.",
+ "steps": [
+  {
+   "node": "pos",
+   "fase": "Busca em árvore (MCTS)",
+   "title": "Posição do jogo",
+   "edges": [],
+   "resumo": "O ponto de partida: o tabuleiro de Go como está agora, com todas as pedras já colocadas. É a pergunta que o programa precisa responder: qual é a melhor jogada daqui?",
+   "entra": "O estado atual do tabuleiro.",
+   "sai": "A posição que será a raiz da árvore de busca.",
+   "termos": [
+    [
+     "Posição",
+     "Retrato do tabuleiro em um momento do jogo."
+    ],
+    [
+     "Raiz",
+     "Posição inicial da árvore, de onde a busca parte."
+    ]
+   ],
+   "tecnico": "A posição atual vira o nó raiz da árvore de busca; cada nó guarda estatísticas de visitas e de vitórias."
+  },
+  {
+   "node": "sel",
+   "fase": "Busca em árvore (MCTS)",
+   "title": "Seleção",
+   "edges": [
+    "pos-sel"
+   ],
+   "resumo": "A busca desce pela árvore, de posição em posição, escolhendo a cada passo a jogada que parece mais promissora. Ela equilibra duas coisas: repetir o que já deu certo e testar jogadas pouco exploradas.",
+   "entra": "A raiz da árvore e as estatísticas já acumuladas.",
+   "sai": "Um caminho até uma posição ainda pouco explorada.",
+   "termos": [
+    [
+     "Árvore de busca",
+     "Mapa das jogadas possíveis e das respostas a cada uma."
+    ],
+    [
+     "Exploração",
+     "Testar jogadas pouco vistas, para não ignorar boas opções."
+    ]
+   ],
+   "tecnico": "Descida da raiz até uma folha, escolhendo o filho que maximiza um critério de seleção que combina estatística de vitórias e incentivo à exploração."
+  },
+  {
+   "node": "exp",
+   "fase": "Busca em árvore (MCTS)",
+   "title": "Expansão",
+   "edges": [
+    "sel-exp",
+    "pol-exp"
+   ],
+   "resumo": "Ao chegar ao fim do caminho conhecido, o programa adiciona à árvore uma nova posição, correspondente a uma jogada ainda não testada. Aqui a rede de política ajuda a decidir quais jogadas merecem entrar.",
+   "entra": "A posição onde a descida terminou.",
+   "sai": "Uma nova posição adicionada à árvore.",
+   "termos": [
+    [
+     "Expandir",
+     "Acrescentar um novo ramo à árvore."
+    ],
+    [
+     "Jogada candidata",
+     "Jogada que vale a pena examinar."
+    ]
+   ],
+   "tecnico": "Criação de um ou mais nós filhos para a folha alcançada, com probabilidades iniciais (priors) fornecidas pela rede de política."
+  },
+  {
+   "node": "aval",
+   "fase": "Busca em árvore (MCTS)",
+   "title": "Avaliação",
+   "edges": [
+    "exp-aval",
+    "val-aval"
+   ],
+   "resumo": "Agora é preciso saber quem está ganhando nessa nova posição. No AlphaGo, a rede de valor dá uma estimativa direta, sem precisar jogar a partida inteira até o fim.",
+   "entra": "A nova posição da árvore.",
+   "sai": "Uma estimativa de quem tende a vencer.",
+   "termos": [
+    [
+     "Avaliar",
+     "Estimar a chance de vitória de uma posição."
+    ],
+    [
+     "Simulação",
+     "Partida jogada até o fim, só para ver o resultado."
+    ]
+   ],
+   "tecnico": "Estimativa do resultado a partir da posição, feita pela rede de valor; o AlphaGo original também podia combinar isso com simulações rápidas até o fim da partida."
+  },
+  {
+   "node": "retro",
+   "fase": "Busca em árvore (MCTS)",
+   "title": "Retropropagação",
+   "edges": [
+    "aval-retro",
+    "retro-sel"
+   ],
+   "resumo": "O resultado da avaliação sobe pelo caminho percorrido, de volta até a raiz, atualizando as estatísticas de cada posição: quantas vezes foi visitada e quão boa parece. Depois, o ciclo recomeça na seleção, muitas vezes.",
+   "entra": "A estimativa da nova posição e o caminho percorrido.",
+   "sai": "Estatísticas atualizadas em todo o caminho.",
+   "termos": [
+    [
+     "Retropropagação",
+     "Passar um resultado de volta por todo o caminho."
+    ],
+    [
+     "Visita",
+     "Cada vez que a busca passa por uma posição."
+    ]
+   ],
+   "tecnico": "Atualização dos contadores de visitas e do valor médio de cada nó do caminho, do nó avaliado até a raiz. As quatro etapas se repetem por muitas iterações."
+  },
+  {
+   "node": "jogada",
+   "fase": "Busca em árvore (MCTS)",
+   "title": "Jogada escolhida",
+   "edges": [
+    "retro-jogada"
+   ],
+   "resumo": "Terminada a busca, o programa joga a jogada mais visitada a partir da posição inicial. Ser a mais visitada é um sinal mais estável do que ter vencido uma única simulação.",
+   "entra": "As estatísticas finais de visitas da raiz.",
+   "sai": "A jogada que o programa faz no tabuleiro.",
+   "termos": [
+    [
+     "Mais visitada",
+     "Jogada para a qual a busca voltou mais vezes."
+    ]
+   ],
+   "tecnico": "A jogada final é o filho da raiz com maior contagem de visitas, não o de maior valor médio isolado."
+  },
+  {
+   "node": "pol",
+   "fase": "As redes do AlphaGo",
+   "title": "Rede de política",
+   "edges": [
+    "hum-pol",
+    "self-pol"
+   ],
+   "resumo": "Uma rede neural que, olhando o tabuleiro, indica quais jogadas valem a pena examinar. Em vez de testar todas as centenas de jogadas possíveis, a busca se concentra nas mais plausíveis, o que reduz a largura da árvore.",
+   "entra": "A posição do tabuleiro.",
+   "sai": "Uma probabilidade para cada jogada possível.",
+   "termos": [
+    [
+     "Rede de política",
+     "Rede que sugere quais jogadas são mais promissoras."
+    ],
+    [
+     "Largura da busca",
+     "Quantas jogadas diferentes são examinadas em cada posição."
+    ]
+   ],
+   "tecnico": "Rede neural convolucional que recebe a posição e produz uma distribuição de probabilidade sobre as jogadas, usada como prior na expansão e na seleção."
+  },
+  {
+   "node": "val",
+   "fase": "As redes do AlphaGo",
+   "title": "Rede de valor",
+   "edges": [
+    "self-val"
+   ],
+   "resumo": "Outra rede neural, que olha uma posição e estima o resultado: quem tende a ganhar. Isso evita simular longas partidas até o fim para cada posição nova, economizando muito tempo.",
+   "entra": "A posição do tabuleiro.",
+   "sai": "Um número que indica quem está em vantagem.",
+   "termos": [
+    [
+     "Rede de valor",
+     "Rede que estima o resultado do jogo a partir da posição."
+    ],
+    [
+     "Profundidade da busca",
+     "Quantas jogadas à frente a busca consegue olhar."
+    ]
+   ],
+   "tecnico": "Rede neural treinada para regredir o resultado final da partida a partir da posição, substituindo (ou complementando) simulações longas na avaliação."
+  },
+  {
+   "node": "hum",
+   "fase": "Como treinou",
+   "title": "Partidas humanas",
+   "edges": [],
+   "resumo": "Primeiro, a rede de política aprendeu a imitar jogadores humanos fortes, a partir de um grande banco de partidas já jogadas. Isso dá ao programa um bom ponto de partida.",
+   "entra": "Partidas de jogadores humanos.",
+   "sai": "Uma rede de política que imita jogadas humanas.",
+   "termos": [
+    [
+     "Aprendizado supervisionado",
+     "Aprender a partir de exemplos já resolvidos, aqui as jogadas humanas."
+    ]
+   ],
+   "tecnico": "Etapa de aprendizado supervisionado: a rede de política é treinada para prever a jogada que o humano fez em cada posição."
+  },
+  {
+   "node": "self",
+   "fase": "Como treinou",
+   "title": "Self-play",
+   "edges": [
+    "hum-self"
+   ],
+   "resumo": "Depois, o programa joga contra si mesmo, milhares de vezes, e aprende pelo resultado: jogadas que levam à vitória são reforçadas. Isso é aprendizado por reforço, o tema do fluxo “rl-basico”, e melhora tanto a política quanto o valor.",
+   "entra": "O programa atual e a busca MCTS.",
+   "sai": "Novas partidas e resultados, que aprimoram as duas redes.",
+   "termos": [
+    [
+     "Self-play",
+     "Jogar contra si mesmo para gerar experiência."
+    ],
+    [
+     "Aprendizado por reforço",
+     "Aprender por tentativa, erro e recompensa (veja “rl-basico”)."
+    ]
+   ],
+   "tecnico": "Aprendizado por reforço com partidas de autojogo: o resultado final serve de sinal de recompensa, e as partidas geradas treinam a rede de valor e refinam a política."
+  },
+  {
+   "node": "zero",
+   "fase": "Como treinou",
+   "title": "AlphaGo Zero",
+   "edges": [
+    "self-zero"
+   ],
+   "resumo": "Uma versão posterior, o AlphaGo Zero, aprendeu apenas por self-play, sem usar nenhuma partida humana. Partiu das regras do jogo e foi se melhorando sozinho.",
+   "entra": "Apenas as regras do Go.",
+   "sai": "Um jogador treinado sem dados humanos.",
+   "termos": [
+    [
+     "AlphaGo Zero",
+     "Versão que aprende só jogando contra si mesma."
+    ]
+   ],
+   "tecnico": "Variante que dispensa o treino supervisionado inicial: parte de pesos aleatórios e usa somente autojogo guiado pela busca."
+  }
+ ]
+}

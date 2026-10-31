@@ -1,0 +1,144 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para ver como o conhecimento vira regras, ou pelo 4 para seguir o raciocínio de um caso.",
+ "steps": [
+  {
+   "node": "esp",
+   "fase": "Construir",
+   "title": "Especialista",
+   "edges": [],
+   "resumo": "Tudo começa com uma pessoa que domina um assunto, como um médico ou um mecânico experiente. Em vez de aprender com milhões de exemplos, o sistema recebe o saber dessa pessoa de forma explícita.",
+   "entra": "A experiência e o raciocínio de um profissional humano.",
+   "sai": "Explicações sobre como ele decide, em suas próprias palavras.",
+   "exemplo": "Um mecânico explica: “se a bateria está descarregada e a luz não acende, o problema é elétrico.”",
+   "ilustrativo": true,
+   "termos": [
+    ["IA simbólica", "Abordagem em que o computador raciocina com regras e símbolos escritos por pessoas."],
+    ["Domínio", "A área restrita de conhecimento que o sistema cobre."]
+   ],
+   "tecnico": "Fonte do conhecimento de domínio, em geral tácito, que precisa ser tornado explícito (aquisição de conhecimento)."
+  },
+  {
+   "node": "eng",
+   "fase": "Construir",
+   "title": "Engenheiro",
+   "edges": ["e-esp-eng"],
+   "resumo": "O engenheiro de conhecimento entrevista o especialista, observa casos reais e transforma o que ouve em fatos e regras do tipo “se... então...”. É um trabalho de tradução, feito à mão e com muita conversa.",
+   "entra": "Entrevistas e exemplos de casos do especialista.",
+   "sai": "Regras “se... então...” e fatos organizados.",
+   "termos": [
+    ["Engenheiro de conhecimento", "Profissional que traduz o saber de um especialista em regras que o computador usa."],
+    ["Regra", "Frase no formato “se condição, então conclusão”."]
+   ],
+   "tecnico": "Etapa de aquisição e representação do conhecimento, tipicamente com regras de produção do tipo condição-ação."
+  },
+  {
+   "node": "base",
+   "fase": "Construir",
+   "title": "Base de conhecimento",
+   "edges": ["e-eng-base"],
+   "resumo": "É onde ficam guardados os fatos e as regras. Ela fica separada do programa que raciocina, então dá para corrigir ou acrescentar regras sem reescrever o resto do sistema.",
+   "entra": "Fatos e regras escritos pelo engenheiro de conhecimento.",
+   "sai": "Um conjunto de conhecimento pronto para ser consultado.",
+   "exemplo": "Regra 1: se a bateria está descarregada e a luz não acende, então o carro não dá partida por falta de energia.",
+   "ilustrativo": true,
+   "termos": [
+    ["Base de conhecimento", "Coleção organizada de fatos e regras sobre um assunto."],
+    ["Fato", "Informação tida como verdadeira, como “a luz não acende”."]
+   ],
+   "tecnico": "Memória declarativa com regras de produção, mantida separada do mecanismo de controle que as executa."
+  },
+  {
+   "node": "fatos",
+   "fase": "Raciocinar",
+   "title": "Fatos do caso",
+   "edges": [],
+   "resumo": "Aqui começa o uso do sistema. O usuário informa o que sabe sobre o caso atual, geralmente respondendo a perguntas do próprio sistema. Esses fatos são o ponto de partida do raciocínio.",
+   "entra": "Respostas do usuário sobre o caso.",
+   "sai": "Uma lista de fatos sobre a situação atual.",
+   "exemplo": "O carro não liga e a luz do painel não acende.",
+   "ilustrativo": true,
+   "termos": [
+    ["Caso", "A situação concreta que se quer analisar."],
+    ["Memória de trabalho", "Lugar onde ficam os fatos do caso atual durante o raciocínio."]
+   ],
+   "tecnico": "Os fatos informados entram na memória de trabalho, que é consultada e ampliada pelo motor de inferência."
+  },
+  {
+   "node": "motor",
+   "fase": "Raciocinar",
+   "title": "Motor de inferência",
+   "edges": ["e-base-motor", "e-fatos-motor"],
+   "resumo": "É o programa que raciocina. Ele compara os fatos do caso com as condições das regras e, quando uma regra se aplica, acrescenta a conclusão dela. Ele não guarda conhecimento sobre carros ou doenças; só sabe aplicar regras.",
+   "entra": "As regras da base de conhecimento e os fatos do caso.",
+   "sai": "Novos fatos deduzidos e o registro das regras usadas.",
+   "termos": [
+    ["Motor de inferência", "Parte do sistema que aplica as regras aos fatos para deduzir algo novo."],
+    ["Inferência", "Dedução de uma conclusão a partir de fatos e regras."]
+   ],
+   "tecnico": "Mecanismo de controle que repete o ciclo de casar regras com a memória de trabalho, escolher uma regra aplicável (resolução de conflitos) e executá-la."
+  },
+  {
+   "node": "enc",
+   "fase": "Raciocinar",
+   "title": "Encadeamento",
+   "edges": ["e-motor-enc"],
+   "resumo": "Há duas formas de percorrer as regras. No encadeamento para frente, parte-se dos fatos e deduz-se o que for possível até chegar a conclusões. No encadeamento para trás, parte-se de uma hipótese e procura-se os fatos que a sustentam.",
+   "entra": "Fatos do caso ou uma hipótese a verificar.",
+   "sai": "Uma cadeia de regras que leva à conclusão, ou a falta de apoio para a hipótese.",
+   "exemplo": "Para frente: bateria descarregada e luz apagada levam a “falta de energia”. Para trás: para testar “falta de energia”, o sistema pergunta se a bateria está descarregada.",
+   "ilustrativo": true,
+   "termos": [
+    ["Encadeamento para frente", "Raciocínio que vai dos fatos às conclusões."],
+    ["Encadeamento para trás", "Raciocínio que vai de uma hipótese aos fatos que a sustentam."]
+   ],
+   "tecnico": "Forward chaining é dirigido pelos dados; backward chaining é dirigido por objetivo, e costuma perguntar ao usuário os fatos que faltam."
+  },
+  {
+   "node": "concl",
+   "fase": "Raciocinar",
+   "title": "Conclusão",
+   "edges": ["e-enc-concl"],
+   "resumo": "Quando nenhuma regra nova se aplica, ou a hipótese é confirmada, o sistema apresenta o resultado: um diagnóstico, uma recomendação ou uma decisão. Se faltam regras para o caso, ele pode simplesmente não chegar a nenhuma conclusão.",
+   "entra": "A cadeia de regras aplicadas.",
+   "sai": "Um diagnóstico ou uma recomendação.",
+   "exemplo": "“Provável falta de energia: carregue ou troque a bateria.”",
+   "ilustrativo": true,
+   "termos": [
+    ["Diagnóstico", "Conclusão sobre qual é o problema em um caso."]
+   ],
+   "tecnico": "Saída do processo de inferência, ao se atingir o objetivo ou quando nenhuma regra restante pode ser disparada."
+  },
+  {
+   "node": "rastro",
+   "fase": "Explicar e limites",
+   "title": "Rastro de regras",
+   "edges": ["e-motor-rastro"],
+   "resumo": "Como as conclusões saem de regras explícitas, o sistema consegue mostrar exatamente quais regras usou e em que ordem. É o grande ponto forte da abordagem: dá para responder “por que você concluiu isso?” e auditar o raciocínio.",
+   "entra": "O registro das regras disparadas durante o raciocínio.",
+   "sai": "Uma explicação em passos que a pessoa consegue ler e conferir.",
+   "exemplo": "“Concluí falta de energia porque a bateria está descarregada (regra 1) e a luz não acende (fato informado).”",
+   "ilustrativo": true,
+   "termos": [
+    ["Explicabilidade", "Capacidade de mostrar por que o sistema chegou a uma resposta."],
+    ["Rastro", "Registro, passo a passo, das regras usadas."]
+   ],
+   "tecnico": "Facilidade de explicação (por quê e como) construída sobre o histórico de regras disparadas, o que torna o sistema auditável."
+  },
+  {
+   "node": "limites",
+   "fase": "Explicar e limites",
+   "title": "Limites",
+   "edges": ["e-rastro-limites"],
+   "resumo": "Manter milhares de regras é caro, e o conhecimento nunca fica completo. Fora do seu domínio o sistema falha, e ele não aprende sozinho: cada mudança exige que uma pessoa reescreva regras. Já o machine learning aprende padrões a partir de dados, e a IA neuro-simbólica tenta combinar os dois, juntando aprendizado com raciocínio por regras.",
+   "entra": "A experiência de manter e usar o sistema ao longo do tempo.",
+   "sai": "Uma visão de onde essa abordagem funciona bem e onde não funciona.",
+   "termos": [
+    ["Machine learning", "Abordagem em que o computador aprende padrões a partir de dados, em vez de receber regras prontas."],
+    ["IA neuro-simbólica", "Ideia de combinar redes neurais, que aprendem, com regras e símbolos, que raciocinam e explicam."]
+   ],
+   "tecnico": "Limitações clássicas: gargalo de aquisição de conhecimento, manutenção de bases grandes, fragilidade fora do domínio e ausência de aprendizado automático."
+  }
+ ]
+}

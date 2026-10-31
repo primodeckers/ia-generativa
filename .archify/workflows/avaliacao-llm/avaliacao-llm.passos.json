@@ -1,0 +1,208 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado.",
+ "inicio": "Comece pelo 1 para definir o teste, ou pelo 3 para ver como as respostas são medidas.",
+ "steps": [
+  {
+   "node": "criterios",
+   "fase": "Definir o teste",
+   "title": "Tarefa e critérios",
+   "edges": [],
+   "resumo": "Antes de medir, é preciso dizer o que se quer medir. Qual é a tarefa do modelo e o que conta como uma boa resposta: correta, clara, segura, no tom certo? Sem isso, qualquer nota perde o sentido.",
+   "entra": "O uso que você tem em mente para o modelo.",
+   "sai": "Uma lista de critérios claros de qualidade.",
+   "exemplo": "Para um assistente de suporte: a resposta deve estar correta, citar a política e ser educada.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Critério",
+     "Característica que uma boa resposta deve ter."
+    ],
+    [
+     "Tarefa",
+     "O trabalho que o modelo deve fazer, como resumir ou responder dúvidas."
+    ]
+   ],
+   "tecnico": "Definição do escopo da avaliação: tarefa, critérios e, quando possível, uma rubrica com níveis descritos. É a base para escolher métricas e dados de teste."
+  },
+  {
+   "node": "exemplos",
+   "fase": "Definir o teste",
+   "title": "Exemplos de teste",
+   "edges": [
+    "e-criterios-exemplos"
+   ],
+   "resumo": "Reúne as perguntas e tarefas em que o modelo será testado. Podem vir de benchmarks públicos, que permitem comparar modelos, ou de casos próprios, tirados do seu uso real. Idealmente há os dois.",
+   "entra": "Os critérios definidos.",
+   "sai": "Um conjunto de exemplos de teste, com respostas esperadas quando existirem.",
+   "exemplo": "Cinquenta perguntas reais de clientes, cada uma com a resposta aprovada pela equipe.",
+   "ilustrativo": true,
+   "termos": [
+    [
+     "Benchmark",
+     "Conjunto padronizado de testes usado para comparar modelos."
+    ],
+    [
+     "Conjunto de teste",
+     "Exemplos separados só para avaliar, nunca para treinar."
+    ]
+   ],
+   "tecnico": "Conjunto de avaliação (eval set) com entradas e, quando há resposta correta, o gabarito. Deve cobrir casos típicos, difíceis e de borda."
+  },
+  {
+   "node": "metricas",
+   "fase": "Medir",
+   "title": "Métricas automáticas",
+   "edges": [
+    "e-exemplos-metricas"
+   ],
+   "resumo": "Quando existe uma resposta certa, o computador confere sozinho e de forma barata. Exemplos: acertar a alternativa em uma múltipla escolha, bater exatamente com o gabarito ou fazer o código gerado passar nos testes.",
+   "entra": "Respostas do modelo e o gabarito.",
+   "sai": "Uma pontuação objetiva e repetível.",
+   "termos": [
+    [
+     "Correspondência exata",
+     "A resposta só vale se for idêntica ao gabarito."
+    ],
+    [
+     "Testes de código",
+     "Executar o código gerado e ver se ele passa em casos conhecidos."
+    ]
+   ],
+   "tecnico": "Métricas determinísticas: acurácia em múltipla escolha, exact match e taxa de aprovação em testes unitários. Funcionam bem com resposta verificável, mas comparar texto livre com referências costuma ser fraco."
+  },
+  {
+   "node": "juiz",
+   "fase": "Medir",
+   "title": "LLM-as-judge",
+   "edges": [
+    "e-metricas-juiz"
+   ],
+   "resumo": "Para texto livre, não há uma resposta única. Uma solução é pedir a outro modelo que avalie as respostas, seguindo uma rubrica. É rápido e escala bem, mas o juiz tem vieses conhecidos: tende a preferir a primeira resposta, as mais longas e o próprio estilo.",
+   "entra": "Respostas do modelo, a pergunta e a rubrica.",
+   "sai": "Notas ou preferências, com justificativa.",
+   "termos": [
+    [
+     "Rubrica",
+     "Guia que descreve o que vale cada nota."
+    ],
+    [
+     "Viés do juiz",
+     "Tendência de favorecer certas respostas por motivos alheios à qualidade."
+    ]
+   ],
+   "tecnico": "Avaliação com LLM como juiz, por nota direta ou comparação em pares. Mitiga-se o viés de posição trocando a ordem das respostas, controlando o comprimento e calibrando o juiz com amostras avaliadas por humanos."
+  },
+  {
+   "node": "humana",
+   "fase": "Medir",
+   "title": "Avaliação humana",
+   "edges": [
+    "e-juiz-humana"
+   ],
+   "resumo": "Pessoas leem as respostas e dão a palavra final. Um formato comum é a comparação em pares: mostram-se duas respostas e a pessoa escolhe a melhor. É mais confiável para qualidade e preferência, porém mais lenta e cara.",
+   "entra": "Pares de respostas, ou uma amostra delas.",
+   "sai": "Preferências humanas, que também servem para conferir o juiz.",
+   "termos": [
+    [
+     "Comparação em pares",
+     "Escolher a melhor entre duas respostas."
+    ],
+    [
+     "Concordância entre avaliadores",
+     "Quanto as pessoas coincidem entre si."
+    ]
+   ],
+   "tecnico": "Anotação humana com instruções claras e checagem de concordância entre avaliadores. As preferências agregadas formam um ranking de modelos e calibram o LLM-as-judge."
+  },
+  {
+   "node": "contam",
+   "fase": "Cuidados e decisão",
+   "title": "Contaminação",
+   "edges": [
+    "e-exemplos-contam"
+   ],
+   "resumo": "Um benchmark público pode ter vazado para os dados de treino. Nesse caso o modelo parece ótimo porque já viu as respostas. Além disso, benchmarks antigos saturam: os modelos chegam perto do máximo e o teste deixa de diferenciar.",
+   "entra": "O benchmark e o que se sabe do treino do modelo.",
+   "sai": "Dúvida sobre se a nota reflete capacidade de verdade.",
+   "termos": [
+    [
+     "Contaminação",
+     "Quando os exemplos de teste aparecem nos dados de treino."
+    ],
+    [
+     "Saturação",
+     "Quando o teste fica fácil demais para distinguir os modelos."
+    ]
+   ],
+   "tecnico": "Data contamination ou vazamento de teste distorce a medida de generalização. Mitiga-se com testes privados, itens novos e renovados, e checagem de sobreposição com o corpus de treino."
+  },
+  {
+   "node": "real",
+   "fase": "Cuidados e decisão",
+   "title": "Seu caso real",
+   "edges": [
+    "e-contam-real"
+   ],
+   "resumo": "Nota alta em benchmark não garante bom desempenho no seu problema. Teste o modelo com seus próprios dados e situações, incluindo casos difíceis. Medir erros inventados, as alucinações, também faz parte, como no tema Alucinação.",
+   "entra": "Seus casos reais, com os problemas conhecidos.",
+   "sai": "Um retrato do desempenho no seu contexto.",
+   "termos": [
+    [
+     "Caso real",
+     "Exemplo tirado do uso verdadeiro do sistema."
+    ],
+    [
+     "Alucinação",
+     "Resposta que soa certa, mas é inventada."
+    ]
+   ],
+   "tecnico": "Avaliação específica do domínio (task-specific eval) com dados representativos, incluindo métricas de fidelidade e erros factuais além da qualidade geral."
+  },
+  {
+   "node": "acompanhar",
+   "fase": "Cuidados e decisão",
+   "title": "Acompanhar",
+   "edges": [
+    "e-real-acompanhar"
+   ],
+   "resumo": "Avaliar não é uma tarefa única. Modelos, prompts e dados mudam com o tempo, então os testes devem rodar de novo a cada mudança e em produção. Isso pega regressões cedo, como se discute no tema MLOps.",
+   "entra": "Os testes e as respostas novas ao longo do tempo.",
+   "sai": "Um histórico de qualidade e alertas de queda.",
+   "termos": [
+    [
+     "Regressão",
+     "Piora de qualidade depois de uma mudança."
+    ],
+    [
+     "Monitoramento",
+     "Acompanhamento contínuo do sistema em uso."
+    ]
+   ],
+   "tecnico": "Avaliação contínua: suíte de testes de regressão automatizada, executada a cada mudança de modelo ou prompt, com monitoramento da qualidade em produção."
+  },
+  {
+   "node": "decisao",
+   "fase": "Cuidados e decisão",
+   "title": "Decisão",
+   "edges": [
+    "e-humana-decisao",
+    "e-acompanhar-decisao"
+   ],
+   "resumo": "Com os resultados em mãos, decide-se o que fazer: trocar de modelo, ajustar o prompt ou, se for preciso, fazer fine-tuning. A avaliação mostra onde está o problema, e por isso a decisão deixa de ser um palpite.",
+   "entra": "Resultados automáticos, do juiz e humanos, mais o acompanhamento.",
+   "sai": "A escolha do próximo passo.",
+   "termos": [
+    [
+     "Fine-tuning",
+     "Ajustar o modelo com exemplos adicionais."
+    ],
+    [
+     "Ajuste de prompt",
+     "Mudar as instruções para melhorar a resposta."
+    ]
+   ],
+   "tecnico": "Decisão orientada por dados, comparando alternativas no mesmo conjunto de teste e considerando também custo e latência. Cada mudança volta a ser medida pelo mesmo ciclo."
+  }
+ ]
+}

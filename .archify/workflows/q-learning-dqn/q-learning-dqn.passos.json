@@ -1,0 +1,125 @@
+{
+ "titulo": "Passo a passo",
+ "intro": "Percorra o fluxo caixa por caixa. Clique em um número, em uma caixa do diagrama, ou use as setas ← → do teclado. Este fluxo detalha como o agente do workflow “rl-basico” aprende o valor de cada ação.",
+ "inicio": "Comece pelo 1 para ver o Q-learning com tabela, ou pelo 5 para ver por que o DQN usa uma rede neural.",
+ "steps": [
+  {
+   "node": "tabq",
+   "fase": "Q-learning (tabela)",
+   "title": "Tabela Q",
+   "edges": [],
+   "resumo": "Uma tabela com uma linha para cada situação (estado) e uma coluna para cada ação possível. Cada célula guarda uma nota: quanto de recompensa futura o agente espera receber se tomar aquela ação naquela situação. No começo, as notas são chutes.",
+   "entra": "Os estados e as ações possíveis do problema.",
+   "sai": "A nota de cada par estado-ação, usada para decidir.",
+   "exemplo": "Num labirinto pequeno, a célula “estou no canto, vou para a direita” guarda a nota 0,7.",
+   "ilustrativo": true,
+   "termos": [
+    ["Valor Q", "Nota que estima a recompensa futura de uma ação num estado."],
+    ["Par estado-ação", "Uma combinação de situação atual e ação escolhida."]
+   ],
+   "tecnico": "Função de valor de ação armazenada de forma tabular, tipicamente inicializada com zeros ou valores arbitrários e refinada pela experiência."
+  },
+  {
+   "node": "acao",
+   "fase": "Q-learning (tabela)",
+   "title": "Escolhe ação",
+   "edges": ["e-tabq-acao"],
+   "resumo": "O agente consulta a tabela e, na maioria das vezes, escolhe a ação de maior nota (aproveitar o que já sabe). De vez em quando, sorteia uma ação qualquer para explorar e descobrir opções melhores. Essa mistura se chama epsilon-greedy.",
+   "entra": "O estado atual e as notas da tabela.",
+   "sai": "A ação a executar.",
+   "termos": [
+    ["Epsilon-greedy", "Regra que explora ao acaso de vez em quando e aproveita o melhor palpite no resto do tempo."],
+    ["Exploração e aproveitamento", "Dilema entre testar o novo e repetir o que funciona."]
+   ],
+   "tecnico": "Política epsilon-greedy: com probabilidade pequena escolhe ação aleatória, caso contrário a ação de maior valor Q. O parâmetro epsilon costuma diminuir ao longo do treino."
+  },
+  {
+   "node": "amb",
+   "fase": "Q-learning (tabela)",
+   "title": "Ambiente",
+   "edges": ["e-acao-amb", "e-amb-upd"],
+   "resumo": "O agente executa a ação e o ambiente responde com uma recompensa e com o novo estado. É a única fonte de informação real: o agente aprende apenas com o que acontece de fato.",
+   "entra": "A ação escolhida.",
+   "sai": "Recompensa e novo estado.",
+   "exemplo": "O robô dá um passo, ganha −1 por gastar tempo e chega a uma nova célula.",
+   "ilustrativo": true,
+   "termos": [
+    ["Recompensa", "Número que diz se o resultado da ação foi bom ou ruim."],
+    ["Transição", "O conjunto estado, ação, recompensa e novo estado."]
+   ],
+   "tecnico": "Passo do ambiente que devolve a transição observada. O Q-learning não precisa de um modelo do ambiente, por isso é chamado de método livre de modelo."
+  },
+  {
+   "node": "upd",
+   "fase": "Q-learning (tabela)",
+   "title": "Atualiza a nota",
+   "edges": ["e-upd-tabq"],
+   "resumo": "A nota do par estado-ação é ajustada em direção a um alvo: a recompensa recebida mais a melhor nota estimada para o novo estado. Ou seja, o agente aprende a partir da própria estimativa (bootstrapping). A nova nota volta para a tabela e o ciclo recomeça.",
+   "entra": "Recompensa, novo estado e a nota antiga.",
+   "sai": "A nota atualizada, gravada na tabela.",
+   "termos": [
+    ["Bootstrapping", "Atualizar uma estimativa usando outra estimativa, e não só o resultado final."],
+    ["Taxa de aprendizado", "Tamanho do passo dado a cada ajuste da nota."]
+   ],
+   "tecnico": "Atualização por diferença temporal: a nota se move em direção ao alvo, composto pela recompensa e pelo valor máximo do próximo estado, descontado por um fator de desconto. É um método fora da política (off-policy)."
+  },
+  {
+   "node": "limite",
+   "fase": "Quando a tabela não cabe",
+   "title": "Estados demais",
+   "edges": ["e-upd-limite"],
+   "resumo": "Em problemas reais o número de estados explode. Num jogo em que o estado é a imagem da tela, quase nunca se repete a mesma situação, e uma tabela não caberia na memória nem seria preenchida por completo. Falta também a capacidade de generalizar para situações parecidas.",
+   "entra": "Um problema com estados muito numerosos.",
+   "sai": "A necessidade de estimar valores sem uma linha por estado.",
+   "exemplo": "Cada imagem de um jogo de Atari é um estado diferente.",
+   "ilustrativo": true,
+   "termos": [
+    ["Explosão de estados", "Crescimento enorme do número de situações possíveis."],
+    ["Generalização", "Dar boas estimativas para situações nunca vistas, por semelhança."]
+   ],
+   "tecnico": "Espaços de estado de alta dimensão tornam a representação tabular inviável. É preciso aproximar a função de valor com um modelo paramétrico."
+  },
+  {
+   "node": "rede",
+   "fase": "Quando a tabela não cabe",
+   "title": "Rede neural (DQN)",
+   "edges": ["e-limite-rede"],
+   "resumo": "O DQN (Deep Q-Network) troca a tabela por uma rede neural. Ela recebe o estado, por exemplo a imagem do jogo, e devolve uma nota para cada ação. Como estados parecidos geram notas parecidas, o agente generaliza. O treino segue a mesma ideia do Q-learning, ajustando a rede em vez de uma célula.",
+   "entra": "O estado (como pixels da tela).",
+   "sai": "Uma nota estimada para cada ação possível.",
+   "termos": [
+    ["DQN", "Deep Q-Network: Q-learning com uma rede neural no lugar da tabela."],
+    ["Aproximador de função", "Modelo que estima valores sem listar todos os casos."]
+   ],
+   "tecnico": "Rede neural, em geral convolucional para imagens, que mapeia o estado para um valor Q por ação. É treinada por gradiente para reduzir o erro entre sua estimativa e o alvo de diferença temporal."
+  },
+  {
+   "node": "replay",
+   "fase": "Truques de estabilidade",
+   "title": "Replay buffer",
+   "edges": ["e-replay-rede"],
+   "resumo": "O agente guarda suas experiências (estado, ação, recompensa, novo estado) numa memória. Para treinar, a rede sorteia um lote embaralhado dessas lembranças. Isso quebra a correlação entre passos seguidos, que são muito parecidos, e permite reaproveitar cada experiência várias vezes.",
+   "entra": "Experiências recentes e antigas do agente.",
+   "sai": "Lotes embaralhados para treinar a rede.",
+   "termos": [
+    ["Replay buffer", "Memória de experiências passadas usada para treinar."],
+    ["Correlação", "Dependência entre exemplos consecutivos, que atrapalha o treino."]
+   ],
+   "tecnico": "Memória circular de transições da qual se amostram minilotes uniformemente. Aproxima amostras independentes e identicamente distribuídas, estabilizando o gradiente, e aumenta a eficiência de dados."
+  },
+  {
+   "node": "alvo",
+   "fase": "Truques de estabilidade",
+   "title": "Rede-alvo",
+   "edges": ["e-alvo-rede"],
+   "resumo": "Uma cópia congelada da rede é usada para calcular o alvo do aprendizado. Sem ela, o alvo mudaria a cada ajuste, como perseguir a própria sombra. A cópia só é atualizada de tempos em tempos, o que dá um alvo estável e um treino mais firme.",
+   "entra": "Uma cópia periódica dos pesos da rede principal.",
+   "sai": "Alvos estáveis para o cálculo do erro.",
+   "termos": [
+    ["Rede-alvo", "Cópia da rede, atualizada devagar, que fornece o alvo do treino."],
+    ["Instabilidade", "Treino que oscila ou diverge porque o alvo muda o tempo todo."]
+   ],
+   "tecnico": "Segunda rede com pesos congelados, sincronizada com a rede principal a cada certo número de passos (ou por média móvel suave). Evita a divergência causada por alvo e estimativa dependerem dos mesmos pesos."
+  }
+ ]
+}

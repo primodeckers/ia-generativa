@@ -40,11 +40,11 @@ Temas para virar workflow (passo a passo). Marque `[x]` quando estiver pronto em
 
 ## LLMs por dentro
 - [x] ⭐ KV cache e FlashAttention
-- [ ] Multi-head attention, RoPE e janela de contexto
-- [ ] Temperatura, top-k e top-p
-- [ ] Chain-of-thought e modelos de raciocínio
-- [ ] Alucinação e como mitigar
-- [ ] Avaliação: benchmarks e LLM-as-judge
+- [x] Multi-head attention, RoPE e janela de contexto
+- [x] Temperatura, top-k e top-p
+- [x] Chain-of-thought e modelos de raciocínio
+- [x] Alucinação e como mitigar
+- [x] Avaliação: benchmarks e LLM-as-judge
 
 ## Aplicações com LLMs
 - [x] ⭐ MCP (Model Context Protocol)
@@ -54,9 +54,9 @@ Temas para virar workflow (passo a passo). Marque `[x]` quando estiver pronto em
 
 ## Aprendizado por reforço
 - [x] ⭐ Agente, ambiente, recompensa
-- [ ] Q-learning e DQN
-- [ ] Policy gradient e PPO
-- [ ] AlphaGo / MCTS
+- [x] Q-learning e DQN
+- [x] Policy gradient e PPO
+- [x] AlphaGo / MCTS
 
 ## Visão, imagem e vídeo
 - [ ] ControlNet e LoRA de imagem
@@ -79,6 +79,11 @@ Temas para virar workflow (passo a passo). Marque `[x]` quando estiver pronto em
 - [ ] ONNX, Docker e Kubernetes para IA
 - [x] Experimentos: MLflow
 - [ ] Experimentos: Weights & Biases
+
+## IA simbólica
+- [x] ⭐ Sistemas especialistas e regras (motor de inferência, base de conhecimento)
+- [ ] Lógica, busca e planejamento (A*, resolução de problemas)
+- [ ] IA neuro-simbólica (redes neurais + regras)
 
 ## Dados, ética e segurança
 - [ ] Coleta, limpeza e rotulagem; dados sintéticos

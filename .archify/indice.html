@@ -39,14 +39,78 @@
   a.card span { color: var(--muted); font-size: .92rem; }
   a.main { border-color: var(--accent); background: var(--accent-bg); }
   footer { margin-top: 40px; color: var(--muted); font-size: .88rem; }
+
+  .sec { color: var(--muted); margin: -6px 0 14px; font-size: .95rem; }
+  h3 { font-size: .95rem; margin: 20px 0 10px; color: var(--text); }
+  .count { font-weight: 400; letter-spacing: 0; text-transform: none; font-size: .85rem;
+           background: var(--accent-bg); color: var(--accent); padding: 1px 8px; border-radius: 999px; margin-left: 6px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 28px; }
+  .chips a { padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--card);
+             color: var(--text); text-decoration: none; font-size: .9rem; }
+  .chips a:hover, .chips a:focus-visible { border-color: var(--accent); outline: none; }
+  .map { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--card); margin: 0 0 8px; }
+  .map h4 { margin: 0 0 4px; font-size: .95rem; }
+  .map p { margin: 0 0 10px; color: var(--muted); font-size: .88rem; }
+  .map .box { border: 1px dashed var(--line); border-radius: 10px; padding: 12px; margin-top: 10px; }
+  .map .box.ml { border-color: var(--accent); }
+  .map .row { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+  .map a.node, .map div.node { display: block; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px;
+             color: inherit; text-decoration: none; background: var(--bg); font-size: .88rem; }
+  .map a.node:hover { border-color: var(--accent); }
+  .map .node b { display: block; color: var(--accent); }
+  .map .node small { color: var(--muted); }
+  .soon { opacity: .7; border-style: dashed !important; }
 </style>
 </head>
 <body>
 <main>
   <h1>IA generativa</h1>
-  <p class="lead">Fluxos interativos de como funcionam os modelos de IA generativa e as redes neurais. Clique nas caixas ou ligue o Live para percorrer cada passo.</p>
-
-  <h2>Fundamentos de machine learning</h2>
+  <p class="lead">Do machine learning clássico às redes neurais e à IA generativa: fluxos interativos, agrupados por área. Clique nas caixas ou ligue o Live para percorrer cada passo.</p>
+  <div class="map" aria-label="Mapa de como as áreas se encaixam">
+    <h4>Inteligência artificial</h4>
+    <p>Tudo que faz uma máquina realizar tarefas que parecem exigir inteligência. Há duas grandes tradições: a que escreve regras e a que aprende com dados.</p>
+    <div class="row">
+      <a class="node" href="#simbolica"><b>IA simbólica</b><small>Regras, lógica e sistemas especialistas</small></a>
+      <a class="node" href="#engenharia"><b>Engenharia (MLOps)</b><small>Levar modelos para produção e mantê-los.</small></a>
+    </div>
+    <div class="box ml">
+      <h4>Machine learning</h4>
+      <p>O sistema aprende padrões a partir de exemplos, em vez de receber regras prontas.</p>
+      <div class="row">
+        <a class="node" href="#ml-classico"><b>Machine learning clássico</b><small>Regressão, árvores, k-NN, SVM, k-means</small></a>
+        <a class="node" href="#reforco"><b>Aprendizado por reforço</b><small>Aprende agindo e recebendo recompensa</small></a>
+      </div>
+      <div class="box">
+        <h4>Deep learning (redes neurais)</h4>
+        <p>Redes com muitas camadas, que aprendem as próprias características.</p>
+        <div class="row">
+          <a class="node" href="#redes-ff"><b>Redes feed-forward e autoencoders</b><small>A base de todas as redes</small></a>
+          <a class="node" href="#redes-conv"><b>Redes convolucionais</b><small>Imagens: filtros e atalhos</small></a>
+          <a class="node" href="#redes-rec"><b>Redes recorrentes</b><small>Sequências: RNN, LSTM, GRU</small></a>
+          <a class="node" href="#redes-trans"><b>Transformers</b><small>Atenção: a base dos LLMs</small></a>
+        </div>
+        <div class="box">
+          <h4>IA generativa</h4>
+          <p>Modelos que criam texto, imagens e mais.</p>
+          <div class="row">
+            <a class="node" href="#gen-img"><b>Modelos de imagem</b><small>Difusão, GAN, VAE, CLIP</small></a>
+            <a class="node" href="#gen-llm-dentro"><b>LLMs por dentro</b><small>Amostragem, raciocínio, alucinação, avaliação</small></a>
+            <a class="node" href="#gen-llm"><b>LLMs na prática</b><small>RAG, agentes, MCP, RLHF, LoRA</small></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nav class="chips" aria-label="Seções">
+    <a href="#ml-classico">Machine learning clássico</a>
+    <a href="#redes">Redes neurais</a>
+    <a href="#gen">IA generativa</a>
+    <a href="#reforco">Reforço</a>
+    <a href="#simbolica">IA simbólica</a>
+    <a href="#engenharia">Engenharia</a>
+  </nav>
+  <h2 id="ml-classico">Machine learning clássico <span class="count">6</span></h2>
+  <p class="sec">Aprender padrões com dados antes das redes profundas: como treinar, avaliar e escolher um modelo.</p>
   <div class="grid">
     <a class="card" href="workflows/pipeline-ml/pipeline-ml-passo-a-passo.html">
       <strong>Pipeline de ML</strong>
@@ -73,12 +137,17 @@
       <span>Quatro algoritmos clássicos lado a lado.</span>
     </a>
   </div>
-
-  <h2>Como as redes aprendem</h2>
+  <h2 id="redes">Redes neurais e deep learning <span class="count">18</span></h2>
+  <p class="sec">Como as redes funcionam, aprendem e se organizam em arquiteturas.</p>
+  <h3>Como uma rede aprende</h3>
   <div class="grid">
     <a class="card" href="workflows/otimizadores/otimizadores-passo-a-passo.html">
       <strong>Gradiente descendente e otimizadores</strong>
       <span>SGD, momentum e Adam: como os pesos são ajustados.</span>
+    </a>
+    <a class="card" href="workflows/gradiente-desaparecendo/gradiente-desaparecendo-passo-a-passo.html">
+      <strong>Gradiente desaparecendo</strong>
+      <span>Por que as redes esqueciam o começo, e como a LSTM resolve.</span>
     </a>
     <a class="card" href="workflows/transfer-learning/transfer-learning-passo-a-passo.html">
       <strong>Transfer learning e fine-tuning</strong>
@@ -89,32 +158,119 @@
       <span>Modelos menores e mais rápidos com menos bits.</span>
     </a>
   </div>
-
-  <h2>Como um LLM funciona</h2>
+  <h3 id="redes-ff">Redes feed-forward e autoencoders</h3>
   <div class="grid">
-    <a class="card main" href="workflows/transformer-llm/transformer-llm-passo-a-passo.html">
+    <a class="card" href="workflows/ffn/ffn-passo-a-passo.html">
+      <strong>FFN</strong>
+      <span>Camadas só para frente.</span>
+    </a>
+    <a class="card" href="workflows/autoencoder/autoencoder-passo-a-passo.html">
+      <strong>Autoencoder</strong>
+      <span>Comprimir e recriar.</span>
+    </a>
+  </div>
+  <h3 id="redes-conv">Redes convolucionais (imagens)</h3>
+  <div class="grid">
+    <a class="card" href="workflows/cnn/cnn-passo-a-passo.html">
+      <strong>CNN</strong>
+      <span>Filtros que acham bordas e formas.</span>
+    </a>
+    <a class="card" href="workflows/resnet/resnet-passo-a-passo.html">
+      <strong>ResNet</strong>
+      <span>Atalhos que permitem redes muito profundas.</span>
+    </a>
+    <a class="card" href="workflows/unet/unet-passo-a-passo.html">
+      <strong>U-Net</strong>
+      <span>Encoder, decoder e atalhos para segmentar imagens.</span>
+    </a>
+  </div>
+  <h3 id="redes-rec">Redes recorrentes (sequências)</h3>
+  <div class="grid">
+    <a class="card" href="workflows/rnn/rnn-passo-a-passo.html">
+      <strong>RNN</strong>
+      <span>Memória que volta em laço.</span>
+    </a>
+    <a class="card" href="workflows/lstm/lstm-passo-a-passo.html">
+      <strong>LSTM</strong>
+      <span>Três portões e memória longa.</span>
+    </a>
+    <a class="card" href="workflows/gru/gru-passo-a-passo.html">
+      <strong>GRU</strong>
+      <span>Dois portões e uma memória.</span>
+    </a>
+  </div>
+  <h3 id="redes-trans">Transformers e atenção</h3>
+  <div class="grid">
+    <a class="card" href="workflows/transformer-llm/transformer-llm-passo-a-passo.html">
       <strong>Transformer / LLM, passo a passo</strong>
       <span>Do texto à próxima palavra, e como aprende. Clique nas caixas ou ligue o Live.</span>
+    </a>
+    <a class="card" href="workflows/evolucao-linguagem/evolucao-linguagem-passo-a-passo.html">
+      <strong>Evolução dos modelos de linguagem</strong>
+      <span>Do n-gram ao Transformer, e o problema de cada etapa.</span>
     </a>
     <a class="card" href="workflows/kv-cache/kv-cache-passo-a-passo.html">
       <strong>KV cache e FlashAttention</strong>
       <span>Como o LLM gera texto mais rápido.</span>
     </a>
+    <a class="card" href="workflows/atencao-rope/atencao-rope-passo-a-passo.html">
+      <strong>Atenção multi-head, RoPE e contexto</strong>
+      <span>Quem olha quem, a ordem das palavras e o limite do contexto.</span>
+    </a>
+    <a class="card" href="workflows/moe/moe-passo-a-passo.html">
+      <strong>Mixture of Experts</strong>
+      <span>Só alguns especialistas trabalham a cada token.</span>
+    </a>
+    <a class="card" href="workflows/vit/vit-passo-a-passo.html">
+      <strong>Vision Transformer (ViT)</strong>
+      <span>Imagem em patches, tratada como texto.</span>
+    </a>
   </div>
-
-  <h2>Linguagem e treino</h2>
+  <h2 id="gen">IA generativa <span class="count">14</span></h2>
+  <p class="sec">Modelos que criam conteúdo novo, e como usá-los e ajustá-los.</p>
+  <h3 id="gen-img">Modelos de imagem e multimodais</h3>
   <div class="grid">
-    <a class="card" href="workflows/evolucao-linguagem/evolucao-linguagem-passo-a-passo.html">
-      <strong>Evolução dos modelos de linguagem</strong>
-      <span>Do n-gram ao Transformer, e o problema de cada etapa.</span>
+    <a class="card" href="workflows/difusao/difusao-passo-a-passo.html">
+      <strong>Difusão</strong>
+      <span>De ruído a imagem, passo a passo.</span>
     </a>
-    <a class="card" href="workflows/gradiente-desaparecendo/gradiente-desaparecendo-passo-a-passo.html">
-      <strong>Gradiente desaparecendo</strong>
-      <span>Por que as redes esqueciam o começo, e como a LSTM resolve.</span>
+    <a class="card" href="workflows/stable-diffusion/stable-diffusion-passo-a-passo.html">
+      <strong>Stable Diffusion por dentro</strong>
+      <span>Texto, espaço latente, U-Net e decodificador.</span>
+    </a>
+    <a class="card" href="workflows/gan/gan-passo-a-passo.html">
+      <strong>GAN</strong>
+      <span>Falsificador contra detetive.</span>
+    </a>
+    <a class="card" href="workflows/vae/vae-passo-a-passo.html">
+      <strong>VAE</strong>
+      <span>Resumir, sortear e recriar.</span>
+    </a>
+    <a class="card" href="workflows/clip/clip-passo-a-passo.html">
+      <strong>CLIP e modelos multimodais</strong>
+      <span>Ligar texto e imagem no mesmo espaço.</span>
     </a>
   </div>
-
-  <h2>LLMs na prática</h2>
+  <h3 id="gen-llm-dentro">LLMs por dentro</h3>
+  <div class="grid">
+    <a class="card" href="workflows/amostragem/amostragem-passo-a-passo.html">
+      <strong>Temperatura, top-k e top-p</strong>
+      <span>Como o LLM escolhe a próxima palavra.</span>
+    </a>
+    <a class="card" href="workflows/chain-of-thought/chain-of-thought-passo-a-passo.html">
+      <strong>Chain-of-thought e raciocínio</strong>
+      <span>Pensar passo a passo antes de responder.</span>
+    </a>
+    <a class="card" href="workflows/alucinacao/alucinacao-passo-a-passo.html">
+      <strong>Alucinação e como mitigar</strong>
+      <span>Por que o modelo inventa e o que reduz isso.</span>
+    </a>
+    <a class="card" href="workflows/avaliacao-llm/avaliacao-llm-passo-a-passo.html">
+      <strong>Avaliação: benchmarks e LLM-as-judge</strong>
+      <span>Como medir se um LLM é bom.</span>
+    </a>
+  </div>
+  <h3 id="gen-llm">LLMs na prática</h3>
   <div class="grid">
     <a class="card" href="workflows/rag/rag-passo-a-passo.html">
       <strong>RAG</strong>
@@ -137,84 +293,36 @@
       <span>Ajustar um modelo treinando só um adaptador pequeno.</span>
     </a>
   </div>
-
-  <h2>Famílias de modelos generativos</h2>
-  <div class="grid">
-    <a class="card" href="workflows/difusao/difusao-passo-a-passo.html">
-      <strong>Difusão</strong>
-      <span>De ruído a imagem, passo a passo.</span>
-    </a>
-    <a class="card" href="workflows/stable-diffusion/stable-diffusion-passo-a-passo.html">
-      <strong>Stable Diffusion por dentro</strong>
-      <span>Texto, espaço latente, U-Net e decodificador.</span>
-    </a>
-    <a class="card" href="workflows/gan/gan-passo-a-passo.html">
-      <strong>GAN</strong>
-      <span>Falsificador contra detetive.</span>
-    </a>
-    <a class="card" href="workflows/vae/vae-passo-a-passo.html">
-      <strong>VAE</strong>
-      <span>Resumir, sortear e recriar.</span>
-    </a>
-  </div>
-
-  <h2>Tipos de rede neural e arquiteturas</h2>
-  <div class="grid">
-    <a class="card" href="workflows/ffn/ffn-passo-a-passo.html">
-      <strong>FFN</strong>
-      <span>Camadas só para frente.</span>
-    </a>
-    <a class="card" href="workflows/cnn/cnn-passo-a-passo.html">
-      <strong>CNN</strong>
-      <span>Filtros que acham bordas e formas.</span>
-    </a>
-    <a class="card" href="workflows/rnn/rnn-passo-a-passo.html">
-      <strong>RNN</strong>
-      <span>Memória que volta em laço.</span>
-    </a>
-    <a class="card" href="workflows/lstm/lstm-passo-a-passo.html">
-      <strong>LSTM</strong>
-      <span>Três portões e memória longa.</span>
-    </a>
-    <a class="card" href="workflows/gru/gru-passo-a-passo.html">
-      <strong>GRU</strong>
-      <span>Dois portões e uma memória.</span>
-    </a>
-    <a class="card" href="workflows/autoencoder/autoencoder-passo-a-passo.html">
-      <strong>Autoencoder</strong>
-      <span>Comprimir e recriar.</span>
-    </a>
-    <a class="card" href="workflows/resnet/resnet-passo-a-passo.html">
-      <strong>ResNet</strong>
-      <span>Atalhos que permitem redes muito profundas.</span>
-    </a>
-    <a class="card" href="workflows/unet/unet-passo-a-passo.html">
-      <strong>U-Net</strong>
-      <span>Encoder, decoder e atalhos para segmentar imagens.</span>
-    </a>
-    <a class="card" href="workflows/vit/vit-passo-a-passo.html">
-      <strong>Vision Transformer (ViT)</strong>
-      <span>Imagem em patches, tratada como texto.</span>
-    </a>
-    <a class="card" href="workflows/moe/moe-passo-a-passo.html">
-      <strong>Mixture of Experts</strong>
-      <span>Só alguns especialistas trabalham a cada token.</span>
-    </a>
-    <a class="card" href="workflows/clip/clip-passo-a-passo.html">
-      <strong>CLIP e modelos multimodais</strong>
-      <span>Ligar texto e imagem no mesmo espaço.</span>
-    </a>
-  </div>
-
-  <h2>Aprendizado por reforço</h2>
+  <h2 id="reforco">Aprendizado por reforço <span class="count">4</span></h2>
+  <p class="sec">Aprender por tentativa e erro, guiado por recompensas.</p>
   <div class="grid">
     <a class="card" href="workflows/rl-basico/rl-basico-passo-a-passo.html">
       <strong>Agente, ambiente e recompensa</strong>
       <span>O ciclo básico: agir, receber recompensa, aprender.</span>
     </a>
+    <a class="card" href="workflows/q-learning-dqn/q-learning-dqn-passo-a-passo.html">
+      <strong>Q-learning e DQN</strong>
+      <span>Aprender o valor de cada ação, da tabela à rede neural.</span>
+    </a>
+    <a class="card" href="workflows/policy-gradient-ppo/policy-gradient-ppo-passo-a-passo.html">
+      <strong>Policy gradient e PPO</strong>
+      <span>Aprender direto a política, com passos seguros.</span>
+    </a>
+    <a class="card" href="workflows/alphago-mcts/alphago-mcts-passo-a-passo.html">
+      <strong>AlphaGo e busca em árvore (MCTS)</strong>
+      <span>Redes neurais mais busca para jogar Go.</span>
+    </a>
   </div>
-
-  <h2>Ferramentas e engenharia</h2>
+  <h2 id="simbolica">IA simbólica <span class="count">1</span></h2>
+  <p class="sec">A tradição de representar conhecimento com regras e lógica, sem aprender com dados.</p>
+  <div class="grid">
+    <a class="card" href="workflows/sistemas-especialistas/sistemas-especialistas-passo-a-passo.html">
+      <strong>Sistemas especialistas</strong>
+      <span>Regras escritas por humanos e motor de inferência.</span>
+    </a>
+  </div>
+  <h2 id="engenharia">Engenharia e operação (MLOps) <span class="count">3</span></h2>
+  <p class="sec">Levar modelos para produção, acompanhá-los e servi-los com eficiência.</p>
   <div class="grid">
     <a class="card" href="workflows/mlflow/mlflow-passo-a-passo.html">
       <strong>MLflow</strong>
@@ -229,8 +337,7 @@
       <span>Batching contínuo, KV cache paginado e GPU.</span>
     </a>
   </div>
-
-  <footer>37 workflows. Os textos explicativos foram escritos por IA; confira antes de publicar.</footer>
+  <footer>46 workflows. Os textos explicativos foram escritos por IA; confira antes de publicar.</footer>
 </main>
 </body>
 </html>
